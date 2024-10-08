@@ -71,7 +71,7 @@ if response.status_code == 200:
                 background-color: #333333;
             }
             th, td {
-                padding: 10px;
+                padding: 6px 10px;  /* Reduser padding for tettere kolonner */
                 text-align: left;
                 border-bottom: 1px solid #666666;
             }
@@ -80,17 +80,16 @@ if response.status_code == 200:
                 color: #333;
                 font-weight: bold;
                 border-radius: 5px;
-                font-size: 14px;
+                font-size: 12px; /* Mindre font-størrelse for en mer kompakt stil */
+            }
+            td {
+                font-size: 12px; /* Mindre font for kompakte kolonner */
             }
             tr:nth-child(even) {
                 background-color: #2c2c2c;
             }
             tr:hover {
                 background-color: #444444;
-            }
-            td {
-                color: #ddd;
-                cursor: pointer;
             }
             #popup {
                 display: none;
@@ -116,20 +115,20 @@ if response.status_code == 200:
                 color: #f4d03f;
                 margin-top: 10px;
             }
-            /* Responsive design */
+            /* Mobilvennlig design */
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 16px;
+                    font-size: 14px;
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 14px;
-                    padding: 8px;
+                    font-size: 11px;  /* Mindre font for mobilvisning */
+                    padding: 4px 8px;  /* Redusert padding */
                 }
                 h2 {
-                    font-size: 20px;
+                    font-size: 18px;  /* Mindre heading for mobil */
                 }
                 #popup {
                     width: 90%;
