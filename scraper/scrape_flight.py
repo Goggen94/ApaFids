@@ -111,19 +111,18 @@ if response.status_code == 200:
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: #444;
-                padding: 20px;
+                padding: 15px;
                 border-radius: 10px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 color: white;
                 font-size: 16px;
-                width: 60%;  /* New, smaller width */
-                text-align: left;
+                width: 80%; /* Adjusted for better display */
             }
             #popup h3 {
                 color: #f4d03f;
                 font-size: 18px;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
             }
             #popup p {
                 margin: 2px 0;
@@ -132,10 +131,15 @@ if response.status_code == 200:
             .info-container {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 10px;
+                align-items: flex-start;
+                width: 100%;
             }
             .info-container div {
                 width: 48%;
+            }
+            .info-container div h3 {
+                margin-bottom: 5px;
+                text-align: left; /* Aligning the headers properly */
             }
             #close-popup {
                 cursor: pointer;
@@ -146,16 +150,16 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 #popup {
-                    width: 90%;
+                    width: 100%;
                     padding: 10px;
                 }
                 .info-container {
-                    flex-direction: column;
-                    text-align: center;
+                    display: flex; /* Keep them side by side */
+                    justify-content: space-between; /* Ensure proper alignment */
+                    width: 100%;
                 }
                 .info-container div {
-                    width: 100%;
-                    margin-bottom: 10px;
+                    width: 48%; /* Ensuring the width stays equal */
                 }
             }
         </style>
