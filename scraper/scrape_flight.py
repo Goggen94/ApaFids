@@ -58,7 +58,7 @@ if response.status_code == 200:
                 background-color: #2c2c2c;
                 color: white;
                 font-family: Arial, sans-serif;
-                font-size: 16px;  /* Reduced font size */
+                font-size: 16px;
             }
             h2 {
                 text-align: center;
@@ -86,10 +86,10 @@ if response.status_code == 200:
                 color: #333;
                 font-weight: bold;
                 border-radius: 5px;
-                font-size: 14px;  /* Reduced font size */
+                font-size: 14px;
             }
             td {
-                font-size: 14px;  /* Reduced font size */
+                font-size: 14px;
             }
             tr:nth-child(even) {
                 background-color: #2c2c2c;
@@ -111,30 +111,36 @@ if response.status_code == 200:
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: #444;
-                padding: 15px;
+                padding: 20px;
                 border-radius: 10px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 color: white;
-                font-size: 14px;  /* Reduced font size */
-                width: 70%;  /* Shorter box width */
+                font-size: 16px;
+                width: 60%;  /* New, smaller width */
+                text-align: left;
             }
-            #popup h3 {
+            #popup .headers {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            #popup .headers h3 {
+                margin: 0;
+                padding: 0;
                 color: #f4d03f;
-                margin-bottom: 5px;
-            }
-            #popup p {
-                margin: 5px 0;
+                font-size: 18px;
             }
             #popup .info-container {
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
                 width: 100%;
-                gap: 5px;  /* Reduced gap */
             }
             #popup .left, #popup .right {
                 width: 48%;
+            }
+            #popup p {
+                margin: 2px 0;
             }
             #close-popup {
                 cursor: pointer;
@@ -144,22 +150,12 @@ if response.status_code == 200:
                 display: block;
             }
             @media only screen and (max-width: 600px) {
-                body {
-                    font-size: 14px;
-                }
-                table {
-                    width: 100%;
-                }
-                th, td {
-                    font-size: 12px;
-                    padding: 6px 8px;
-                }
-                h2 {
-                    font-size: 18px;
-                }
                 #popup {
                     width: 90%;
                     padding: 10px;
+                }
+                #popup .headers h3 {
+                    font-size: 16px;
                 }
                 #popup .info-container {
                     flex-direction: column;
@@ -167,7 +163,6 @@ if response.status_code == 200:
                 #popup .left, #popup .right {
                     width: 100%;
                     text-align: center;
-                    margin-bottom: 8px;
                 }
             }
         </style>
@@ -215,76 +210,4 @@ if response.status_code == 200:
             # Format scheduled and expected time
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-            expected_time = flight.get("expected_time", "")
-            formatted_etd_time, _ = format_time(expected_time)
-            
-            # Check if ETD exists, use it for the popup instead of STD if present
-            time_for_popup = expected_time if expected_time != "" else sched_time
-
-            # Calculate event times (only for OG flights)
-            if flight_number.startswith("OG"):
-                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}')\""
-            else:
-                row_click = ""
-
-            status = flight.get("status", "N/A")
-            stand = flight.get("stand", "N/A")
-            gate = flight.get("gate", "N/A")
-            
-            # Insert yellow line when the day changes
-            if previous_date and sched_date != previous_date:
-                html_output += f"""
-                <tr id="next-day">
-                    <td colspan="7">Next Day Flights</td>
-                </tr>
-                """
-            
-            html_output += f"""
-                <tr {row_click}>
-                    <td>{flight_number}</td>
-                    <td>{destination_name}</td>
-                    <td>{formatted_sched_time}</td>
-                    <td>{formatted_etd_time}</td>
-                    <td>{status}</td>
-                    <td>{stand}</td>
-                    <td>{gate}</td>
-                </tr>
-            """
-
-            previous_date = sched_date  # Update the previous_date for next iteration
-
-    html_output += """
-        </table>
-
-        <div id="popup">
-            <div class="info-container">
-                <div class="left">
-                    <h3>Check-in Information</h3>
-                    <p id="checkin-opens"></p>
-                    <p id="checkin-closes"></p>
-                </div>
-                <div class="right">
-                    <h3>Gate Information</h3>
-                    <p id="flight-info"></p>
-                    <p id="go-to-gate"></p>
-                    <p id="boarding"></p>
-                    <p id="final-call"></p>
-                    <p id="name-call"></p>
-                    <p id="gate-closed"></p>
-                </div>
-            </div>
-            <p id="close-popup" onclick="closePopup()">Close</p>
-        </div>
-    </body>
-    </html>
-    """
-
-    # Save the HTML file to the output directory
-    os.makedirs("scraper/output", exist_ok=True)
-    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
-        file.write(html_output)
-
-    print("HTML file has been generated with departing flights handled by APA.")
-else:
-    print(f"Failed to retrieve data. Status code: {response.status_code}")
+            expected_time = flight.get("expected_time",
