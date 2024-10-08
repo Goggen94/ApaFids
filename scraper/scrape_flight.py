@@ -11,11 +11,11 @@ response = requests.get(url)
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
     
-    # Generate HTML file with only departing flights (filter out KEF as destination)
+    # Generate HTML file with only departing flights handled by APA
     html_output = """
     <html>
     <head>
-        <title>KEF Departing Flights</title>
+        <title>KEF Departing Flights (Handled by APA)</title>
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             table { width: 100%; border-collapse: collapse; }
@@ -24,7 +24,7 @@ if response.status_code == 200:
         </style>
     </head>
     <body>
-        <h2>KEF Airport Departing Flights Information</h2>
+        <h2>KEF Airport Departing Flights (Handled by APA)</h2>
         <table>
             <tr>
                 <th>Flight Number</th>
@@ -38,9 +38,10 @@ if response.status_code == 200:
 
     for flight in data:
         destination = flight.get("destination_iata", "")
-        
-        # Exclude flights with Keflavik (KEF) as destination
-        if destination != "KEF":
+        handling_agent = flight.get("handling_agent", "")
+
+        # Exclude flights with Keflavik (KEF) as destination and filter only flights handled by APA
+        if destination != "KEF" and handling_agent == "APA":
             flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
             destination_name = flight.get("destination", "N/A")
             sched_time = flight.get("sched_time", "N/A")
@@ -70,6 +71,7 @@ if response.status_code == 200:
     with open("scraper/output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
 
-    print("HTML file has been generated with departing flights.")
+    print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
+
