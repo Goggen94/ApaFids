@@ -2,9 +2,9 @@ name: Scrape Flight Data
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Kjør hvert 10. minutt
+    - cron: '*/10 * * * *'  # Run every 10 minutes
   workflow_dispatch:
-    # Dette lar deg manuelt kjøre workflow fra GitHub
+    # Allows manual run of the workflow
 
 jobs:
   build:
