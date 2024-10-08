@@ -41,12 +41,12 @@ def calculate_event_times(sched_time):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a link to Flightradar using the aircraft registration (A/C Reg)
-def generate_flightradar_link(ac_reg):
-    if ac_reg:
-        return f"https://www.flightradar24.com/{ac_reg}"  # Return the tracking URL using the A/C Reg
+# Create a link to Flightradar using the aircraft registration (aircraft_reg from the API)
+def generate_flightradar_link(aircraft_reg):
+    if aircraft_reg:
+        return f"https://www.flightradar24.com/{aircraft_reg}"  # Return the tracking URL using the aircraft registration
     else:
-        return "#"  # Return a placeholder link if A/C Reg is missing
+        return "#"  # Return a placeholder link if aircraft registration is missing
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -207,6 +207,7 @@ if response.status_code == 200:
                 <th>Status</th>
                 <th>Stand</th>
                 <th>Gate</th>
+                <th>A/C Reg</th> <!-- New column for A/C Reg -->
             </tr>
     """
 
@@ -214,10 +215,7 @@ if response.status_code == 200:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        ac_reg = flight.get("ac_reg", "")  # Get the aircraft registration from the API
-
-        # Debug: Print A/C Reg for verification
-        print(f"Flight: {flight_number}, A/C Reg: {ac_reg}")
+        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get the aircraft registration from the API
 
         # Filter flights handled by APA and departing from KEF, and limit popup to "OG" flights
         if destination != "KEF" and handling_agent == "APA":
@@ -235,7 +233,7 @@ if response.status_code == 200:
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
-                flightradar_link = generate_flightradar_link(ac_reg)  # Get the tracking link using A/C Reg
+                flightradar_link = generate_flightradar_link(aircraft_reg)  # Get the tracking link using the aircraft registration
                 row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
             else:
                 row_click = ""
@@ -248,7 +246,7 @@ if response.status_code == 200:
             if previous_date and sched_date != previous_date:
                 html_output += f"""
                 <tr id="next-day">
-                    <td colspan="7">Next Day Flights</td>
+                    <td colspan="8">Next Day Flights</td> <!-- Adjusted colspan for the new A/C Reg column -->
                 </tr>
                 """
             
@@ -261,6 +259,7 @@ if response.status_code == 200:
                     <td>{status}</td>
                     <td>{stand}</td>
                     <td>{gate}</td>
+                    <td>{aircraft_reg}</td> <!-- Display A/C Reg -->
                 </tr>
             """
 
