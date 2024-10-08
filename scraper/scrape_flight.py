@@ -210,4 +210,78 @@ if response.status_code == 200:
             # Format scheduled and expected time
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-            expected_time = flight.get("expected_time",
+            expected_time = flight.get("expected_time", "")
+            formatted_etd_time, _ = format_time(expected_time)
+            
+            # Check if ETD exists, use it for the popup instead of STD if present
+            time_for_popup = expected_time if expected_time != "" else sched_time
+
+            # Calculate event times (only for OG flights)
+            if flight_number.startswith("OG"):
+                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}')\""
+            else:
+                row_click = ""
+
+            status = flight.get("status", "N/A")
+            stand = flight.get("stand", "N/A")
+            gate = flight.get("gate", "N/A")
+            
+            # Insert yellow line when the day changes
+            if previous_date and sched_date != previous_date:
+                html_output += f"""
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                """
+            
+            html_output += f"""
+                <tr {row_click}>
+                    <td>{flight_number}</td>
+                    <td>{destination_name}</td>
+                    <td>{formatted_sched_time}</td>
+                    <td>{formatted_etd_time}</td>
+                    <td>{status}</td>
+                    <td>{stand}</td>
+                    <td>{gate}</td>
+                </tr>
+            """
+
+            previous_date = sched_date  # Update the previous_date for next iteration
+
+    html_output += """
+        </table>
+
+        <div id="popup">
+            <div class="headers">
+                <h3>Check-in Information</h3>
+                <h3>Gate Information</h3>
+            </div>
+            <div class="info-container">
+                <div class="left">
+                    <p id="checkin-opens"></p>
+                    <p id="checkin-closes"></p>
+                </div>
+                <div class="right">
+                    <p id="flight-info"></p>
+                    <p id="go-to-gate"></p>
+                    <p id="boarding"></p>
+                    <p id="final-call"></p>
+                    <p id="name-call"></p>
+                    <p id="gate-closed"></p>
+                </div>
+            </div>
+            <p id="close-popup" onclick="closePopup()">Close</p>
+        </div>
+    </body>
+    </html>
+    """
+
+    # Save the HTML file to the output directory
+    os.makedirs("scraper/output", exist_ok=True)
+    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
+        file.write(html_output)
+
+    print("HTML file has been generated with departing flights handled by APA.")
+else:
+    print(f"Failed to retrieve data. Status code: {response.status_code}")
