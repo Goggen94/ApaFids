@@ -21,13 +21,14 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r scraper/requirements.txt
-        playwright install  # Installerer Playwright-browserne
 
     - name: Run Scrapy spider
-      run: scrapy crawl kef_spider
+      run: |
+        cd scraper
+        scrapy crawl kef_spider  # Kjører spideren i scraper-mappen
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.APAFIDSTOKEN }}
         publish_dir: ./scraper/output
