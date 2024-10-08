@@ -31,10 +31,12 @@ def calculate_event_times(sched_time, is_og_flight):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         if is_og_flight:
+            # OG flight times
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
         else:
+            # W4, W6, W9 flight times
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
