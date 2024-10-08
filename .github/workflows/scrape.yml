@@ -2,8 +2,9 @@ name: Scrape Flight Data
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/10 * * * *'  # Kjør hvert 10. minutt
   workflow_dispatch:
+    # Dette lar deg manuelt kjøre workflow fra GitHub
 
 jobs:
   build:
@@ -22,13 +23,11 @@ jobs:
       run: |
         pip install -r scraper/requirements.txt
 
-    - name: Run Scrapy spider
-      run: |
-        cd scraper
-        scrapy crawl kef_spider  # Kjører spideren
+    - name: Run scraper
+      run: python scraper/scrape_flight.py
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.APAFIDSTOKEN }}
-        publish_dir: ./scraper/output
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: scraper/output
