@@ -68,3 +68,4 @@ if response.status_code == 200:
         file.write(html_output)
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
+    
