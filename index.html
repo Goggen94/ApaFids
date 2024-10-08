@@ -71,27 +71,22 @@
                 width: 60%;  /* New, smaller width */
                 text-align: left;
             }
-            #popup .headers {
+            #popup h3 {
+                color: #f4d03f;
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            #popup p {
+                margin: 2px 0;
+                font-size: 16px;
+            }
+            .info-container {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;
             }
-            #popup .headers h3 {
-                margin: 0;
-                padding: 0;
-                color: #f4d03f;
-                font-size: 18px;
-            }
-            #popup .info-container {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-            }
-            #popup .left, #popup .right {
+            .info-container div {
                 width: 48%;
-            }
-            #popup p {
-                margin: 2px 0;
             }
             #close-popup {
                 cursor: pointer;
@@ -105,15 +100,13 @@
                     width: 90%;
                     padding: 10px;
                 }
-                #popup .headers h3 {
-                    font-size: 16px;
-                }
-                #popup .info-container {
+                .info-container {
                     flex-direction: column;
-                }
-                #popup .left, #popup .right {
-                    width: 100%;
                     text-align: center;
+                }
+                .info-container div {
+                    width: 100%;
+                    margin-bottom: 10px;
                 }
             }
         </style>
@@ -465,22 +458,20 @@
         </table>
 
         <div id="popup">
-            <div class="headers">
-                <h3>Check-in Information</h3>
-                <h3>Gate Information</h3>
-            </div>
             <div class="info-container">
-                <div class="left">
-                    <p id="checkin-opens"></p>
-                    <p id="checkin-closes"></p>
+                <div>
+                    <h3>Check-in Information</h3>
+                    <p id="checkin-opens">Check-in opens:</p>
+                    <p id="checkin-closes">Check-in closes:</p>
                 </div>
-                <div class="right">
-                    <p id="flight-info"></p>
-                    <p id="go-to-gate"></p>
-                    <p id="boarding"></p>
-                    <p id="final-call"></p>
-                    <p id="name-call"></p>
-                    <p id="gate-closed"></p>
+                <div>
+                    <h3>Gate Information</h3>
+                    <p id="flight-info">Flight:</p>
+                    <p id="go-to-gate">Go to Gate:</p>
+                    <p id="boarding">Boarding:</p>
+                    <p id="final-call">Final Call:</p>
+                    <p id="name-call">Name Call:</p>
+                    <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
