@@ -27,6 +27,9 @@ jobs:
     - name: Run scraper
       run: python scraper/scrape_flight.py
 
+    - name: List output files  # Legg til dette steget
+      run: ls scraper/output
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
