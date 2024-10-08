@@ -1,1 +1,34 @@
+name: Scrape Flight Data
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Kjør hvert 10. minutt
+  workflow_dispatch:
+    # Dette lar deg manuelt kjøre workflow fra GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r scraper/requirements.txt
+
+    - name: Run scraper
+      run: python scraper/scrape_flight.py
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./scraper/output
 
