@@ -68,7 +68,7 @@
                 z-index: 999;
                 color: white;
                 font-size: 16px;
-                width: 40%;  /* Further reduced size */
+                width: 40%;  /* Reduced size */
             }
             #popup h3 {
                 color: #f4d03f;
@@ -79,7 +79,7 @@
                 margin: 2px 0;
                 font-size: 16px;
                 display: flex;
-                justify-content: space-between;  /* Align vertically */
+                justify-content: space-between;  /* Vertical alignment */
             }
             .info-container {
                 display: flex;
@@ -102,9 +102,16 @@
                 text-align: center;
                 display: block;
             }
+            a {
+                color: #f4d03f;  /* Set link color to yellow */
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
             @media only screen and (max-width: 600px) {
                 #popup {
-                    width: 75%;
+                    width: 75%;  /* Adjusted for mobile */
                     padding: 8px;
                 }
                 .info-container {
@@ -116,11 +123,9 @@
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarWebLink, flightradarAppLink) {
-                var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                var flightLink = isMobile ? flightradarAppLink : flightradarWebLink;
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightLink + '" target="_blank">Flight: ' + flight + '</a>';
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
                 document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
                 document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
@@ -172,7 +177,7 @@
                     <td>C35</td>
                 </tr>
             
-                <tr onclick="showPopup('OG700', '05:00', '05:15', '05:30', '05:40', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/OG699', 'flightradar24://OG699')">
+                <tr onclick="showPopup('OG700', '05:00', '05:15', '05:30', '05:40', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG700</td>
                     <td>Berlin Brandenburg</td>
                     <td>06:00</td>
@@ -182,7 +187,7 @@
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('OG400', '05:00', '05:15', '05:30', '05:40', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/OG399', 'flightradar24://OG399')">
+                <tr onclick="showPopup('OG400', '05:00', '05:15', '05:30', '05:40', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG400</td>
                     <td>Paris CDG</td>
                     <td>06:00</td>
@@ -192,7 +197,7 @@
                     <td>C35</td>
                 </tr>
             
-                <tr onclick="showPopup('OG460', '05:10', '05:25', '05:40', '05:50', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/OG459', 'flightradar24://OG459')">
+                <tr onclick="showPopup('OG460', '05:10', '05:25', '05:40', '05:50', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG460</td>
                     <td>Amsterdam</td>
                     <td>06:10</td>
@@ -202,7 +207,7 @@
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG900', '05:25', '05:40', '05:55', '06:05', '06:10', '03:25', '05:25', 'https://www.flightradar24.com/OG899', 'flightradar24://OG899')">
+                <tr onclick="showPopup('OG900', '05:25', '05:40', '05:55', '06:05', '06:10', '03:25', '05:25', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG900</td>
                     <td>Copenhagen</td>
                     <td>06:25</td>
@@ -212,7 +217,7 @@
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG880', '05:40', '05:55', '06:10', '06:20', '06:25', '03:40', '05:40', 'https://www.flightradar24.com/OG879', 'flightradar24://OG879')">
+                <tr onclick="showPopup('OG880', '05:40', '05:55', '06:10', '06:20', '06:25', '03:40', '05:40', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG880</td>
                     <td>Dublin</td>
                     <td>06:40</td>
@@ -222,7 +227,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG800', '05:40', '05:55', '06:10', '06:20', '06:25', '03:40', '05:40', 'https://www.flightradar24.com/OG799', 'flightradar24://OG799')">
+                <tr onclick="showPopup('OG800', '05:40', '05:55', '06:10', '06:20', '06:25', '03:40', '05:40', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG800</td>
                     <td>London Stansted</td>
                     <td>06:40</td>
@@ -262,14 +267,14 @@
                     <td>D22B</td>
                 </tr>
             
-                <tr onclick="showPopup('OG640', '07:55', '08:10', '08:25', '08:35', '08:40', '05:55', '07:55', 'https://www.flightradar24.com/OG639', 'flightradar24://OG639')">
+                <tr onclick="showPopup('OG640', '07:55', '08:10', '08:25', '08:35', '08:40', '05:55', '07:55', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG640</td>
                     <td>Las Palmas</td>
                     <td>08:55</td>
                     <td></td>
                     <td></td>
-                    <td>118</td>
-                    <td></td>
+                    <td>46R</td>
+                    <td>C28</td>
                 </tr>
             
                 <tr >
@@ -312,7 +317,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('OG600', '09:00', '09:15', '09:30', '09:40', '09:45', '07:00', '09:00', 'https://www.flightradar24.com/OG599', 'flightradar24://OG599')">
+                <tr onclick="showPopup('OG600', '09:00', '09:15', '09:30', '09:40', '09:45', '07:00', '09:00', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG600</td>
                     <td>Alicante</td>
                     <td>10:00</td>
@@ -382,7 +387,7 @@
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG101', '14:05', '14:20', '14:35', '14:45', '14:50', '12:05', '14:05', 'https://www.flightradar24.com/OG100', 'flightradar24://OG100')">
+                <tr onclick="showPopup('OG101', '14:05', '14:20', '14:35', '14:45', '14:50', '12:05', '14:05', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG101</td>
                     <td>Baltimore Washington</td>
                     <td>15:05</td>
@@ -392,7 +397,7 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG664', '14:10', '14:25', '14:40', '14:50', '14:55', '12:10', '14:10', 'https://www.flightradar24.com/OG663', 'flightradar24://OG663')">
+                <tr onclick="showPopup('OG664', '14:10', '14:25', '14:40', '14:50', '14:55', '12:10', '14:10', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG664</td>
                     <td>Madrid</td>
                     <td>15:10</td>
@@ -402,7 +407,7 @@
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG614', '14:20', '14:35', '14:50', '15:00', '15:05', '12:20', '14:20', 'https://www.flightradar24.com/OG613', 'flightradar24://OG613')">
+                <tr onclick="showPopup('OG614', '14:20', '14:35', '14:50', '15:00', '15:05', '12:20', '14:20', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG614</td>
                     <td>Barcelona</td>
                     <td>15:20</td>
@@ -412,7 +417,7 @@
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG111', '14:50', '15:05', '15:20', '15:30', '15:35', '12:50', '14:50', 'https://www.flightradar24.com/OG110', 'flightradar24://OG110')">
+                <tr onclick="showPopup('OG111', '14:50', '15:05', '15:20', '15:30', '15:35', '12:50', '14:50', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG111</td>
                     <td>Boston</td>
                     <td>15:50</td>
@@ -422,7 +427,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG121', '15:00', '15:15', '15:30', '15:40', '15:45', '13:00', '15:00', 'https://www.flightradar24.com/OG120', 'flightradar24://OG120')">
+                <tr onclick="showPopup('OG121', '15:00', '15:15', '15:30', '15:40', '15:45', '13:00', '15:00', 'https://www.flightradar24.com/data/aircraft/')">
                     <td>OG121</td>
                     <td>New York Stewart</td>
                     <td>16:00</td>
