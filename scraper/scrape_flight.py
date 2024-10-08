@@ -231,10 +231,7 @@ if response.status_code == 200:
         etd_time = flight.get("expected_time", "")
         aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
 
-        # Skip if status is "DYNAMIC MESSAGING"
-        if status == "DYNAMIC MESSAGING":
-            continue
-
+        # Allow "Dynamic Messaging" status to be shown again
         # Filter flights handled by APA and departing from KEF
         if destination != "KEF" and handling_agent == "APA":
             destination_name = flight.get("destination", "N/A")
