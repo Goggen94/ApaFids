@@ -143,13 +143,13 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 16px;
+                    font-size: 14px;
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 14px;
+                    font-size: 10px;
                     padding: 8px 10px;
                 }
                 h2 {
