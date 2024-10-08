@@ -1,7 +1,7 @@
 
     <html>
     <head>
-        <title>KEF Departing Flights (Handled by APA)</title>
+        <title>KEF Airport departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
@@ -123,7 +123,7 @@
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink, status) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
@@ -133,7 +133,6 @@
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-                document.getElementById("status").innerHTML = "Status: " + status;
             }
 
             function closePopup() {
@@ -142,7 +141,7 @@
         </script>
     </head>
     <body>
-        <h2>KEF Airport Departing Flights (Handled by APA)</h2>
+        <h2>KEF Airport departures</h2>
         <table>
             <tr>
                 <th>Flight</th>
@@ -154,71 +153,71 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('W42858', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/W42857', 'Estimated')">
+                <tr onclick="showPopup('W42858', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/W42857')">
                     <td>W42858</td>
                     <td>Vienna</td>
                     <td>01:05</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG700', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG701', 'Estimated')">
+                <tr onclick="showPopup('OG700', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPA')">
                     <td>OG700</td>
                     <td>Berlin Brandenburg</td>
                     <td>06:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>7</td>
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('OG400', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG401', 'Estimated')">
+                <tr onclick="showPopup('OG400', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPE')">
                     <td>OG400</td>
                     <td>Paris CDG</td>
                     <td>06:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>12</td>
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG460', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG461', 'Estimated')">
+                <tr onclick="showPopup('OG460', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPC')">
                     <td>OG460</td>
                     <td>Amsterdam</td>
                     <td>06:10</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>8</td>
                     <td>C35</td>
                 </tr>
             
-                <tr onclick="showPopup('OG900', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG901', 'Estimated')">
+                <tr onclick="showPopup('OG900', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPB')">
                     <td>OG900</td>
                     <td>Copenhagen</td>
                     <td>06:25</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>9</td>
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG880', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG881', 'Estimated')">
+                <tr onclick="showPopup('OG880', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPF')">
                     <td>OG880</td>
                     <td>Dublin</td>
                     <td>06:40</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>5</td>
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG800', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG801', 'Estimated')">
+                <tr onclick="showPopup('OG800', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFAEW')">
                     <td>OG800</td>
                     <td>London Stansted</td>
                     <td>06:40</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>61</td>
                     <td>D31</td>
@@ -228,7 +227,7 @@
                     <td>EZY3316</td>
                     <td>Edinburgh</td>
                     <td>08:20</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>8</td>
                     <td>D35</td>
@@ -238,7 +237,7 @@
                     <td>BT170</td>
                     <td>Riga</td>
                     <td>08:50</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>7</td>
                     <td>C22</td>
@@ -248,17 +247,17 @@
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>42</td>
                     <td>D22B</td>
                 </tr>
             
-                <tr onclick="showPopup('OG640', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG641', 'Estimated')">
+                <tr onclick="showPopup('OG640', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPLA')">
                     <td>OG640</td>
                     <td>Las Palmas</td>
                     <td>08:55</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>46R</td>
                     <td>C28</td>
@@ -268,7 +267,7 @@
                     <td>NO3924</td>
                     <td>Tenerife South</td>
                     <td>09:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>72L</td>
                     <td>C24</td>
@@ -278,27 +277,27 @@
                     <td>EZY2636</td>
                     <td>London Luton</td>
                     <td>09:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>11</td>
                     <td>D21</td>
                 </tr>
             
-                <tr onclick="showPopup('W61168', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/W61167', 'Estimated')">
+                <tr onclick="showPopup('W61168', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/W61167')">
                     <td>W61168</td>
                     <td>Katowice</td>
                     <td>09:55</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>5</td>
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG600', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG601', 'Estimated')">
+                <tr onclick="showPopup('OG600', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPLC')">
                     <td>OG600</td>
                     <td>Alicante</td>
                     <td>10:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>9</td>
                     <td>C23</td>
@@ -308,7 +307,7 @@
                     <td>LS410</td>
                     <td>Leeds</td>
                     <td>10:15</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>7</td>
                     <td>D22</td>
@@ -318,7 +317,7 @@
                     <td>EJU3970</td>
                     <td>Milan</td>
                     <td>10:35</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>3</td>
                     <td>A13</td>
@@ -328,7 +327,7 @@
                     <td>LS1908</td>
                     <td>Newcastle</td>
                     <td>10:45</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>8</td>
                     <td>D35</td>
@@ -338,7 +337,7 @@
                     <td>BA801</td>
                     <td>London Heathrow</td>
                     <td>11:05</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>5</td>
                     <td>D15</td>
@@ -348,7 +347,7 @@
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>11</td>
                     <td>D21</td>
@@ -358,57 +357,57 @@
                     <td>TO4403</td>
                     <td>Paris Orly</td>
                     <td>13:15</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG101', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG102', 'Estimated')">
+                <tr onclick="showPopup('OG101', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPB')">
                     <td>OG101</td>
                     <td>Baltimore Washington</td>
                     <td>15:05</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>9</td>
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG664', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG665', 'Estimated')">
+                <tr onclick="showPopup('OG664', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPA')">
                     <td>OG664</td>
                     <td>Madrid</td>
                     <td>15:10</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG614', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG615', 'Estimated')">
+                <tr onclick="showPopup('OG614', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFAEW')">
                     <td>OG614</td>
                     <td>Barcelona</td>
                     <td>15:20</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>7</td>
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG111', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG112', 'Estimated')">
+                <tr onclick="showPopup('OG111', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPF')">
                     <td>OG111</td>
                     <td>Boston</td>
                     <td>15:50</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>5</td>
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG121', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/OG122', 'Estimated')">
+                <tr onclick="showPopup('OG121', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'https://www.flightradar24.com/TFPPD')">
                     <td>OG121</td>
                     <td>New York Stewart</td>
                     <td>16:00</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>116</td>
                     <td>D27</td>
@@ -418,7 +417,7 @@
                     <td>ED6809</td>
                     <td>Billund</td>
                     <td>16:15</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>59</td>
                     <td></td>
@@ -428,7 +427,7 @@
                     <td>D03999</td>
                     <td>East Midlands</td>
                     <td>17:10</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>61</td>
                     <td></td>
@@ -438,7 +437,7 @@
                     <td>HV6888</td>
                     <td>Amsterdam</td>
                     <td>19:50</td>
-                    <td></td>
+                    <td>N/A</td>
                     <td>Estimated</td>
                     <td>8</td>
                     <td>C35</td>
@@ -461,7 +460,6 @@
                     <p id="final-call">Final Call:</p>
                     <p id="name-call">Name Call:</p>
                     <p id="gate-closed">Gate Closed:</p>
-                    <p id="status">Status:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
