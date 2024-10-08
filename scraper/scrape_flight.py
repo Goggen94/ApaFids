@@ -126,16 +126,13 @@ if response.status_code == 200:
             #popup p {
                 margin: 5px 0;
             }
+            #popup .info-container {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
             #popup .left, #popup .right {
-                display: inline-block;
                 width: 48%;
-                vertical-align: top;
-            }
-            #popup .left {
-                text-align: left;
-            }
-            #popup .right {
-                text-align: right;
             }
             #close-popup {
                 cursor: pointer;
@@ -146,26 +143,29 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 20px;
+                    font-size: 16px;
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 18px;
-                    padding: 12px 10px;
+                    font-size: 14px;
+                    padding: 8px 10px;
                 }
                 h2 {
-                    font-size: 24px;
+                    font-size: 22px;
                 }
                 #popup {
-                    width: 90%;
+                    width: 95%;
                     padding: 15px;
                 }
-                #popup .left, #popup .right {
+                #popup .info-container {
                     display: block;
-                    width: 100%;
                     text-align: center;
+                }
+                #popup .left, #popup .right {
+                    width: 100%;
+                    margin-bottom: 10px;
                 }
             }
         </style>
@@ -256,19 +256,21 @@ if response.status_code == 200:
         </table>
 
         <div id="popup">
-            <div class="left">
-                <h3>Check-in Information</h3>
-                <p id="checkin-opens"></p>
-                <p id="checkin-closes"></p>
-            </div>
-            <div class="right">
-                <h3>Gate Information</h3>
-                <p id="flight-info"></p>
-                <p id="go-to-gate"></p>
-                <p id="boarding"></p>
-                <p id="final-call"></p>
-                <p id="name-call"></p>
-                <p id="gate-closed"></p>
+            <div class="info-container">
+                <div class="left">
+                    <h3>Check-in Information</h3>
+                    <p id="checkin-opens"></p>
+                    <p id="checkin-closes"></p>
+                </div>
+                <div class="right">
+                    <h3>Gate Information</h3>
+                    <p id="flight-info"></p>
+                    <p id="go-to-gate"></p>
+                    <p id="boarding"></p>
+                    <p id="final-call"></p>
+                    <p id="name-call"></p>
+                    <p id="gate-closed"></p>
+                </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
