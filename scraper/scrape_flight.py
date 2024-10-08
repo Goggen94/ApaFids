@@ -1,15 +1,18 @@
 import requests
+from bs4 import BeautifulSoup
 import os
 
-# API URL to fetch flight data
+# URL to the flight data API
 url = "https://fids.kefairport.is/api/flights?dateFrom=2024-10-08T13:37&dateTo=2024-10-09T02:37"
 
+# Send the request to get the flight data
 response = requests.get(url)
 
+# Check if the request was successful
 if response.status_code == 200:
-    data = response.json()
-
-    # Generate HTML content
+    data = response.json()  # Parse the JSON data
+    
+    # Generate HTML file with scraped data
     html_output = """
     <html>
     <head>
@@ -34,37 +37,34 @@ if response.status_code == 200:
             </tr>
     """
 
-    # Loop through the flight data
     for flight in data:
-        flight_number = flight.get('flight_prefix', '') + flight.get('flight_num', '')
-        destination = flight.get('destination', '')
-        sched_time = flight.get('sched_time', '')
-        expected_time = flight.get('expected_time', '')
-        status = flight.get('status', '')
-        gate = flight.get('gate', '')
-
-        # Add each flight's data to the table
+        flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
+        destination = flight.get("destination", "N/A")
+        sched_time = flight.get("sched_time", "N/A")
+        expected_time = flight.get("expected_time", "N/A")
+        status = flight.get("status", "N/A")
+        gate = flight.get("gate", "N/A")
+        
         html_output += f"""
-        <tr>
-            <td>{flight_number}</td>
-            <td>{destination}</td>
-            <td>{sched_time}</td>
-            <td>{expected_time}</td>
-            <td>{status}</td>
-            <td>{gate}</td>
-        </tr>
+            <tr>
+                <td>{flight_number}</td>
+                <td>{destination}</td>
+                <td>{sched_time}</td>
+                <td>{expected_time}</td>
+                <td>{status}</td>
+                <td>{gate}</td>
+            </tr>
         """
 
-    # Complete the HTML structure
     html_output += """
         </table>
     </body>
     </html>
     """
 
-    # Save the result as an index.html in the output directory
-    os.makedirs("output", exist_ok=True)
-    with open("output/index.html", "w", encoding="utf-8") as file:
+    # Save the HTML file to the output directory
+    os.makedirs("scraper/output", exist_ok=True)
+    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
 else:
-    print(f"Failed to fetch data. Status code: {response.status_code}")
+    print(f"Failed to retrieve data. Status code: {response.status_code}")
