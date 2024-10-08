@@ -15,57 +15,60 @@ if response.status_code == 200:
     # Finn tabellen med flyinformasjon
     table = soup.find('table', {'class': 'table'})
     
-    # Generer HTML-fil med scraped data
-    html_output = """
-    <html>
-    <head>
-        <title>Flight Information</title>
-        <meta http-equiv="refresh" content="600">  <!-- Oppdater hver 10. minutt -->
-        <style>
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
-            th { background-color: #4CAF50; color: white; }
-        </style>
-    </head>
-    <body>
-        <h2>KEF Airport Flight Information</h2>
-        <table>
-            <tr>
-                <th>Flight Number</th>
-                <th>Destination</th>
-                <th>Scheduled Time</th>
-                <th>Status</th>
-            </tr>
-    """
+    if table:
+        # Generer HTML-fil med scraped data
+        html_output = """
+        <html>
+        <head>
+            <title>Flight Information</title>
+            <meta http-equiv="refresh" content="600">  <!-- Oppdater hver 10. minutt -->
+            <style>
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
+                th { background-color: #4CAF50; color: white; }
+            </style>
+        </head>
+        <body>
+            <h2>KEF Airport Flight Information</h2>
+            <table>
+                <tr>
+                    <th>Flight Number</th>
+                    <th>Destination</th>
+                    <th>Scheduled Time</th>
+                    <th>Status</th>
+                </tr>
+        """
 
-    # Gå gjennom rader og celler i tabellen
-    for row in table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        if len(cells) > 3:
-            flight_number = cells[0].text.strip()
-            destination = cells[1].text.strip()
-            scheduled_time = cells[2].text.strip()
-            status = cells[3].text.strip()
+        # Gå gjennom rader og celler i tabellen
+        for row in table.find_all('tr')[1:]:
+            cells = row.find_all('td')
+            if len(cells) > 3:
+                flight_number = cells[0].text.strip()
+                destination = cells[1].text.strip()
+                scheduled_time = cells[2].text.strip()
+                status = cells[3].text.strip()
 
-            html_output += f"""
-            <tr>
-                <td>{flight_number}</td>
-                <td>{destination}</td>
-                <td>{scheduled_time}</td>
-                <td>{status}</td>
-            </tr>
-            """
+                html_output += f"""
+                <tr>
+                    <td>{flight_number}</td>
+                    <td>{destination}</td>
+                    <td>{scheduled_time}</td>
+                    <td>{status}</td>
+                </tr>
+                """
 
-    html_output += """
-        </table>
-    </body>
-    </html>
-    """
+        html_output += """
+            </table>
+        </body>
+        </html>
+        """
 
-    # Lagre filen
-    os.makedirs("output", exist_ok=True)
-    with open("output/index.html", "w", encoding="utf-8") as file:
-        file.write(html_output)
+        # Lagre filen i "output"-mappen
+        os.makedirs("output", exist_ok=True)
+        with open("output/index.html", "w", encoding="utf-8") as file:
+            file.write(html_output)
+        print("HTML-fil generert i output/index.html")
+    else:
+        print("Fant ingen tabell på siden. Sjekk om URL-en eller strukturen er korrekt.")
 else:
-    print(f"Failed to retrieve data. Status code: {response.status_code}")
-
+    print(f"Feilet å hente data. Statuskode: {response.status_code}")
