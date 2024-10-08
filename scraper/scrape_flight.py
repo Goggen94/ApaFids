@@ -32,11 +32,11 @@ def calculate_event_times(sched_time):
     try:
         # Parse the scheduled departure time
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
-        go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        name_call_time = (sched_dt - timedelta(minutes=20)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
+        boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
+        final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
+        name_call_time = (sched_dt - timedelta(minutes=20)).strftime("%H:%M")
+        gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A"
@@ -118,49 +118,20 @@ if response.status_code == 200:
                 color: #f4d03f;
                 margin-top: 10px;
             }
-            .event {
-                margin-bottom: 10px;
-            }
-            .event.green {
-                color: #00ff00;
-            }
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = "Flight: " + flight;
-                setCountdown("go-to-gate", goToGate, "Go to Gate");
-                setCountdown("boarding", boarding, "Boarding");
-                setCountdown("final-call", finalCall, "Final Call");
-                setCountdown("name-call", nameCall, "Name Call");
-                setCountdown("gate-closed", gateClosed, "Gate Closed");
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
             }
 
             function closePopup() {
                 document.getElementById("popup").style.display = "none";
-            }
-
-            function setCountdown(elementId, eventTime, label) {
-                const eventElement = document.getElementById(elementId);
-                const eventDate = new Date(eventTime);
-
-                function updateCountdown() {
-                    const now = new Date();
-                    const timeRemaining = eventDate - now;
-                    
-                    if (timeRemaining > 0) {
-                        const minutes = Math.floor(timeRemaining / 60000);
-                        const seconds = Math.floor((timeRemaining % 60000) / 1000);
-                        eventElement.innerHTML = `${label}: ${minutes}m ${seconds}s remaining`;
-                    } else {
-                        eventElement.innerHTML = `${label} time has passed!`;
-                        eventElement.classList.add("green");
-                        clearInterval(countdownInterval);
-                    }
-                }
-
-                updateCountdown();
-                const countdownInterval = setInterval(updateCountdown, 1000);
             }
         </script>
     </head>
@@ -217,12 +188,12 @@ if response.status_code == 200:
         <div id="popup">
             <h3>Additional Information</h3>
             <p id="flight-info"></p>
-            <p id="go-to-gate" class="event"></p>
-            <p id="boarding" class="event"></p>
-            <p id="final-call" class="event"></p>
-            <p id="name-call" class="event"></p>
-            <p id="gate-closed" class="event"></p>
-            <span id="close-popup" onclick="closePopup()">Close</span>
+            <p id="go-to-gate"></p>
+            <p id="boarding"></p>
+            <p id="final-call"></p>
+            <p id="name-call"></p>
+            <p id="gate-closed"></p>
+            <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
     </html>
