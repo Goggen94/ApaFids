@@ -21,7 +21,6 @@ response = requests.get(url)
 # Function to format the time and date into separate columns
 def format_time(time_str):
     try:
-        # Parse the time string (expected format is "YYYY-MM-DDTHH:MM:SSZ")
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M")  # Return time (HH:MM)
     except Exception as e:
@@ -30,7 +29,6 @@ def format_time(time_str):
 # Function to calculate boarding-related times
 def calculate_event_times(sched_time):
     try:
-        # Parse the scheduled departure time
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
         boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
@@ -118,6 +116,26 @@ if response.status_code == 200:
                 color: #f4d03f;
                 margin-top: 10px;
             }
+            /* Responsive design */
+            @media only screen and (max-width: 600px) {
+                body {
+                    font-size: 16px;
+                }
+                table {
+                    width: 100%;
+                }
+                th, td {
+                    font-size: 14px;
+                    padding: 8px;
+                }
+                h2 {
+                    font-size: 20px;
+                }
+                #popup {
+                    width: 90%;
+                    padding: 15px;
+                }
+            }
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed) {
@@ -152,10 +170,10 @@ if response.status_code == 200:
     for flight in data:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
+        flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
 
-        # Filter flights handled by APA and departing from KEF
+        # Filter flights handled by APA and departing from KEF, and limit popup to "OG" flights
         if destination != "KEF" and handling_agent == "APA":
-            flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
             destination_name = flight.get("destination", "N/A")
             
             # Format scheduled and expected time
@@ -163,15 +181,19 @@ if response.status_code == 200:
             formatted_sched_time = format_time(sched_time)
             expected_time = format_time(flight.get("expected_time", "N/A"))
             
-            # Calculate event times
-            go_to_gate, boarding, final_call, name_call, gate_closed = calculate_event_times(sched_time)
+            # Calculate event times (only for OG flights)
+            if flight_number.startswith("OG"):
+                go_to_gate, boarding, final_call, name_call, gate_closed = calculate_event_times(sched_time)
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}')\""
+            else:
+                row_click = ""
 
             status = flight.get("status", "N/A")
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
             
             html_output += f"""
-                <tr onclick="showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}')">
+                <tr {row_click}>
                     <td>{flight_number}</td>
                     <td>{destination_name}</td>
                     <td>{formatted_sched_time}</td>
