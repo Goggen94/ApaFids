@@ -41,6 +41,20 @@ def calculate_event_times(sched_time):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
+# Create a link to Flightradar with the flight number -1, adjusting for the app on mobile
+def generate_flightradar_link(flight_number):
+    try:
+        flight_prefix = flight_number[:2]  # Extract the flight prefix, e.g., "OG"
+        flight_num = int(flight_number[2:])  # Extract the flight number and convert to int
+        tracking_flight_num = flight_num - 1  # Track the arriving flight by subtracting 1
+        # Create app link for mobile users and web link for others
+        return {
+            'web': f"https://www.flightradar24.com/{flight_prefix}{tracking_flight_num}",
+            'app': f"flightradar24://{flight_prefix}{tracking_flight_num}"
+        }
+    except:
+        return {'web': '#', 'app': '#'}  # Return a placeholder link if there's an error
+
 # Check if the request was successful
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
@@ -111,35 +125,37 @@ if response.status_code == 200:
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: #444;
-                padding: 10px;  /* Reduced padding for a smaller box */
+                padding: 8px;
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 color: white;
                 font-size: 16px;
-                width: 50%;  /* Reduced width for a smaller popup */
+                width: 40%;  /* Further reduced size */
             }
             #popup h3 {
                 color: #f4d03f;
                 font-size: 16px;
-                margin-bottom: 5px;  /* Tightened spacing */
+                margin-bottom: 5px;
             }
             #popup p {
-                margin: 1px 0;  /* Reduced margins for tighter spacing */
+                margin: 2px 0;
                 font-size: 16px;
+                display: flex;
+                justify-content: space-between;  /* Align vertically */
             }
             .info-container {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
                 width: 100%;
-                gap: 10px; /* Added slight gap for better spacing */
+                gap: 5px;
             }
             .info-container div {
                 width: 48%;
             }
             .info-container div h3, .info-container div p {
-                margin: 0;  /* Remove margins to tighten spacing */
+                margin: 0;
                 padding: 0;
             }
             #close-popup {
@@ -151,12 +167,11 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 #popup {
-                    width: 80%;  /* Smaller popup on mobile */
+                    width: 75%;
                     padding: 8px;
                 }
                 .info-container {
-                    flex-direction: row;  /* Keep horizontal on mobile */
-                    gap: 5px; /* Slightly smaller gap on mobile */
+                    flex-direction: row;
                 }
                 .info-container div {
                     width: 48%;
@@ -164,9 +179,11 @@ if response.status_code == 200:
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarWebLink, flightradarAppLink) {
+                var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                var flightLink = isMobile ? flightradarAppLink : flightradarWebLink;
                 document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = "Flight: " + flight;
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
                 document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
                 document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
@@ -216,7 +233,8 @@ if response.status_code == 200:
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}')\""
+                flightradar_links = generate_flightradar_link(flight_number)  # Get both web and app tracking links
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_links['web']}', '{flightradar_links['app']}')\""
             else:
                 row_click = ""
 
