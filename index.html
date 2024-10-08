@@ -2,17 +2,19 @@
     <html>
     <head>
         <title>KEF Departing Flights (Handled by APA)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             body {
                 background-color: #2c2c2c;
                 color: white;
                 font-family: Arial, sans-serif;
+                font-size: 18px;  /* Større font for bedre lesbarhet */
             }
             h2 {
                 text-align: center;
                 color: #f4d03f;
-                font-size: 24px;
+                font-size: 28px;  /* Større heading */
                 padding: 15px;
                 border-radius: 8px;
                 background-color: #444444;
@@ -25,7 +27,7 @@
                 background-color: #333333;
             }
             th, td {
-                padding: 6px 10px;  /* Reduser padding for tettere kolonner */
+                padding: 10px 15px;  /* Øk padding for å gjøre cellene større */
                 text-align: left;
                 border-bottom: 1px solid #666666;
             }
@@ -34,10 +36,10 @@
                 color: #333;
                 font-weight: bold;
                 border-radius: 5px;
-                font-size: 12px; /* Mindre font-størrelse for en mer kompakt stil */
+                font-size: 16px; /* Større font for kolonner */
             }
             td {
-                font-size: 12px; /* Mindre font for kompakte kolonner */
+                font-size: 16px; /* Større font for cellene */
             }
             tr:nth-child(even) {
                 background-color: #2c2c2c;
@@ -57,6 +59,7 @@
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 color: white;
+                font-size: 18px;
             }
             #popup h3 {
                 color: #f4d03f;
@@ -72,17 +75,17 @@
             /* Mobilvennlig design */
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 14px;
+                    font-size: 20px;  /* Øker fonten for bedre lesbarhet på mobil */
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 11px;  /* Mindre font for mobilvisning */
-                    padding: 4px 8px;  /* Redusert padding */
+                    font-size: 18px;  /* Større font på mobil */
+                    padding: 12px 10px;  /* Økt padding for bedre lesbarhet */
                 }
                 h2 {
-                    font-size: 18px;  /* Mindre heading for mobil */
+                    font-size: 24px;  /* Juster heading-størrelse for mobil */
                 }
                 #popup {
                     width: 90%;
