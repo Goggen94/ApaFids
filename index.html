@@ -49,7 +49,7 @@
                 background-color: #444444;
             }
             #next-day {
-                background-color: yellow;
+                background-color: #f4d03f;
                 color: black;
                 font-weight: bold;
                 text-align: center;
@@ -75,10 +75,21 @@
             #popup p {
                 margin: 10px 0;
             }
+            #popup .left {
+                float: left;
+                width: 50%;
+                padding-right: 10px;
+            }
+            #popup .right {
+                float: right;
+                width: 50%;
+                padding-left: 10px;
+            }
             #close-popup {
                 cursor: pointer;
                 color: #f4d03f;
                 margin-top: 10px;
+                clear: both;
             }
             @media only screen and (max-width: 600px) {
                 body {
@@ -101,7 +112,7 @@
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = "Flight: " + flight;
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
@@ -109,6 +120,8 @@
                 document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
                 document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
             }
 
             function closePopup() {
@@ -133,7 +146,7 @@
                     <td>W61774</td>
                     <td>Gdansk</td>
                     <td>20:45</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>5</td>
                     <td>A15</td>
@@ -157,67 +170,67 @@
                     <td>W42858</td>
                     <td>Vienna</td>
                     <td>01:05</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>8</td>
                     <td>C35</td>
                 </tr>
             
-                <tr onclick="showPopup('OG700', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG700', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG700</td>
                     <td>Berlin Brandenburg</td>
                     <td>06:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>7</td>
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('OG400', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG400', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG400</td>
                     <td>Paris CDG</td>
                     <td>06:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>8</td>
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG460', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG460', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG460</td>
                     <td>Amsterdam</td>
                     <td>06:10</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>75L</td>
                     <td>C33</td>
                 </tr>
             
-                <tr onclick="showPopup('OG900', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG900', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG900</td>
                     <td>Copenhagen</td>
                     <td>06:25</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>9</td>
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG880', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG880', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG880</td>
                     <td>Dublin</td>
                     <td>06:40</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>5</td>
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG800', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG800', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG800</td>
                     <td>London Stansted</td>
                     <td>06:40</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>61</td>
                     <td>D31</td>
@@ -227,7 +240,7 @@
                     <td>EZY3316</td>
                     <td>Edinburgh</td>
                     <td>08:20</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>8</td>
                     <td>D35</td>
@@ -237,7 +250,7 @@
                     <td>BT170</td>
                     <td>Riga</td>
                     <td>08:50</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>7</td>
                     <td>C22</td>
@@ -247,37 +260,37 @@
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>42</td>
                     <td>D22B</td>
                 </tr>
             
-                <tr onclick="showPopup('OG640', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG640', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG640</td>
                     <td>Las Palmas</td>
                     <td>08:55</td>
-                    <td>N/A</td>
                     <td></td>
-                    <td>46R</td>
-                    <td>C24</td>
+                    <td></td>
+                    <td>118</td>
+                    <td></td>
                 </tr>
             
                 <tr >
                     <td>NO3924</td>
                     <td>Tenerife South</td>
                     <td>09:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>72L</td>
-                    <td>C34</td>
+                    <td>C24</td>
                 </tr>
             
                 <tr >
                     <td>EZY2636</td>
                     <td>London Luton</td>
                     <td>09:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>11</td>
                     <td>D21</td>
@@ -287,7 +300,7 @@
                     <td>W61168</td>
                     <td>Katowice</td>
                     <td>09:55</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>5</td>
                     <td>A15</td>
@@ -297,17 +310,17 @@
                     <td>CVK7078</td>
                     <td>Toronto Hamilton</td>
                     <td>10:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>109</td>
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('OG600', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG600', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG600</td>
                     <td>Alicante</td>
                     <td>10:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>9</td>
                     <td>C23</td>
@@ -317,7 +330,7 @@
                     <td>LS410</td>
                     <td>Leeds</td>
                     <td>10:15</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>7</td>
                     <td>D22</td>
@@ -327,7 +340,7 @@
                     <td>EJU3970</td>
                     <td>Milan</td>
                     <td>10:35</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>3</td>
                     <td>A13</td>
@@ -337,7 +350,7 @@
                     <td>LS1908</td>
                     <td>Newcastle</td>
                     <td>10:45</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>8</td>
                     <td>D35</td>
@@ -347,7 +360,7 @@
                     <td>BA801</td>
                     <td>London Heathrow</td>
                     <td>11:05</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>5</td>
                     <td>D15</td>
@@ -357,7 +370,7 @@
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>11</td>
                     <td>D21</td>
@@ -367,57 +380,57 @@
                     <td>TO4403</td>
                     <td>Paris Orly</td>
                     <td>13:15</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG101', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG101', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG101</td>
                     <td>Baltimore Washington</td>
                     <td>15:05</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>9</td>
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG664', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG664', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG664</td>
                     <td>Madrid</td>
                     <td>15:10</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG614', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG614', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG614</td>
                     <td>Barcelona</td>
                     <td>15:20</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>7</td>
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG111', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG111', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG111</td>
                     <td>Boston</td>
                     <td>15:50</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>5</td>
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG121', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
+                <tr onclick="showPopup('OG121', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')">
                     <td>OG121</td>
                     <td>New York Stewart</td>
                     <td>16:00</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>116</td>
                     <td>D27</td>
@@ -427,7 +440,7 @@
                     <td>ED6809</td>
                     <td>Billund</td>
                     <td>16:15</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>59</td>
                     <td></td>
@@ -437,22 +450,38 @@
                     <td>D03999</td>
                     <td>East Midlands</td>
                     <td>17:10</td>
-                    <td>N/A</td>
+                    <td></td>
                     <td></td>
                     <td>61</td>
                     <td></td>
                 </tr>
             
+                <tr >
+                    <td>HV6888</td>
+                    <td>Amsterdam</td>
+                    <td>19:50</td>
+                    <td></td>
+                    <td></td>
+                    <td>8</td>
+                    <td>C35</td>
+                </tr>
+            
         </table>
 
         <div id="popup">
-            <h3>Additional Information</h3>
-            <p id="flight-info"></p>
-            <p id="go-to-gate"></p>
-            <p id="boarding"></p>
-            <p id="final-call"></p>
-            <p id="name-call"></p>
-            <p id="gate-closed"></p>
+            <div class="left">
+                <p id="checkin-opens"></p>
+                <p id="checkin-closes"></p>
+            </div>
+            <div class="right">
+                <h3>Additional Information</h3>
+                <p id="flight-info"></p>
+                <p id="go-to-gate"></p>
+                <p id="boarding"></p>
+                <p id="final-call"></p>
+                <p id="name-call"></p>
+                <p id="gate-closed"></p>
+            </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
