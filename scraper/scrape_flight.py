@@ -92,4 +92,3 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-
