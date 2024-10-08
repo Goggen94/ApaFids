@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import os
 
 # URL to the flight data API
@@ -12,7 +11,7 @@ response = requests.get(url)
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
     
-    # Generate HTML file with only departing flights
+    # Generate HTML file with only departing flights (filter out KEF as destination)
     html_output = """
     <html>
     <head>
@@ -38,13 +37,12 @@ if response.status_code == 200:
     """
 
     for flight in data:
-        origin = flight.get("origin_iata", "")
-        arr_dep = flight.get("arr_dep", "")
+        destination = flight.get("destination_iata", "")
         
-        # Filter to include only departing flights from KEF
-        if origin == "KEF" and arr_dep == "Departing":
+        # Exclude flights with Keflavik (KEF) as destination
+        if destination != "KEF":
             flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-            destination = flight.get("destination", "N/A")
+            destination_name = flight.get("destination", "N/A")
             sched_time = flight.get("sched_time", "N/A")
             expected_time = flight.get("expected_time", "N/A")
             status = flight.get("status", "N/A")
@@ -53,7 +51,7 @@ if response.status_code == 200:
             html_output += f"""
                 <tr>
                     <td>{flight_number}</td>
-                    <td>{destination}</td>
+                    <td>{destination_name}</td>
                     <td>{sched_time}</td>
                     <td>{expected_time}</td>
                     <td>{status}</td>
@@ -71,5 +69,7 @@ if response.status_code == 200:
     os.makedirs("scraper/output", exist_ok=True)
     with open("scraper/output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
+
+    print("HTML file has been generated with departing flights.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
