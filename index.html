@@ -1,25 +1,373 @@
 
     <html>
     <head>
-        <title>Flight Information</title>
+        <title>Full Page Content</title>
         <meta http-equiv="refresh" content="600">  <!-- Oppdater hver 10. minutt -->
-        <style>
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
-            th { background-color: #4CAF50; color: white; }
-        </style>
     </head>
     <body>
-        <h2>KEF Airport Flight Information</h2>
-        <table>
-            <tr>
-                <th>Flight Number</th>
-                <th>Destination</th>
-                <th>Scheduled Time</th>
-                <th>Status</th>
-            </tr>
-    
-        </table>
+        <h2>Full Page Text Content</h2>
+        <pre><!DOCTYPE html>
+<html>
+ <head>
+  <title>
+   ISAVIA | Information
+  </title>
+  <!--
+    #########################################################
+        company: ISAVIA ohf
+        2014
+        author: Kerfisþjónustan PKI and BD
+    #########################################################
+  -->
+  <!-- Viewport mobile tag for sensible mobile support -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
+  <meta content="IE=9; IE=8; IE=7; IE=EDGE" http-equiv="X-UA-Compatible">
+   <!-- VERY IMPORTANT FOR IE -->
+   <!--STYLES-->
+   <link href="/min/production.min.css" rel="stylesheet"/>
+   <!--STYLES END-->
+   <script charset="utf-8" type="text/javascript">
+    var infomonConfig = {"bus":{"defaultGate":"D","contactMap":[{"stand":"1","gates":["A11"]},{"stand":"2","gates":["A12"]},{"stand":"3","gates":["A13"]},{"stand":"4","gates":["A14"]},{"stand":"5","gates":["A15","D15"]},{"stand":"6","gates":["A16","D16"]},{"stand":"7","gates":["C22","D22"]},{"stand":"8","gates":["C35","D35"]},{"stand":"9","gates":["C23","D23"]},{"stand":"10","gates":["C36","D36"]},{"stand":"11","gates":["C21","D21"]},{"stand":"12","gates":["C34","D34"]},{"stand":"14","gates":["C32","D32"]}]},"crew":{"defaultGate":"CG2","zoneMap":{"zoneA":["78","76","74"],"zoneB":["46","46L","46R","44","42","40"],"zoneC":["62","63","64","65"],"zoneD":["55","57","59","61"]}},"carrentalbus":{"carNumbers":["KOA15","GRK08","EUN77"]}};
+   </script>
+   <!--SCRIPTS-->
+   <script src="/min/production.min.js">
+   </script>
+   <!--SCRIPTS END-->
+   <link href="/themes/bootstrap.theme.darkly.min.css" rel="stylesheet"/>
+  </meta>
+ </head>
+ <body>
+  <!--
+#################################################################
+############	APA Flight OPS PAGE 		###########################
+#################################################################
+-->
+  <pageconfig data-api-hours="12">
+  </pageconfig>
+  <style media="screen" type="text/css">
+   body {
+  overflow: hidden;
+}
+.dynatable-pagination-links {
+  display: none;
+}
+#control {
+  padding-bottom: 20px;
+}
+#ruta-today .row {
+  padding-bottom: 20px;
+}
+.row {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+#theme-select {
+  display: none;
+}
+.btn-default {
+	margin: 5px;
+}
+.apa-logo {
+	margin-top: 15px;
+}
+.table {
+	margin-top: 25px;
+}
+.header a{
+}
+body:hover #theme-select {
+  display: block;
+}
+  </style>
+  <div id="ruta">
+   <div class="container-fluid">
+    <section id="ruta-flights">
+     <div class="row">
+      <div class="col-md-4 col-sm-6 col-lg-4 col-xs-12 text-center">
+       <img alt="" class="apa-logo" src="/images/apa-logo.png"/>
+      </div>
+      <div class="col-md-4 col-sm-6 col-lg-4 col-xs-12 text-center">
+      </div>
+      <div class="col-md-4 col-sm-12 col-lg-4 col-xs-12 text-center">
+       <h2 class="">
+        <span id="clock-date">
+        </span>
+        <i class="fa fa-clock-o">
+        </i>
+        <span id="clock-time">
+        </span>
+       </h2>
+      </div>
+     </div>
+     <table class="table table-striped" id="flights">
+      <thead>
+       <th class="header" data-dynatable-column="flt">
+        Flight
+       </th>
+       <th class="header" data-dynatable-column="aircraft_reg">
+        A.reg
+       </th>
+       <th class="header" data-dynatable-column="origin_destination">
+        Origin/Destination
+       </th>
+       <th class="header" data-dynatable-column="arr_dep">
+        Arr/Dep
+       </th>
+       <th class="header" data-dynatable-column="sched_time_formatted" data-dynatable-sorts="sched_time">
+        ST
+       </th>
+       <th class="header" data-dynatable-column="expected_time_formatted" data-dynatable-sorts="sched_time">
+        ET
+       </th>
+       <th class="header" data-dynatable-column="sched_time" style="display: none;">
+        ScheduledTime
+       </th>
+       <th class="header" data-dynatable-column="expected_time" style="display: none;">
+        ExpectedTime
+       </th>
+       <th class="header" data-dynatable-column="status">
+        Status
+       </th>
+       <th class="header" data-dynatable-column="stand">
+        Stand
+       </th>
+       <th class="header" data-dynatable-column="gate">
+        Gate
+       </th>
+       <th class="header" data-dynatable-column="belt">
+        Belt
+       </th>
+       <th class="header" data-dynatable-column="pax_total">
+        PAX Total
+       </th>
+       <th class="header" data-dynatable-column="connecting">
+        PAX Connecting
+       </th>
+       <th class="header" data-dynatable-column="pax_checkin">
+        PAX Checkin
+       </th>
+       <th class="header" data-dynatable-column="fuel_upl">
+        Fuel
+       </th>
+       <th class="header" data-dynatable-column="mail">
+        Mail
+       </th>
+       <th class="header" data-dynatable-column="freight">
+        Freight
+       </th>
+      </thead>
+      <tbody>
+      </tbody>
+     </table>
+     <div class="buttons text-right">
+      <p style="display: inline-block; padding-right: 1em; ">
+       <small>
+        Displaying flights for the next: 12 hours
+       </small>
+      </p>
+      <!--
+        <a href="/site/apaops?hoursAhead=3" class="btn btn-default">Next 3 hrs</a>
+        <a href="/site/apaops?hoursAhead=6" class="btn btn-default">Next 6 hrs</a>
+        <a href="/site/apaops?hoursAhead=9" class="btn btn-default">Next 9 hrs</a>
+        <a href="/site/apaops?hoursAhead=24" class="btn btn-default">Next 24 hrs</a>
+        -->
+     </div>
+    </section>
+   </div>
+  </div>
+  <div id="status-box">
+   <span id="status-update">
+   </span>
+   <div class="pull-right" id="theme-select">
+    <a class="btn btn-xs btn-default" href="/site/apaops/?theme=/themes/bootstrap.theme.flatly.min.css">
+     Light theme
+    </a>
+    <a class="btn btn-xs btn-default" href="/site/apaops/?theme=/themes/bootstrap.theme.darkly.min.css">
+     Dark theme
+    </a>
+   </div>
+  </div>
+  <script>
+   toastr.options = {
+  "closeButton": true,
+  "debug": false,
+  "newestOnTop": true,
+  "progressBar": false,
+  "positionClass": "toast-bottom-right",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "2500",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
+
+// Updates flights data in table
+var sanityInfo = false;
+function updateFlights(tableId, url, sortParameter, dt) {
+  if (dt) {
+    var dynatable = dt;
+  } else {
+    var dynatable = $(tableId).data('dynatable');
+  }
+  var flights = [];
+  $.ajax({
+    url: url + sortParameter,
+    success: function(data) {
+      if (data.length > 0) {
+        $.each(data, function(index, record) {
+
+        	if(typeof record.handling_agent !== 'undefined'){
+	        	if(record.handling_agent.toLowerCase() === 'apa'){
+
+		          // format date as time
+		          record.sched_time_formatted = moment(record.sched_time).locale('is').format('HH:mm');
+		          if (record.expected_time != null || record.expected_time != undefined) {
+		            record.expected_time_formatted = moment(record.expected_time).locale('is').format('HH:mm');
+		          } else {
+		            record.expected_time_formatted = '';
+		          }
+              record.pax_checkin = 0;
+              if(record.connecting){
+                record.pax_checkin = parseInt(record.pax_total) - parseInt(record.connecting);
+              } else {
+                record.connecting = 0;
+              }
+
+
+              record.origin_destination = record.origin + ' <i class="fa fa-long-arrow-right" /> '  + record.destination;
+              if (record.origin_iata == 'KEF') {
+		            record.arr_dep = 'Departing';
+                record.mail = record.mail_on;
+                record.freight = record.freight_on;
+              } else {
+                record.arr_dep = 'Arriving';
+                record.mail = record.mail_off;
+                record.freight = record.freight_off;
+		          }
+              // HIDE DATA:
+              if(sanityInfo == false){
+                record.connecting = 'N/A';
+                record.pax_total = 'N/A';
+                record.pax_checkin = 'N/A';
+                record.freight = 'N/A';
+                record.mail = 'N/A';
+              }
+		          // clean data of nulls and undefined
+		          $.each(record, function(key, value) {
+		            if (value == null || value == undefined) { // added also 0 check
+		              record[key] = '';
+		            }
+		          });
+		          flights.push(record);
+	        	}
+        	}
+        });
+        dynatable.records.updateFromJson({
+          records: flights
+        });
+        dynatable.records.init();
+        dynatable.sorts.add('arr_dep', 1);
+        dynatable.sorts.add('sched_time', 1);
+        dynatable.sorts.add('expected_time', 1);
+        dynatable.sorts.add('block_time', 1);
+        dynatable.process();
+        toastr["info"]('Updated ' + flights.length + ' records', moment().locale('is').format('lll'))
+      } else {
+        $(tableId + ' tbody').append('<tr><td class="text-center" colspan="' + $('.table thead tr').children().length + '">No flights available for the next: ' + $('pageConfig').data('api-hours') + ' hrs</td></tr>');
+      }
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      console.log(thrownError);
+      toastr["error"]('Problem connecting to web service. Something might be wrong. <br>Contact Kerfisþjónustan ', moment().locale('is').format('lll'))
+    }
+  });
+}
+
+function initTable(tableId, url, sortParameter) {
+  // init dynatable
+  $(tableId)
+    .bind('dynatable:init', function(e, dynatable) {
+      updateFlights(tableId, url, sortParameter, dynatable);
+    })
+    .dynatable({
+      features: {
+        perPageSelect: false,
+        recordCount: false,
+        //paginate: false,
+        search: false
+      },
+      dataset: {
+        perPageDefault: 50,
+      }
+    })
+    .bind('dynatable:afterUpdate', function() {
+      splitArrDepBorder(tableId);
+    });
+}
+
+function splitArrDepBorder(tableId) {
+  var tableRows = $(tableId).find('tbody').find('tr');
+  var arrDepIndex = $('th:contains("Arr/Dep")').index();
+  $.each(tableRows, function(index, row) {
+    var tds = $(row).children('td');
+    var arrDep = $(tds[arrDepIndex]).text();
+    if (index != 0) {
+      var previousRowTds = $($(tableRows)[index - 1]).children('td');
+      if (arrDep != $(previousRowTds[arrDepIndex]).text()) {
+        $($(tableRows)[index - 1]).css('border-bottom', '10px solid rgba(255,0,0,0.3)');
+      }
+    }
+  });
+}
+
+var theme = "/themes/bootstrap.theme.darkly.min.css"
+$(document).ready(function() {
+
+  if(theme === '/themes/bootstrap.theme.flatly.min.css'){
+    $('.apa-logo').css('background-color', 'rgba(0,0,0,0.7)');
+    $('.apa-logo').css('padding', '5px');
+  }
+
+  function getSortString(dateFrom, dateTo) {
+    return "?dateFrom=" + dateFrom + "&dateTo=" + dateTo;
+  }
+
+  // Start initializing dynatable
+  var hoursAhead = $('pageConfig').data('api-hours');
+
+  var dateFrom = moment().subtract(60, 'minutes').format('YYYY-MM-DD[T]HH:mm');
+  var dateTo = moment().add(hoursAhead, 'hours').format('YYYY-MM-DD[T]HH:mm');
+
+  initTable('#flights', '/api/flights', getSortString(dateFrom, dateTo));
+
+  window.setInterval(function() {
+    $('#clock-time').text(moment().format('HH:mm'));
+    $('#clock-date').text(moment().format('Do MMMM YYYY'));
+  }, 1000);
+
+  window.setInterval(function() {
+    var dateFrom = moment().subtract(60, 'minutes').format('YYYY-MM-DD[T]HH:mm');
+    var dateTo = moment().add(hoursAhead, 'hours').format('YYYY-MM-DD[T]HH:mm');
+
+    updateFlights('#flights', '/api/flights', getSortString(dateFrom, dateTo));
+  }, 120 * 1000); // every 2 minutes
+
+  // Set full	page reload, for consistency
+  window.setTimeout(function() {
+    window.location.reload(true);
+  }, 900 * 1000); // every 10 minutes
+
+
+});
+  </script>
+ </body>
+</html>
+</pre>  <!-- Vis hele innholdet i en preformateringsblokk -->
     </body>
     </html>
     
