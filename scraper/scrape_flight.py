@@ -3,87 +3,81 @@ from bs4 import BeautifulSoup
 import os
 import json
 
-# URL til FIDS data
-url = "https://fids.kefairport.is/site/apaops/?theme=%2Fthemes%2Fbootstrap.theme.darkly.min.css&sorts[arr_dep]=1&sorts[sched_time]=1&sorts[expected_time]=1&sorts[block_time]=1"
+# API URL to get FIDS data
+api_url = "https://fids.kefairport.is/api/flights?dateFrom=2024-10-08T13:37&dateTo=2024-10-09T02:37"
 
-# Send forespørsel
-response = requests.get(url)
+# Fetch the data from the API
+response = requests.get(api_url)
 
-# Sjekk at forespørselen var vellykket
+# Check if the request was successful
 if response.status_code == 200:
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Finn tabellen med flyinformasjon
-    table = soup.find('table', {'class': 'table'})
-    
-    # Hvis ingen tabell ble funnet
-    if table is None:
-        print("Fant ingen tabell på siden. Sjekk HTML-strukturen.")
-        print(soup.prettify())  # Legger ut hele HTML-strukturen til loggen
-    else:
-        # Generer HTML-fil med scraped data
-        html_output = """
-        <html>
-        <head>
-            <title>Flight Information</title>
-            <meta http-equiv="refresh" content="600">  <!-- Oppdater hver 10. minutt -->
-            <style>
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
-                th { background-color: #4CAF50; color: white; }
-            </style>
-        </head>
-        <body>
-            <h2>KEF Airport Flight Information</h2>
-            <table>
-                <tr>
-                    <th>Flight Number</th>
-                    <th>Destination</th>
-                    <th>Scheduled Time</th>
-                    <th>Status</th>
-                </tr>
+    # Parse the JSON response
+    flights_data = response.json()
+
+    # Start creating the HTML content
+    html_output = """
+    <html>
+    <head>
+        <title>Flight Information</title>
+        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
+        <style>
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
+            th { background-color: #4CAF50; color: white; }
+        </style>
+    </head>
+    <body>
+        <h2>KEF Airport Flight Information</h2>
+        <table>
+            <tr>
+                <th>Flight Number</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Scheduled Time</th>
+                <th>Expected Time</th>
+                <th>Status</th>
+                <th>Gate</th>
+            </tr>
+    """
+
+    # Iterate over the flight data and populate the table rows
+    for flight in flights_data:
+        flight_number = flight.get("flt", "N/A")
+        origin = flight.get("origin", "N/A")
+        destination = flight.get("destination", "N/A")
+        scheduled_time = flight.get("sched_time", "N/A")
+        expected_time = flight.get("expected_time", "N/A")
+        status = flight.get("status", "N/A")
+        gate = flight.get("gate", "N/A")
+
+        # Add each flight row to the HTML table
+        html_output += f"""
+        <tr>
+            <td>{flight_number}</td>
+            <td>{origin}</td>
+            <td>{destination}</td>
+            <td>{scheduled_time}</td>
+            <td>{expected_time}</td>
+            <td>{status}</td>
+            <td>{gate}</td>
+        </tr>
         """
 
-        flights_data = []
-        # Gå gjennom rader og celler i tabellen
-        for row in table.find_all('tr')[1:]:
-            cells = row.find_all('td')
-            if len(cells) > 3:
-                flight_number = cells[0].text.strip()
-                destination = cells[1].text.strip()
-                scheduled_time = cells[2].text.strip()
-                status = cells[3].text.strip()
+    # Close the table and HTML tags
+    html_output += """
+        </table>
+    </body>
+    </html>
+    """
 
-                flights_data.append({
-                    "flight_number": flight_number,
-                    "destination": destination,
-                    "scheduled_time": scheduled_time,
-                    "status": status
-                })
+    # Create the output directory if it doesn't exist
+    os.makedirs("output", exist_ok=True)
 
-                html_output += f"""
-                <tr>
-                    <td>{flight_number}</td>
-                    <td>{destination}</td>
-                    <td>{scheduled_time}</td>
-                    <td>{status}</td>
-                </tr>
-                """
+    # Write the HTML content to the index.html file
+    with open("output/index.html", "w", encoding="utf-8") as file:
+        file.write(html_output)
 
-        html_output += """
-            </table>
-        </body>
-        </html>
-        """
-
-        # Lagre filen
-        os.makedirs("scraper/output", exist_ok=True)
-        with open("scraper/output/index.html", "w", encoding="utf-8") as file:
-            file.write(html_output)
-        
-        # Lagre JSON-data for testing
-        with open("scraper/output/flight_data.json", "w", encoding="utf-8") as json_file:
-            json.dump(flights_data, json_file, indent=4)
+    print("Flight data has been written to output/index.html")
 
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
