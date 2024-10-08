@@ -48,10 +48,13 @@ def calculate_event_times(sched_time, is_og_flight):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a Flightradar24 URL with the flight number minus one for W4, W6, W9 flights
+# Create a Flightradar24 URL with flight number logic (-1 for W4, W6, W9, +1 for OG)
 def generate_flightradar_link(flight_number):
     try:
-        flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number
+        if flight_number.startswith("OG"):
+            flight_num = int(flight_number[2:]) + 1  # Add 1 for OG flights
+        else:
+            flight_num = int(flight_number[2:]) - 1  # Subtract 1 for W4, W6, W9 flights
         return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
     except:
         return "#"  # Return a placeholder link if there's an error
@@ -249,11 +252,8 @@ if response.status_code == 200:
             if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, is_og_flight)
 
-                # Generate Flightradar link for W4, W6, W9 flights using flight number -1
-                if not is_og_flight:
-                    flightradar_link = generate_flightradar_link(flight_number)
-                else:
-                    flightradar_link = generate_flightradar_link(flight_number)  # For OG flights, keep it the same
+                # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights +1
+                flightradar_link = generate_flightradar_link(flight_number)
 
                 row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}', '{status}')\""
             else:
