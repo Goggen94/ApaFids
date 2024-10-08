@@ -1,20 +1,15 @@
 import requests
-from bs4 import BeautifulSoup
 import os
-import json
 
-# API URL to get FIDS data
-api_url = "https://fids.kefairport.is/api/flights?dateFrom=2024-10-08T13:37&dateTo=2024-10-09T02:37"
+# API URL to fetch flight data
+url = "https://fids.kefairport.is/api/flights?dateFrom=2024-10-08T13:37&dateTo=2024-10-09T02:37"
 
-# Fetch the data from the API
-response = requests.get(api_url)
+response = requests.get(url)
 
-# Check if the request was successful
 if response.status_code == 200:
-    # Parse the JSON response
-    flights_data = response.json()
+    data = response.json()
 
-    # Start creating the HTML content
+    # Generate HTML content
     html_output = """
     <html>
     <head>
@@ -31,7 +26,6 @@ if response.status_code == 200:
         <table>
             <tr>
                 <th>Flight Number</th>
-                <th>Origin</th>
                 <th>Destination</th>
                 <th>Scheduled Time</th>
                 <th>Expected Time</th>
@@ -40,44 +34,37 @@ if response.status_code == 200:
             </tr>
     """
 
-    # Iterate over the flight data and populate the table rows
-    for flight in flights_data:
-        flight_number = flight.get("flt", "N/A")
-        origin = flight.get("origin", "N/A")
-        destination = flight.get("destination", "N/A")
-        scheduled_time = flight.get("sched_time", "N/A")
-        expected_time = flight.get("expected_time", "N/A")
-        status = flight.get("status", "N/A")
-        gate = flight.get("gate", "N/A")
+    # Loop through the flight data
+    for flight in data:
+        flight_number = flight.get('flight_prefix', '') + flight.get('flight_num', '')
+        destination = flight.get('destination', '')
+        sched_time = flight.get('sched_time', '')
+        expected_time = flight.get('expected_time', '')
+        status = flight.get('status', '')
+        gate = flight.get('gate', '')
 
-        # Add each flight row to the HTML table
+        # Add each flight's data to the table
         html_output += f"""
         <tr>
             <td>{flight_number}</td>
-            <td>{origin}</td>
             <td>{destination}</td>
-            <td>{scheduled_time}</td>
+            <td>{sched_time}</td>
             <td>{expected_time}</td>
             <td>{status}</td>
             <td>{gate}</td>
         </tr>
         """
 
-    # Close the table and HTML tags
+    # Complete the HTML structure
     html_output += """
         </table>
     </body>
     </html>
     """
 
-    # Create the output directory if it doesn't exist
+    # Save the result as an index.html in the output directory
     os.makedirs("output", exist_ok=True)
-
-    # Write the HTML content to the index.html file
     with open("output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
-
-    print("Flight data has been written to output/index.html")
-
 else:
-    print(f"Failed to retrieve data. Status code: {response.status_code}")
+    print(f"Failed to fetch data. Status code: {response.status_code}")
