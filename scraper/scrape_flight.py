@@ -197,7 +197,7 @@ if response.status_code == 200:
         </script>
     </head>
     <body>
-        <h2>KEF Airport Departing Flights (Handled by APA)</h2>
+        <h2>KEF Airport Departures</h2>
         <table>
             <tr>
                 <th>Flight</th>
