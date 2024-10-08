@@ -1,2 +1,4 @@
+scrapy
+scrapy-playwright
 beautifulsoup4
 requests
