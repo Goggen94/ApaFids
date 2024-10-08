@@ -1,5 +1,5 @@
 import scrapy
-from scrapy_playwright.page import PageCoroutine
+from scrapy_playwright.page import PageMethod
 from bs4 import BeautifulSoup
 import os
 
@@ -21,8 +21,8 @@ class FlightSpider(scrapy.Spider):
             url=self.start_urls[0],
             meta={
                 "playwright": True,
-                "playwright_page_coroutines": [
-                    PageCoroutine("wait_for_selector", "table")  # Vent på at tabellen skal vises
+                "playwright_page_methods": [  # Bruk PageMethod i stedet for PageCoroutine
+                    PageMethod("wait_for_selector", "table")  # Vent på at tabellen skal vises
                 ],
             },
             callback=self.parse
@@ -90,4 +90,3 @@ class FlightSpider(scrapy.Spider):
             print("Data har blitt skrevet til index.html i tabellformat!")
         else:
             print("Ingen flydata funnet.")
-
