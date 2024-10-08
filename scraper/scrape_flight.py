@@ -24,7 +24,7 @@ def format_time(time_str):
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "", None  # If there's an issue, return an empty string
+        return "N/A", None  # If there's an issue, return N/A
 
 # Function to calculate boarding-related times
 def calculate_event_times(sched_time, is_og_flight):
@@ -48,14 +48,14 @@ def calculate_event_times(sched_time, is_og_flight):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a Flightradar24 URL with flight number logic (-1 for W4, W6, W9, +1 for OG)
-def generate_flightradar_link(flight_number):
+# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
+def generate_flightradar_link(flight_number, aircraft_reg):
     try:
-        if flight_number.startswith("OG"):
-            flight_num = int(flight_number[2:]) + 1  # Add 1 for OG flights
+        if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
+            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
         else:
-            flight_num = int(flight_number[2:]) - 1  # Subtract 1 for W4, W6, W9 flights
-        return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
+            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
+            return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
     except:
         return "#"  # Return a placeholder link if there's an error
 
@@ -68,7 +68,7 @@ if response.status_code == 200:
     html_output = """
     <html>
     <head>
-        <title>KEF Departing Flights (Handled by APA)</title>
+        <title>KEF Airport departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
@@ -190,7 +190,7 @@ if response.status_code == 200:
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink, status) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
@@ -200,7 +200,6 @@ if response.status_code == 200:
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-                document.getElementById("status").innerHTML = "Status: " + status;
             }
 
             function closePopup() {
@@ -209,7 +208,7 @@ if response.status_code == 200:
         </script>
     </head>
     <body>
-        <h2>KEF Airport Departing Flights (Handled by APA)</h2>
+        <h2>KEF Airport departures</h2>
         <table>
             <tr>
                 <th>Flight</th>
@@ -228,6 +227,7 @@ if response.status_code == 200:
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
         status = flight.get("status", "N/A")
         etd_time = flight.get("expected_time", "")
+        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
 
         # Skip if status is "DYNAMIC MESSAGING"
         if status == "DYNAMIC MESSAGING":
@@ -252,10 +252,10 @@ if response.status_code == 200:
             if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, is_og_flight)
 
-                # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights +1
-                flightradar_link = generate_flightradar_link(flight_number)
+                # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
+                flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
 
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}', '{status}')\""
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
             else:
                 row_click = ""
 
@@ -302,7 +302,6 @@ if response.status_code == 200:
                     <p id="final-call">Final Call:</p>
                     <p id="name-call">Name Call:</p>
                     <p id="gate-closed">Gate Closed:</p>
-                    <p id="status">Status:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
