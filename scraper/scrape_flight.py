@@ -13,7 +13,7 @@ def format_time_and_date(time_str):
     try:
         # Parse the time string (expected format is "YYYY-MM-DDTHH:MM:SSZ")
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
-        return dt.strftime("%H:%M"), dt.strftime("%d-%m")  # Return time (HH:MM) and date (DD-MM)
+        return dt.strftime("%H:%M"), dt.strftime("%d.%m")  # Return time (HH:MM) and date (DD.MM)
     except Exception as e:
         return "N/A", "N/A"  # If there's an issue, return N/A
 
@@ -21,11 +21,11 @@ def format_time_and_date(time_str):
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
     
-    # Generate HTML file with only departing flights excluding FI, LH, WK, and AY
+    # Generate HTML file with only departing flights handled by APA
     html_output = """
     <html>
     <head>
-        <title>KEF Departing Flights</title>
+        <title>KEF Departing Flights (Handled by APA)</title>
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             table { width: 100%; border-collapse: collapse; }
@@ -34,7 +34,7 @@ if response.status_code == 200:
         </style>
     </head>
     <body>
-        <h2>KEF Airport Departing Flights</h2>
+        <h2>KEF Airport Departing Flights (Handled by APA)</h2>
         <table>
             <tr>
                 <th>Flight Number</th>
@@ -42,24 +42,26 @@ if response.status_code == 200:
                 <th>Scheduled Time</th>
                 <th>Date</th>
                 <th>Expected Time</th>
-                <th>Date</th>
+                <th>Expected Date</th>
                 <th>Status</th>
                 <th>Gate</th>
             </tr>
     """
 
-    excluded_airlines = ["FI", "LH", "WK", "AY"]
-
     for flight in data:
         destination = flight.get("destination_iata", "")
-        flight_prefix = flight.get("flight_prefix", "")
+        handling_agent = flight.get("handling_agent", "")
 
-        # Exclude flights with Keflavik (KEF) as destination and flights with specific prefixes
-        if destination != "KEF" and flight_prefix not in excluded_airlines:
-            flight_number = flight_prefix + flight.get("flight_num", "")
+        # Filter flights handled by APA and departing from KEF
+        if destination != "KEF" and handling_agent == "APA":
+            flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
             destination_name = flight.get("destination", "N/A")
+            
+            # Format scheduled time and date
             sched_time, sched_date = format_time_and_date(flight.get("sched_time", "N/A"))
+            # Format expected time and date
             expected_time, expected_date = format_time_and_date(flight.get("expected_time", "N/A"))
+            
             status = flight.get("status", "N/A")
             gate = flight.get("gate", "N/A")
             
@@ -87,6 +89,7 @@ if response.status_code == 200:
     with open("scraper/output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
 
-    print("HTML file has been generated with formatted flight times.")
+    print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
+
