@@ -1,9 +1,19 @@
 import requests
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# URL to the flight data API
-url = "https://fids.kefairport.is/api/flights?dateFrom=2024-10-08T13:37&dateTo=2024-10-09T02:37"
+# Function to get the current time and the time 24 hours ahead
+def get_time_range():
+    now = datetime.utcnow()  # Get the current UTC time
+    date_from = now.strftime("%Y-%m-%dT%H:%M:%SZ")  # Format start time as "YYYY-MM-DDTHH:MM:SSZ"
+    date_to = (now + timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")  # 24 hours ahead
+    return date_from, date_to
+
+# Generate the time range for the API query
+date_from, date_to = get_time_range()
+
+# URL to the flight data API, dynamically adding the dateFrom and dateTo values
+url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date_to}"
 
 # Send the request to get the flight data
 response = requests.get(url)
@@ -92,3 +102,4 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
+
