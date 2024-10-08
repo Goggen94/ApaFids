@@ -57,7 +57,7 @@ if response.status_code == 200:
     html_output = """
     <html>
     <head>
-        <title>KEF Departing Flights (Handled by APA)</title>
+        <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
