@@ -2,9 +2,8 @@ name: Scrape Flight Data
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Kjør hvert 10. minutt
+    - cron: '*/10 * * * *'
   workflow_dispatch:
-    # Dette lar deg manuelt kjøre workflow fra GitHub
 
 jobs:
   build:
@@ -22,16 +21,13 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r scraper/requirements.txt
-        playwright install  # Installerer Playwright for å kjøre scraping med JavaScript
+        playwright install  # Installerer Playwright-browserne
 
-    - name: Run scraper
-      run: python scraper/scrape_flight.py
-
-    - name: List output files  # Legg til dette steget
-      run: ls scraper/output
+    - name: Run Scrapy spider
+      run: scrapy crawl kef_spider
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.APAFIDSTOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./scraper/output
