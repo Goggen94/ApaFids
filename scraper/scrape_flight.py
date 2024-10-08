@@ -1,10 +1,6 @@
-import os
 import requests
 from bs4 import BeautifulSoup
-
-# Sjekk om output-mappen eksisterer, hvis ikke opprett den
-if not os.path.exists("scraper/output"):
-    os.makedirs("scraper/output")
+import os
 
 # URL til FIDS data
 url = "https://fids.kefairport.is/site/apaops/?theme=%2Fthemes%2Fbootstrap.theme.darkly.min.css&sorts[arr_dep]=1&sorts[sched_time]=1&sorts[expected_time]=1&sorts[block_time]=1"
@@ -16,58 +12,28 @@ response = requests.get(url)
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
     
-    # Finn tabellen med flyinformasjon
-    table = soup.find('table', {'class': 'table'})
-    
+    # Hent alt innholdet fra siden
+    full_content = soup.prettify()  # Tar hele HTML-strukturen
+
     # Generer HTML-fil med scraped data
-    html_output = """
+    html_output = f"""
     <html>
     <head>
-        <title>Flight Information</title>
+        <title>Full Page Content</title>
         <meta http-equiv="refresh" content="600">  <!-- Oppdater hver 10. minutt -->
-        <style>
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
-            th { background-color: #4CAF50; color: white; }
-        </style>
     </head>
     <body>
-        <h2>KEF Airport Flight Information</h2>
-        <table>
-            <tr>
-                <th>Flight Number</th>
-                <th>Destination</th>
-                <th>Scheduled Time</th>
-                <th>Status</th>
-            </tr>
-    """
-
-    # Gå gjennom rader og celler i tabellen
-    for row in table.find_all('tr')[1:]:
-        cells = row.find_all('td')
-        if len(cells) > 3:
-            flight_number = cells[0].text.strip()
-            destination = cells[1].text.strip()
-            scheduled_time = cells[2].text.strip()
-            status = cells[3].text.strip()
-
-            html_output += f"""
-            <tr>
-                <td>{flight_number}</td>
-                <td>{destination}</td>
-                <td>{scheduled_time}</td>
-                <td>{status}</td>
-            </tr>
-            """
-
-    html_output += """
-        </table>
+        <h2>Full Page Text Content</h2>
+        <pre>{full_content}</pre>  <!-- Vis hele innholdet i en preformateringsblokk -->
     </body>
     </html>
     """
 
-    # Lagre filen i output-mappen
+    # Lagre filen
+    os.makedirs("scraper/output", exist_ok=True)
     with open("scraper/output/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
+
+    print("Data har blitt skrevet til index.html i fulltekstformat!")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
