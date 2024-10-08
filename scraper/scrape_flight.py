@@ -43,10 +43,10 @@ def calculate_event_times(sched_time):
 
 # Create a link to Flightradar using the aircraft registration (A/C Reg)
 def generate_flightradar_link(ac_reg):
-    try:
+    if ac_reg:
         return f"https://www.flightradar24.com/{ac_reg}"  # Return the tracking URL using the A/C Reg
-    except:
-        return "#"  # Return a placeholder link if there's an error
+    else:
+        return "#"  # Return a placeholder link if A/C Reg is missing
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -215,6 +215,9 @@ if response.status_code == 200:
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
         ac_reg = flight.get("ac_reg", "")  # Get the aircraft registration from the API
+
+        # Debug: Print A/C Reg for verification
+        print(f"Flight: {flight_number}, A/C Reg: {ac_reg}")
 
         # Filter flights handled by APA and departing from KEF, and limit popup to "OG" flights
         if destination != "KEF" and handling_agent == "APA":
