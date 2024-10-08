@@ -22,6 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r scraper/requirements.txt
+        playwright install  # Installerer Playwright for å kjøre scraping med JavaScript
 
     - name: Run scraper
       run: python scraper/scrape_flight.py
@@ -30,4 +31,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.APAFIDSTOKEN }}
-        publish_dir: scraper/output  # Forsikre at vi peker på output-mappen
+        publish_dir: ./scraper/output
