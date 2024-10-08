@@ -117,28 +117,32 @@ if response.status_code == 200:
                 z-index: 999;
                 color: white;
                 font-size: 18px;
+                width: 80%; /* Added width for better alignment */
             }
             #popup h3 {
                 color: #f4d03f;
+                margin-bottom: 5px;
             }
             #popup p {
-                margin: 10px 0;
+                margin: 5px 0;
+            }
+            #popup .left, #popup .right {
+                display: inline-block;
+                width: 48%;
+                vertical-align: top;
             }
             #popup .left {
-                float: left;
-                width: 50%;
-                padding-right: 10px;
+                text-align: left;
             }
             #popup .right {
-                float: right;
-                width: 50%;
-                padding-left: 10px;
+                text-align: right;
             }
             #close-popup {
                 cursor: pointer;
                 color: #f4d03f;
                 margin-top: 10px;
-                clear: both;
+                text-align: center;
+                display: block;
             }
             @media only screen and (max-width: 600px) {
                 body {
@@ -157,6 +161,11 @@ if response.status_code == 200:
                 #popup {
                     width: 90%;
                     padding: 15px;
+                }
+                #popup .left, #popup .right {
+                    display: block;
+                    width: 100%;
+                    text-align: center;
                 }
             }
         </style>
