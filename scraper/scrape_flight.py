@@ -111,21 +111,21 @@ if response.status_code == 200:
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: #444;
-                padding: 15px;
-                border-radius: 10px;
+                padding: 10px;  /* Reduced padding for a smaller box */
+                border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 color: white;
                 font-size: 16px;
-                width: 80%; /* Adjusted for better display */
+                width: 50%;  /* Reduced width for a smaller popup */
             }
             #popup h3 {
                 color: #f4d03f;
-                font-size: 18px;
-                margin-bottom: 8px;
+                font-size: 16px;
+                margin-bottom: 5px;  /* Tightened spacing */
             }
             #popup p {
-                margin: 2px 0;
+                margin: 1px 0;  /* Reduced margins for tighter spacing */
                 font-size: 16px;
             }
             .info-container {
@@ -133,13 +133,14 @@ if response.status_code == 200:
                 justify-content: space-between;
                 align-items: flex-start;
                 width: 100%;
+                gap: 10px; /* Added slight gap for better spacing */
             }
             .info-container div {
                 width: 48%;
             }
-            .info-container div h3 {
-                margin-bottom: 5px;
-                text-align: left; /* Aligning the headers properly */
+            .info-container div h3, .info-container div p {
+                margin: 0;  /* Remove margins to tighten spacing */
+                padding: 0;
             }
             #close-popup {
                 cursor: pointer;
@@ -150,16 +151,15 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 #popup {
-                    width: 100%;
-                    padding: 10px;
+                    width: 80%;  /* Smaller popup on mobile */
+                    padding: 8px;
                 }
                 .info-container {
-                    display: flex; /* Keep them side by side */
-                    justify-content: space-between; /* Ensure proper alignment */
-                    width: 100%;
+                    flex-direction: row;  /* Keep horizontal on mobile */
+                    gap: 5px; /* Slightly smaller gap on mobile */
                 }
                 .info-container div {
-                    width: 48%; /* Ensuring the width stays equal */
+                    width: 48%;
                 }
             }
         </style>
