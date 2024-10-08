@@ -1,37 +1,33 @@
-name: Scrapy KEF Flightscraper
+name: Scrape Flight Data
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '*/5 * * * *'  # Run every 5 minutes
+    - cron: '*/10 * * * *'  # Kjør hvert 10. minutt
+  workflow_dispatch:
+    # Dette lar deg manuelt kjøre workflow fra GitHub
 
 jobs:
-  scrape:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out the code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.10'  # Ensure the correct version of Python
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt  # Install the necessary Python packages
-        playwright install  # Install Playwright browsers for Scrapy Playwright
+        pip install -r scraper/requirements.txt
 
-    - name: Run Scrapy spider
-      run: |
-        cd Flightscraper
-        scrapy crawl kef_spider  # Run your Scrapy spider inside the Flightscraper folder
+    - name: Run scraper
+      run: python scraper/scrape_flight.py
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.APAFIDSTOKEN }}  # Ensure you're using the correct GitHub token
-        publish_dir: ./output  # Specify the output directory where index.html is saved
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./scraper/output
