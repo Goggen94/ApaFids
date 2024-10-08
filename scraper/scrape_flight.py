@@ -212,7 +212,7 @@ if response.status_code == 200:
 
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
-                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(time_for_popup)
+                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
                 row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}')\""
             else:
                 row_click = ""
@@ -248,11 +248,12 @@ if response.status_code == 200:
 
         <div id="popup">
             <div class="left">
+                <h3>Check-in Information</h3>
                 <p id="checkin-opens"></p>
                 <p id="checkin-closes"></p>
             </div>
             <div class="right">
-                <h3>Additional Information</h3>
+                <h3>Gate Information</h3>
                 <p id="flight-info"></p>
                 <p id="go-to-gate"></p>
                 <p id="boarding"></p>
