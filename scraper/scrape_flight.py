@@ -27,20 +27,20 @@ def format_time(time_str):
         return "N/A", None  # If there's an issue, return N/A
 
 # Function to calculate boarding-related times
-def calculate_event_times(sched_time, is_og_flight):
+def calculate_event_times(sched_time, checkin_based_on_std=True):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
-        if is_og_flight:
-            # OG flight times
-            go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
+        
+        if checkin_based_on_std:
+            # Check-in times based on STD
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
         else:
-            # W4, W6, W9 flight times
-            go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
+            # Check-in times for W4, W6, W9 flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-
+        
+        go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
         boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
         final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
         name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
@@ -241,15 +241,14 @@ if response.status_code == 200:
             formatted_sched_time, sched_date = format_time(sched_time)
             formatted_etd_time, _ = format_time(etd_time)
             
-            # If ETD exists, the status should be "Estimated" and flight remains until departure
-            if etd_time != "":
-                status = "Estimated"
-                sched_time = etd_time
+            # If ETD exists, use it for gate-related information, else use STD for both check-in and gate info
+            gate_sched_time = etd_time if etd_time else sched_time
 
             # Check if flight is OG or W4, W6, W9
             is_og_flight = flight_number.startswith("OG")
             if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
-                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, is_og_flight)
+                checkin_based_on_std = is_og_flight  # True if it's OG, else false for W4, W6, W9
+                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(gate_sched_time, checkin_based_on_std)
 
                 # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
                 flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
