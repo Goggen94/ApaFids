@@ -12,11 +12,11 @@ response = requests.get(url)
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
     
-    # Generate HTML file with scraped data
+    # Generate HTML file with only departing flights
     html_output = """
     <html>
     <head>
-        <title>Flight Information</title>
+        <title>KEF Departing Flights</title>
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             table { width: 100%; border-collapse: collapse; }
@@ -25,7 +25,7 @@ if response.status_code == 200:
         </style>
     </head>
     <body>
-        <h2>KEF Airport Flight Information</h2>
+        <h2>KEF Airport Departing Flights Information</h2>
         <table>
             <tr>
                 <th>Flight Number</th>
@@ -38,23 +38,28 @@ if response.status_code == 200:
     """
 
     for flight in data:
-        flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        destination = flight.get("destination", "N/A")
-        sched_time = flight.get("sched_time", "N/A")
-        expected_time = flight.get("expected_time", "N/A")
-        status = flight.get("status", "N/A")
-        gate = flight.get("gate", "N/A")
+        origin = flight.get("origin_iata", "")
+        arr_dep = flight.get("arr_dep", "")
         
-        html_output += f"""
-            <tr>
-                <td>{flight_number}</td>
-                <td>{destination}</td>
-                <td>{sched_time}</td>
-                <td>{expected_time}</td>
-                <td>{status}</td>
-                <td>{gate}</td>
-            </tr>
-        """
+        # Filter to include only departing flights from KEF
+        if origin == "KEF" and arr_dep == "Departing":
+            flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
+            destination = flight.get("destination", "N/A")
+            sched_time = flight.get("sched_time", "N/A")
+            expected_time = flight.get("expected_time", "N/A")
+            status = flight.get("status", "N/A")
+            gate = flight.get("gate", "N/A")
+            
+            html_output += f"""
+                <tr>
+                    <td>{flight_number}</td>
+                    <td>{destination}</td>
+                    <td>{sched_time}</td>
+                    <td>{expected_time}</td>
+                    <td>{status}</td>
+                    <td>{gate}</td>
+                </tr>
+            """
 
     html_output += """
         </table>
@@ -68,4 +73,3 @@ if response.status_code == 200:
         file.write(html_output)
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-    
