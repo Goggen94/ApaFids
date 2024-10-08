@@ -24,7 +24,7 @@ def format_time(time_str):
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "N/A", None  # If there's an issue, return N/A
+        return "", None  # If there's an issue, return an empty string
 
 # Function to calculate boarding-related times
 def calculate_event_times(sched_time):
@@ -35,9 +35,11 @@ def calculate_event_times(sched_time):
         final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
         name_call_time = (sched_dt - timedelta(minutes=20)).strftime("%H:%M")
         gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-        return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time
+        checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")  # Check-in opens 3 hours before STD
+        checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")  # Check-in closes 1 hour before STD
+        return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except:
-        return "N/A", "N/A", "N/A", "N/A", "N/A"
+        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -96,7 +98,7 @@ if response.status_code == 200:
                 background-color: #444444;
             }
             #next-day {
-                background-color: yellow;
+                background-color: #f4d03f;
                 color: black;
                 font-weight: bold;
                 text-align: center;
@@ -122,10 +124,21 @@ if response.status_code == 200:
             #popup p {
                 margin: 10px 0;
             }
+            #popup .left {
+                float: left;
+                width: 50%;
+                padding-right: 10px;
+            }
+            #popup .right {
+                float: right;
+                width: 50%;
+                padding-left: 10px;
+            }
             #close-popup {
                 cursor: pointer;
                 color: #f4d03f;
                 margin-top: 10px;
+                clear: both;
             }
             @media only screen and (max-width: 600px) {
                 body {
@@ -148,7 +161,7 @@ if response.status_code == 200:
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = "Flight: " + flight;
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
@@ -156,6 +169,8 @@ if response.status_code == 200:
                 document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
                 document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
             }
 
             function closePopup() {
@@ -189,16 +204,16 @@ if response.status_code == 200:
             # Format scheduled and expected time
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-            expected_time = flight.get("expected_time", "N/A")
+            expected_time = flight.get("expected_time", "")
             formatted_etd_time, _ = format_time(expected_time)
             
             # Check if ETD exists, use it for the popup instead of STD if present
-            time_for_popup = expected_time if expected_time != "N/A" else sched_time
+            time_for_popup = expected_time if expected_time != "" else sched_time
 
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
-                go_to_gate, boarding, final_call, name_call, gate_closed = calculate_event_times(time_for_popup)
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}')\""
+                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(time_for_popup)
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}')\""
             else:
                 row_click = ""
 
@@ -232,13 +247,19 @@ if response.status_code == 200:
         </table>
 
         <div id="popup">
-            <h3>Additional Information</h3>
-            <p id="flight-info"></p>
-            <p id="go-to-gate"></p>
-            <p id="boarding"></p>
-            <p id="final-call"></p>
-            <p id="name-call"></p>
-            <p id="gate-closed"></p>
+            <div class="left">
+                <p id="checkin-opens"></p>
+                <p id="checkin-closes"></p>
+            </div>
+            <div class="right">
+                <h3>Additional Information</h3>
+                <p id="flight-info"></p>
+                <p id="go-to-gate"></p>
+                <p id="boarding"></p>
+                <p id="final-call"></p>
+                <p id="name-call"></p>
+                <p id="gate-closed"></p>
+            </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
