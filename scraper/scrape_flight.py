@@ -27,16 +27,23 @@ def format_time(time_str):
         return "", None  # If there's an issue, return an empty string
 
 # Function to calculate boarding-related times
-def calculate_event_times(sched_time):
+def calculate_event_times(sched_time, is_og_flight):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
-        go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
-        boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
+        if is_og_flight:
+            go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+        else:
+            go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+
+        boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
         final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-        name_call_time = (sched_dt - timedelta(minutes=20)).strftime("%H:%M")
+        name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
         gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-        checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")  # Check-in opens 3 hours before STD
-        checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")  # Check-in closes 1 hour before STD
+
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
@@ -207,7 +214,6 @@ if response.status_code == 200:
                 <th>Status</th>
                 <th>Stand</th>
                 <th>Gate</th>
-                <th>A/C Reg</th> <!-- New column for A/C Reg -->
             </tr>
     """
 
@@ -215,9 +221,14 @@ if response.status_code == 200:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get the aircraft registration from the API
+        aircraft_reg = flight.get("aircraft_reg", "")  # Get the aircraft registration from the API
+        status = flight.get("status", "N/A")
 
-        # Filter flights handled by APA and departing from KEF, and limit popup to "OG" flights
+        # Skip if status is "DYNAMIC MESSAGING"
+        if status == "DYNAMIC MESSAGING":
+            continue
+
+        # Filter flights handled by APA and departing from KEF
         if destination != "KEF" and handling_agent == "APA":
             destination_name = flight.get("destination", "N/A")
             
@@ -230,15 +241,15 @@ if response.status_code == 200:
             # Check if ETD exists, use it for the popup instead of STD if present
             time_for_popup = expected_time if expected_time != "" else sched_time
 
-            # Calculate event times (only for OG flights)
-            if flight_number.startswith("OG"):
-                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
-                flightradar_link = generate_flightradar_link(aircraft_reg)  # Get the tracking link using the aircraft registration
+            # Determine if flight is OG or W4, W6, W9
+            is_og_flight = flight_number.startswith("OG")
+            if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
+                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, is_og_flight)
+                flightradar_link = generate_flightradar_link(aircraft_reg)  # Get the tracking link using A/C Reg
                 row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
             else:
                 row_click = ""
 
-            status = flight.get("status", "N/A")
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
             
@@ -246,7 +257,7 @@ if response.status_code == 200:
             if previous_date and sched_date != previous_date:
                 html_output += f"""
                 <tr id="next-day">
-                    <td colspan="8">Next Day Flights</td> <!-- Adjusted colspan for the new A/C Reg column -->
+                    <td colspan="7">Next Day Flights</td>
                 </tr>
                 """
             
@@ -259,7 +270,6 @@ if response.status_code == 200:
                     <td>{status}</td>
                     <td>{stand}</td>
                     <td>{gate}</td>
-                    <td>{aircraft_reg}</td> <!-- Display A/C Reg -->
                 </tr>
             """
 
