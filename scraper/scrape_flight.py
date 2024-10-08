@@ -117,7 +117,7 @@ if response.status_code == 200:
                 z-index: 999;
                 color: white;
                 font-size: 18px;
-                width: 80%; /* Added width for better alignment */
+                width: 90%;
             }
             #popup h3 {
                 color: #f4d03f;
@@ -129,10 +129,15 @@ if response.status_code == 200:
             #popup .info-container {
                 display: flex;
                 justify-content: space-between;
+                align-items: flex-start;
                 width: 100%;
+                gap: 10px;
             }
             #popup .left, #popup .right {
                 width: 48%;
+            }
+            #popup .left h3, #popup .right h3 {
+                margin-bottom: 10px;
             }
             #close-popup {
                 cursor: pointer;
@@ -143,13 +148,13 @@ if response.status_code == 200:
             }
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 14px;
+                    font-size: 16px;
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 10px;
+                    font-size: 14px;
                     padding: 8px 10px;
                 }
                 h2 {
@@ -160,12 +165,12 @@ if response.status_code == 200:
                     padding: 15px;
                 }
                 #popup .info-container {
-                    display: block;
-                    text-align: center;
+                    flex-direction: column;
                 }
                 #popup .left, #popup .right {
                     width: 100%;
                     margin-bottom: 10px;
+                    text-align: center;
                 }
             }
         </style>
