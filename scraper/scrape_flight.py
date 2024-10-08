@@ -19,13 +19,13 @@ url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date
 response = requests.get(url)
 
 # Function to format the time and date into separate columns
-def format_time_and_date(time_str):
+def format_time(time_str):
     try:
         # Parse the time string (expected format is "YYYY-MM-DDTHH:MM:SSZ")
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
-        return dt.strftime("%H:%M"), dt.strftime("%d.%m")  # Return time (HH:MM) and date (DD.MM)
+        return dt.strftime("%H:%M")  # Return time (HH:MM)
     except Exception as e:
-        return "N/A", "N/A"  # If there's an issue, return N/A
+        return "N/A"  # If there's an issue, return N/A
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -38,22 +38,59 @@ if response.status_code == 200:
         <title>KEF Departing Flights (Handled by APA)</title>
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px 12px; border: 1px solid black; text-align: left; }
-            th { background-color: #4CAF50; color: white; }
+            body {
+                background-color: #2c2c2c;
+                color: white;
+                font-family: Arial, sans-serif;
+            }
+            h2 {
+                text-align: center;
+                color: #f4d03f;
+                font-size: 24px;
+                padding: 15px;
+                border-radius: 8px;
+                background-color: #444444;
+                margin-bottom: 20px;
+            }
+            table {
+                width: 100%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                background-color: #333333;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+                border-bottom: 1px solid #666666;
+            }
+            th {
+                background-color: #f4d03f;
+                color: #333;
+                font-weight: bold;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            tr:nth-child(even) {
+                background-color: #2c2c2c;
+            }
+            tr:hover {
+                background-color: #444444;
+            }
+            td {
+                color: #ddd;
+            }
         </style>
     </head>
     <body>
         <h2>KEF Airport Departing Flights (Handled by APA)</h2>
         <table>
             <tr>
-                <th>Flight Number</th>
+                <th>Flight</th>
                 <th>Destination</th>
-                <th>Scheduled Time</th>
-                <th>Date</th>
-                <th>Expected Time</th>
-                <th>Expected Date</th>
+                <th>STD</th>
+                <th>ETD</th>
                 <th>Status</th>
+                <th>Stand</th>
                 <th>Gate</th>
             </tr>
     """
@@ -67,12 +104,12 @@ if response.status_code == 200:
             flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
             destination_name = flight.get("destination", "N/A")
             
-            # Format scheduled time and date
-            sched_time, sched_date = format_time_and_date(flight.get("sched_time", "N/A"))
-            # Format expected time and date
-            expected_time, expected_date = format_time_and_date(flight.get("expected_time", "N/A"))
+            # Format scheduled and expected time
+            sched_time = format_time(flight.get("sched_time", "N/A"))
+            expected_time = format_time(flight.get("expected_time", "N/A"))
             
             status = flight.get("status", "N/A")
+            stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
             
             html_output += f"""
@@ -80,10 +117,9 @@ if response.status_code == 200:
                     <td>{flight_number}</td>
                     <td>{destination_name}</td>
                     <td>{sched_time}</td>
-                    <td>{sched_date}</td>
                     <td>{expected_time}</td>
-                    <td>{expected_date}</td>
                     <td>{status}</td>
+                    <td>{stand}</td>
                     <td>{gate}</td>
                 </tr>
             """
@@ -102,4 +138,3 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-
