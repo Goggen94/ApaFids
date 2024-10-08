@@ -41,19 +41,12 @@ def calculate_event_times(sched_time):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a link to Flightradar with the flight number -1, adjusting for the app on mobile
-def generate_flightradar_link(flight_number):
+# Create a link to Flightradar using the aircraft registration (A/C Reg)
+def generate_flightradar_link(ac_reg):
     try:
-        flight_prefix = flight_number[:2]  # Extract the flight prefix, e.g., "OG"
-        flight_num = int(flight_number[2:])  # Extract the flight number and convert to int
-        tracking_flight_num = flight_num - 1  # Track the arriving flight by subtracting 1
-        # Create app link for mobile users and web link for others
-        return {
-            'web': f"https://www.flightradar24.com/{flight_prefix}{tracking_flight_num}",
-            'app': f"flightradar24://{flight_prefix}{tracking_flight_num}"
-        }
+        return f"https://www.flightradar24.com/data/aircraft/{ac_reg}"  # Return the tracking URL using the A/C Reg
     except:
-        return {'web': '#', 'app': '#'}  # Return a placeholder link if there's an error
+        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -131,7 +124,7 @@ if response.status_code == 200:
                 z-index: 999;
                 color: white;
                 font-size: 16px;
-                width: 40%;  /* Further reduced size */
+                width: 40%;  /* Reduced size */
             }
             #popup h3 {
                 color: #f4d03f;
@@ -142,7 +135,7 @@ if response.status_code == 200:
                 margin: 2px 0;
                 font-size: 16px;
                 display: flex;
-                justify-content: space-between;  /* Align vertically */
+                justify-content: space-between;  /* Vertical alignment */
             }
             .info-container {
                 display: flex;
@@ -165,9 +158,16 @@ if response.status_code == 200:
                 text-align: center;
                 display: block;
             }
+            a {
+                color: #f4d03f;  /* Set link color to yellow */
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
             @media only screen and (max-width: 600px) {
                 #popup {
-                    width: 75%;
+                    width: 75%;  /* Adjusted for mobile */
                     padding: 8px;
                 }
                 .info-container {
@@ -179,11 +179,9 @@ if response.status_code == 200:
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarWebLink, flightradarAppLink) {
-                var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                var flightLink = isMobile ? flightradarAppLink : flightradarWebLink;
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightLink + '" target="_blank">Flight: ' + flight + '</a>';
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
                 document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
                 document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
@@ -216,6 +214,7 @@ if response.status_code == 200:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
+        ac_reg = flight.get("ac_reg", "")  # Get the aircraft registration from the API
 
         # Filter flights handled by APA and departing from KEF, and limit popup to "OG" flights
         if destination != "KEF" and handling_agent == "APA":
@@ -233,8 +232,8 @@ if response.status_code == 200:
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time)
-                flightradar_links = generate_flightradar_link(flight_number)  # Get both web and app tracking links
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_links['web']}', '{flightradar_links['app']}')\""
+                flightradar_link = generate_flightradar_link(ac_reg)  # Get the tracking link using A/C Reg
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
             else:
                 row_click = ""
 
