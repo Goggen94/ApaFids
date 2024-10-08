@@ -2,16 +2,15 @@ name: Scrape Flight Data
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Runs every 10 minutes
-  workflow_dispatch:  # Allows manual triggering
-    # Allows you to trigger the workflow manually in the GitHub UI
+    - cron: '*/10 * * * *'  # Run every 10 minutes
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the repository
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -23,11 +22,11 @@ jobs:
       run: |
         pip install -r scraper/requirements.txt
 
-    - name: Run the scraper
+    - name: Run scraper
       run: python scraper/scrape_flight.py
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ APAFIDSTOKEN }}
-        publish_dir: ./scraper/output
+        github_token: ${{ secrets.GITHUB_TOKEN }}  # Use default GitHub token for publishing
+        publish_dir: ./output
