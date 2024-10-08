@@ -44,7 +44,7 @@ def calculate_event_times(sched_time):
 # Create a link to Flightradar using the aircraft registration (A/C Reg)
 def generate_flightradar_link(ac_reg):
     try:
-        return f"https://www.flightradar24.com/data/aircraft/{ac_reg}"  # Return the tracking URL using the A/C Reg
+        return f"https://www.flightradar24.com/{ac_reg}"  # Return the tracking URL using the A/C Reg
     except:
         return "#"  # Return a placeholder link if there's an error
 
