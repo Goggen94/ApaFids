@@ -22,9 +22,9 @@ response = requests.get(url)
 def format_time(time_str):
     try:
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
-        return dt.strftime("%H:%M")  # Return time (HH:MM)
+        return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "N/A"  # If there's an issue, return N/A
+        return "N/A", None  # If there's an issue, return N/A
 
 # Function to calculate boarding-related times
 def calculate_event_times(sched_time):
@@ -42,7 +42,8 @@ def calculate_event_times(sched_time):
 # Check if the request was successful
 if response.status_code == 200:
     data = response.json()  # Parse the JSON data
-    
+    previous_date = None  # Track the date to insert the yellow line when the day changes
+
     # Generate HTML file with only departing flights handled by APA
     html_output = """
     <html>
@@ -55,12 +56,12 @@ if response.status_code == 200:
                 background-color: #2c2c2c;
                 color: white;
                 font-family: Arial, sans-serif;
-                font-size: 18px;  /* Større font for bedre lesbarhet */
+                font-size: 18px;
             }
             h2 {
                 text-align: center;
                 color: #f4d03f;
-                font-size: 28px;  /* Større heading */
+                font-size: 28px;
                 padding: 15px;
                 border-radius: 8px;
                 background-color: #444444;
@@ -73,25 +74,33 @@ if response.status_code == 200:
                 background-color: #333333;
             }
             th, td {
-                padding: 10px 15px;  /* Øk padding for å gjøre cellene større */
+                padding: 10px 15px;
                 text-align: left;
                 border-bottom: 1px solid #666666;
+                font-weight: bold;  /* Gjør teksten tykkere */
             }
             th {
                 background-color: #f4d03f;
                 color: #333;
                 font-weight: bold;
                 border-radius: 5px;
-                font-size: 16px; /* Større font for kolonner */
+                font-size: 16px;
             }
             td {
-                font-size: 16px; /* Større font for cellene */
+                font-size: 16px;
             }
             tr:nth-child(even) {
                 background-color: #2c2c2c;
             }
             tr:hover {
                 background-color: #444444;
+            }
+            #next-day {
+                background-color: yellow;
+                color: black;
+                font-weight: bold;
+                text-align: center;
+                padding: 10px;
             }
             #popup {
                 display: none;
@@ -118,20 +127,19 @@ if response.status_code == 200:
                 color: #f4d03f;
                 margin-top: 10px;
             }
-            /* Mobilvennlig design */
             @media only screen and (max-width: 600px) {
                 body {
-                    font-size: 20px;  /* Øker fonten for bedre lesbarhet på mobil */
+                    font-size: 20px;
                 }
                 table {
                     width: 100%;
                 }
                 th, td {
-                    font-size: 18px;  /* Større font på mobil */
-                    padding: 12px 10px;  /* Økt padding for bedre lesbarhet */
+                    font-size: 18px;
+                    padding: 12px 10px;
                 }
                 h2 {
-                    font-size: 24px;  /* Juster heading-størrelse for mobil */
+                    font-size: 24px;
                 }
                 #popup {
                     width: 90%;
@@ -180,12 +188,16 @@ if response.status_code == 200:
             
             # Format scheduled and expected time
             sched_time = flight.get("sched_time", "N/A")
-            formatted_sched_time = format_time(sched_time)
-            expected_time = format_time(flight.get("expected_time", "N/A"))
+            formatted_sched_time, sched_date = format_time(sched_time)
+            expected_time = flight.get("expected_time", "N/A")
+            formatted_etd_time, _ = format_time(expected_time)
             
+            # Check if ETD exists, use it for the popup instead of STD if present
+            time_for_popup = expected_time if expected_time != "N/A" else sched_time
+
             # Calculate event times (only for OG flights)
             if flight_number.startswith("OG"):
-                go_to_gate, boarding, final_call, name_call, gate_closed = calculate_event_times(sched_time)
+                go_to_gate, boarding, final_call, name_call, gate_closed = calculate_event_times(time_for_popup)
                 row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}')\""
             else:
                 row_click = ""
@@ -194,17 +206,27 @@ if response.status_code == 200:
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
             
+            # Insert yellow line when the day changes
+            if previous_date and sched_date != previous_date:
+                html_output += f"""
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                """
+            
             html_output += f"""
                 <tr {row_click}>
                     <td>{flight_number}</td>
                     <td>{destination_name}</td>
                     <td>{formatted_sched_time}</td>
-                    <td>{expected_time}</td>
+                    <td>{formatted_etd_time}</td>
                     <td>{status}</td>
                     <td>{stand}</td>
                     <td>{gate}</td>
                 </tr>
             """
+
+            previous_date = sched_date  # Update the previous_date for next iteration
 
     html_output += """
         </table>
