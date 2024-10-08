@@ -29,5 +29,5 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ APAFIDSTOKEN }}
-        publish_dir: ./scraper/output
+        github_token: ${{ secrets.APAFIDSTOKEN }}  # Bruker din PAT-token her
+        publish_dir: ./scraper/output  # Output directory der HTML-filen genereres
