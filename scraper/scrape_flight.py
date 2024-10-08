@@ -48,12 +48,13 @@ def calculate_event_times(sched_time, is_og_flight):
     except:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a link to Flightradar using the aircraft registration (aircraft_reg from the API)
-def generate_flightradar_link(aircraft_reg):
-    if aircraft_reg:
-        return f"https://www.flightradar24.com/{aircraft_reg}"  # Return the tracking URL using the aircraft registration
-    else:
-        return "#"  # Return a placeholder link if aircraft registration is missing
+# Create a Flightradar24 URL with the flight number minus one for W4, W6, W9 flights
+def generate_flightradar_link(flight_number):
+    try:
+        flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number
+        return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
+    except:
+        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -186,7 +187,7 @@ if response.status_code == 200:
             }
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink, status) {
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
                 document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
@@ -196,6 +197,7 @@ if response.status_code == 200:
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+                document.getElementById("status").innerHTML = "Status: " + status;
             }
 
             function closePopup() {
@@ -221,8 +223,8 @@ if response.status_code == 200:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        aircraft_reg = flight.get("aircraft_reg", "")  # Get the aircraft registration from the API
         status = flight.get("status", "N/A")
+        etd_time = flight.get("expected_time", "")
 
         # Skip if status is "DYNAMIC MESSAGING"
         if status == "DYNAMIC MESSAGING":
@@ -235,18 +237,25 @@ if response.status_code == 200:
             # Format scheduled and expected time
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-            expected_time = flight.get("expected_time", "")
-            formatted_etd_time, _ = format_time(expected_time)
+            formatted_etd_time, _ = format_time(etd_time)
             
-            # Check if ETD exists, use it for the popup instead of STD if present
-            time_for_popup = expected_time if expected_time != "" else sched_time
+            # If ETD exists, the status should be "Estimated" and flight remains until departure
+            if etd_time != "":
+                status = "Estimated"
+                sched_time = etd_time
 
-            # Determine if flight is OG or W4, W6, W9
+            # Check if flight is OG or W4, W6, W9
             is_og_flight = flight_number.startswith("OG")
             if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
                 go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, is_og_flight)
-                flightradar_link = generate_flightradar_link(aircraft_reg)  # Get the tracking link using A/C Reg
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
+
+                # Generate Flightradar link for W4, W6, W9 flights using flight number -1
+                if not is_og_flight:
+                    flightradar_link = generate_flightradar_link(flight_number)
+                else:
+                    flightradar_link = generate_flightradar_link(flight_number)  # For OG flights, keep it the same
+
+                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}', '{status}')\""
             else:
                 row_click = ""
 
@@ -293,6 +302,7 @@ if response.status_code == 200:
                     <p id="final-call">Final Call:</p>
                     <p id="name-call">Name Call:</p>
                     <p id="gate-closed">Gate Closed:</p>
+                    <p id="status">Status:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
