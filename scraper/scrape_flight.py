@@ -32,11 +32,9 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
         
-        # Default times based on the flight number
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
 
-        # Flight code-specific times
         if flight_number.startswith("OG"):
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
@@ -51,8 +49,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        # Additional flight codes follow the same logic here...
-
+        
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
@@ -100,7 +97,7 @@ if response.status_code == 200:
             a {{ color: #f4d03f; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
             #arrivals-btn {{
-                margin-top: 15px;
+                margin-bottom: 15px;
                 padding: 10px 20px;
                 background-color: #444444;
                 color: #f4d03f;
@@ -115,11 +112,10 @@ if response.status_code == 200:
                 color: #f4d03f;
                 font-size: 14px;
                 padding-right: 20px;
-                margin-top: 10px;
             }}
             @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%; padding: 8px; }}
                 #arrivals-btn {{ margin-top: 10px; width: 100%; }}
+                table {{ margin-top: 10px; }}
                 #last-updated {{ text-align: center; margin-top: 15px; }}
             }}
         </style>
