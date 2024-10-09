@@ -166,11 +166,18 @@ if response.status_code == 200:
                 font-size: 14px;
                 padding-right: 20px;
             }}
-            @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
-                .info-container {{ flex-direction: row; }}
-                .info-container div {{ width: 48%; }}
-                #departures-btn {{ margin-top: 15px; }}
+@media only screen and (max-width: 600px) {
+    #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
+    .info-container { flex-direction: row; }
+    .info-container div { width: 48%; }
+
+    #departures-btn {
+        margin-left: auto;  /* Shift the button to the right */
+        margin-right: 20px; /* Add right margin for better spacing */
+        margin-top: 15px;   /* Keep the top margin as it was */
+    }
+}
+
             }}
         </style>
         <script>
