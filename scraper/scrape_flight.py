@@ -38,6 +38,7 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
             final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         # Check-in and gate times for TO, HV flights
@@ -76,14 +77,14 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # If no match, return N/A for all times
         else:
-            # If flight code is not listed, return N/A for all times
-            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
 
     except:
-        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"  # Always return 7 values
 
 # Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
 def generate_flightradar_link(flight_number, aircraft_reg):
