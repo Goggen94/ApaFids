@@ -27,10 +27,96 @@ def format_time(time_str):
         return "", None  # Return an empty string if there's an issue
 
 # Function to calculate times related to check-in and gate events based on flight code
-# (same as before, no changes needed here)
+def calculate_event_times(sched_time, event_time_for_gate, flight_number):
+    try:
+        sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
+        event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
+        
+        # Default times based on the flight number
+        checkin_opens_time, checkin_closes_time = "", ""
+        go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
+
+        # Flight code-specific times
+        if flight_number.startswith("OG"):
+            # OG flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("W4", "W6", "W9")):
+            # W4, W6, W9 flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("EZY", "EJU")):
+            # EZY, EJU flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("TO", "HV")):
+            # TO, HV flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("NO"):
+            # NO flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("LS"):
+            # LS flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("I2"):
+            # I2 flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("DL"):
+            # DL flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+
+        return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
+    except Exception as e:
+        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
 # Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
-# (same as before, no changes needed here)
+def generate_flightradar_link(flight_number, aircraft_reg):
+    try:
+        if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
+            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
+        else:
+            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
+            return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
+    except:
+        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -54,22 +140,25 @@ if response.status_code == 200:
             tr:nth-child(even) {{ background-color: #2c2c2c; }}
             tr:hover {{ background-color: #444444; }}
             #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
-            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
             #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
-            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
+            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
+            .info-container div {{ width: 48%; }}
+            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
-            a {{ color: #f4d03f; text-decoration: none; }}
+            a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #arrivals-btn {{
-                margin-top: 10px;
-                padding: 6px 12px;
+            #departures-btn {{
+                margin-left: 20px;
+                padding: 10px 20px;
                 background-color: #444444;
                 color: #f4d03f;
                 font-weight: bold;
                 border-radius: 8px;
                 text-decoration: none;
-                border: 2px solid #f4d03f;
                 cursor: pointer;
+                border: 2px solid #f4d03f;
             }}
             #last-updated {{
                 text-align: right;
@@ -78,14 +167,10 @@ if response.status_code == 200:
                 padding-right: 20px;
             }}
             @media only screen and (max-width: 600px) {{
-                #arrivals-btn {{
-                    margin-left: 20px;
-                    margin-bottom: 20px;
-                    display: block;
-                }}
-                #arrivals-btn, #last-updated {{
-                    text-align: center;
-                }}
+                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                .info-container {{ flex-direction: row; }}
+                .info-container div {{ width: 48%; }}
+                #departures-btn {{ margin-top: 15px; }}
             }}
         </style>
         <script>
@@ -107,9 +192,11 @@ if response.status_code == 200:
         </script>
     </head>
     <body>
-        <h2>KEF Airport Departures</h2>
-        <a href="https://arr.paxnotes.com" id="arrivals-btn">Arrivals</a>
-        <div id="last-updated">Last updated: {datetime.now().strftime("%H:%M")}</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
+        </div>
+        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
         <table>
             <tr>
                 <th>Flight</th>
