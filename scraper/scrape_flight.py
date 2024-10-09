@@ -24,67 +24,80 @@ def format_time(time_str):
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "N/A", None  # Return "N/A" if there's an issue
+        return "", None  # Return an empty string if there's an issue
 
-# Function to calculate event times based on flight code
-def calculate_event_times_by_flight_code(flight_code, sched_time):
+# Function to calculate times related to check-in and gate events based on flight code
+def calculate_event_times(sched_time, event_time_for_gate, flight_number):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
+        event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
+        
+        # Default times based on the flight number
+        checkin_opens_time, checkin_closes_time = "", ""
+        go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
 
-        # Check-in and gate times for EZY, EJU flights
-        if flight_code in ["EZY", "EJU"]:
+        # Flight code-specific times
+        if flight_number.startswith("OG"):
+            # OG flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+        elif flight_number.startswith(("W4", "W6", "W9")):
+            # W4, W6, W9 flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
-            final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-
-        # Check-in and gate times for TO, HV flights
-        elif flight_code in ["TO", "HV"]:
+        elif flight_number.startswith(("EZY", "EJU")):
+            # EZY, EJU flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-
-        # Check-in and gate times for NO flights
-        elif flight_code == "NO":
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("TO", "HV")):
+            # TO, HV flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-
-        # Check-in and gate times for LS flights
-        elif flight_code == "LS":
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("NO"):
+            # NO flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-
-        # Check-in and gate times for I2 flights
-        elif flight_code == "I2":
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("LS"):
+            # LS flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-
-        # If no match, return N/A for all times
-        else:
-            return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("I2"):
+            # I2 flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("DL"):
+            # DL flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
-
-    except:
-        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"  # Always return 7 values
+    except Exception as e:
+        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
 # Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
 def generate_flightradar_link(flight_number, aircraft_reg):
@@ -110,122 +123,27 @@ if response.status_code == 200:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
-            body {
-                background-color: #2c2c2c;
-                color: white;
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-            }
-            h2 {
-                text-align: center;
-                color: #f4d03f;
-                font-size: 24px;
-                padding: 10px;
-                border-radius: 8px;
-                background-color: #444444;
-                margin-bottom: 15px;
-            }
-            table {
-                width: 100%;
-                margin: 15px auto;
-                border-collapse: collapse;
-                background-color: #333333;
-            }
-            th, td {
-                padding: 8px 12px;
-                text-align: left;
-                border-bottom: 1px solid #666666;
-                font-weight: bold;
-            }
-            th {
-                background-color: #f4d03f;
-                color: #333;
-                font-weight: bold;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-            td {
-                font-size: 14px;
-            }
-            tr:nth-child(even) {
-                background-color: #2c2c2c;
-            }
-            tr:hover {
-                background-color: #444444;
-            }
-            #next-day {
-                background-color: #f4d03f;
-                color: black;
-                font-weight: bold;
-                text-align: center;
-                padding: 8px;
-            }
-            #popup {
-                display: none;
-                position: fixed;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                background-color: #444;
-                padding: 8px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                color: white;
-                font-size: 16px;
-                width: 40%;  /* Reduced size */
-            }
-            #popup h3 {
-                color: #f4d03f;
-                font-size: 16px;
-                margin-bottom: 5px;
-            }
-            #popup p {
-                margin: 2px 0;
-                font-size: 16px;
-                display: flex;
-                justify-content: space-between;  /* Vertical alignment */
-            }
-            .info-container {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                width: 100%;
-                gap: 5px;
-            }
-            .info-container div {
-                width: 48%;
-            }
-            .info-container div h3, .info-container div p {
-                margin: 0;
-                padding: 0;
-            }
-            #close-popup {
-                cursor: pointer;
-                color: #f4d03f;
-                margin-top: 8px;
-                text-align: center;
-                display: block;
-            }
-            a {
-                color: #f4d03f;  /* Set link color to yellow */
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-            @media only screen and (max-width: 600px) {
-                #popup {
-                    width: 75%;  /* Adjusted for mobile */
-                    padding: 8px;
-                }
-                .info-container {
-                    flex-direction: row;
-                }
-                .info-container div {
-                    width: 48%;
-                }
-            }
+            body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
+            h2 { text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }
+            table { width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }
+            th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }
+            th { background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }
+            td { font-size: 14px; }
+            tr:nth-child(even) { background-color: #2c2c2c; }
+            tr:hover { background-color: #444444; }
+            #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
+            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }
+            #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
+            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }
+            .info-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }
+            .info-container div { width: 48%; }
+            .info-container div h3, .info-container div p { margin: 0; padding: 0; }
+            #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
+            a { color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            @media only screen and (max-width: 600px) { #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
+                .info-container { flex-direction: row; }
+                .info-container div { width: 48%; } }
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
@@ -263,7 +181,6 @@ if response.status_code == 200:
         destination = flight.get("destination_iata", "")
         handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        flight_code = flight.get("flight_prefix", "")
         status = flight.get("status", "N/A")
         etd_time = flight.get("expected_time", "")
         aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
@@ -282,8 +199,8 @@ if response.status_code == 200:
             # Use STD for Check-in Information and ETD for Gate Information if available
             gate_sched_time = etd_time if etd_time else sched_time
 
-            # Calculate event times based on the flight code
-            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times_by_flight_code(flight_code, sched_time)
+            # Calculate times for check-in and gate events
+            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
 
             # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
             flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
