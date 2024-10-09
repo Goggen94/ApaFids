@@ -1,9 +1,8 @@
 
     <html>
     <head>
-        <title>KEF Airport departures</title>
+        <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
@@ -24,9 +23,29 @@
             #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
             a { color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }
             a:hover { text-decoration: underline; }
-            @media only screen and (max-width: 600px) { #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
+            #departures-btn {
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }
+            #last-updated {
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }
+            @media only screen and (max-width: 600px) {
+                #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
                 .info-container { flex-direction: row; }
-                .info-container div { width: 48%; } }
+                .info-container div { width: 48%; }
+                #departures-btn { margin-top: 15px; }
+            }
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
@@ -47,7 +66,11 @@
         </script>
     </head>
     <body>
-        <h2>KEF Airport departures</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
+        </div>
+        <div id="last-updated">Last updated: 18:42</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -341,6 +364,16 @@
                     <td></td>
                     <td>75L</td>
                     <td></td>
+                </tr>
+            
+                <tr onclick="showPopup('W61774', '', '17:55', '18:05', '18:10', '18:20', '16:05', '17:55', 'https://www.flightradar24.com/W61773')">
+                    <td>W61774</td>
+                    <td>Gdansk</td>
+                    <td>18:35</td>
+                    <td></td>
+                    <td></td>
+                    <td>14</td>
+                    <td>C32</td>
                 </tr>
             
         </table>
