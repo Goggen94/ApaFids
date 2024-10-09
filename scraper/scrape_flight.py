@@ -24,24 +24,24 @@ def format_time(time_str):
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "", None  # Return an empty string if there's an issue
+        return "N/A", None  # Return "N/A" if there's an issue
 
-# Function to calculate event times for different flight codes
+# Function to calculate event times based on flight code
 def calculate_event_times_by_flight_code(flight_code, sched_time):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
-        
+
+        # Check-in and gate times for EZY, EJU flights
         if flight_code in ["EZY", "EJU"]:
-            # Check-in and gate info for EZY, EJU
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
             final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
-        
+
+        # Check-in and gate times for TO, HV flights
         elif flight_code in ["TO", "HV"]:
-            # Check-in and gate info for TO, HV
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
@@ -49,8 +49,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for NO flights
         elif flight_code == "NO":
-            # Check-in and gate info for NO
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
@@ -58,8 +58,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for LS flights
         elif flight_code == "LS":
-            # Check-in and gate info for LS
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
@@ -67,8 +67,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for I2 flights
         elif flight_code == "I2":
-            # Check-in and gate info for I2
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
@@ -76,8 +76,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for DL flights
         elif flight_code == "DL":
-            # Check-in and gate info for DL
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
@@ -86,8 +86,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=20)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for OG flights
         elif flight_code.startswith("OG"):
-            # Check-in and gate info for OG
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
@@ -96,8 +96,8 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             name_call_time = (sched_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
+        # Check-in and gate times for W4, W6, W9 flights
         elif flight_code.startswith(("W4", "W6", "W9")):
-            # Check-in and gate info for W flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
@@ -107,7 +107,7 @@ def calculate_event_times_by_flight_code(flight_code, sched_time):
             gate_closed_time = (sched_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         else:
-            # If flight code not listed, return N/A for all times
+            # If flight code is not listed, return N/A for all times
             return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
