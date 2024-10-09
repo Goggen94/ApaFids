@@ -24,22 +24,21 @@ def format_time(time_str):
         dt = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%SZ")
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
-        return "N/A", None  # If there's an issue, return N/A
+        return "", None  # Return an empty string if there's an issue
 
 # Function to calculate boarding-related times
-def calculate_event_times(sched_time, checkin_based_on_std=True):
+def calculate_event_times(sched_time, is_og_flight=True):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
-        
-        if checkin_based_on_std:
-            # Check-in times based on STD
+        if is_og_flight:
+            # Check-in for OG flights
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
         else:
-            # Check-in times for W4, W6, W9 flights
+            # Check-in for W4, W6, W9 flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-        
+
         go_to_gate_time = (sched_dt - timedelta(minutes=60)).strftime("%H:%M")
         boarding_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
         final_call_time = (sched_dt - timedelta(minutes=30)).strftime("%H:%M")
@@ -231,31 +230,28 @@ if response.status_code == 200:
         etd_time = flight.get("expected_time", "")
         aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
 
-        # Allow "Dynamic Messaging" status to be shown again
+        # Remove N/A from ETD column
+        formatted_etd_time, _ = format_time(etd_time) if etd_time != "" else ("", None)
+
         # Filter flights handled by APA and departing from KEF
         if destination != "KEF" and handling_agent == "APA":
             destination_name = flight.get("destination", "N/A")
             
-            # Format scheduled and expected time
+            # Format scheduled time (STD)
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-            formatted_etd_time, _ = format_time(etd_time)
-            
+
             # If ETD exists, use it for gate-related information, else use STD for both check-in and gate info
             gate_sched_time = etd_time if etd_time else sched_time
 
             # Check if flight is OG or W4, W6, W9
             is_og_flight = flight_number.startswith("OG")
-            if is_og_flight or flight_number.startswith(("W4", "W6", "W9")):
-                checkin_based_on_std = is_og_flight  # True if it's OG, else false for W4, W6, W9
-                go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(gate_sched_time, checkin_based_on_std)
+            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(gate_sched_time, is_og_flight)
 
-                # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
-                flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
+            # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
+            flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
 
-                row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
-            else:
-                row_click = ""
+            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
 
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
