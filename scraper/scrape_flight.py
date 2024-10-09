@@ -31,7 +31,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
-        
+
         # Default times based on the flight number
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
@@ -53,6 +53,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        
         elif flight_number.startswith(("EZY", "EJU")):
             # EZY, EJU flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
@@ -102,103 +103,61 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
-
-# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
-def generate_flightradar_link(flight_number, aircraft_reg):
-    try:
-        if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
-            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
-        else:
-            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
-            return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
-    except:
-        return "#"  # Return a placeholder link if there's an error
-
-# Check if the request was successful
-if response.status_code == 200:
-    data = response.json()  # Parse the JSON data
-    previous_date = None  # Track the date to insert the yellow line when the day changes
-
-    # Generate HTML file with only departing flights handled by APA
-    html_output = f"""
-    <html>
+@@ -76,7 +129,7 @@
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="refresh" content="65">  <!-- Refresh every 65 seconds -->
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
             h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
-            table {{ width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }}
-            th, td {{ padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }}
-            th {{ background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }}
-            td {{ font-size: 14px; }}
+@@ -87,17 +140,17 @@
             tr:nth-child(even) {{ background-color: #2c2c2c; }}
             tr:hover {{ background-color: #444444; }}
             #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }}
             #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
             #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
             #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
             .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
             .info-container div {{ width: 48%; }}
             .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
+            a {{ color: #f4d03f; text-decoration: none; }}
             a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
+            #arrivals-btn {{
+                margin-bottom: 15px;
             #departures-btn {{
                 margin-left: 20px;
                 padding: 10px 20px;
                 background-color: #444444;
                 color: #f4d03f;
-                font-weight: bold;
-                border-radius: 8px;
-                text-decoration: none;
-                cursor: pointer;
-                border: 2px solid #f4d03f;
-            }}
-            #last-updated {{
-                text-align: right;
-                color: #f4d03f;
-                font-size: 14px;
+@@ -114,9 +167,10 @@
                 padding-right: 20px;
             }}
-@media only screen and (max-width: 600px) {
-    #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
-    .info-container { flex-direction: row; }
-    .info-container div { width: 48%; }
-
-    #departures-btn {
-        margin-left: auto;  /* Shift the button to the right */
-        margin-right: 20px; /* Add right margin for better spacing */
-        margin-top: 15px;   /* Keep the top margin as it was */
-    }
-}
-
+            @media only screen and (max-width: 600px) {{
+                #arrivals-btn {{ margin-top: 10px; width: 100%; }}
+                table {{ margin-top: 10px; }}
+                #last-updated {{ text-align: center; margin-top: 15px; }}
+                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                .info-container {{ flex-direction: row; }}
+                .info-container div {{ width: 48%; }}
+                #departures-btn {{ margin-top: 15px; }}
             }}
         </style>
         <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-            }}
-
-            function closePopup() {{
-                document.getElementById("popup").style.display = "none";
-            }}
+@@ -138,8 +192,11 @@
         </script>
     </head>
     <body>
+        <h2>KEF Airport Departures</h2>
+        <a href="https://arr.paxnotes.com" id="arrivals-btn">Arrivals</a>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
@@ -207,20 +166,7 @@ if response.status_code == 200:
         <table>
             <tr>
                 <th>Flight</th>
-                <th>Destination</th>
-                <th>STD</th>
-                <th>ETD</th>
-                <th>Status</th>
-                <th>Stand</th>
-                <th>Gate</th>
-            </tr>
-    """
-
-    for flight in data:
-        destination = flight.get("destination_iata", "")
-        handling_agent = flight.get("handling_agent", "")
-        flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        status = flight.get("status", "N/A")
+@@ -160,22 +217,32 @@
         etd_time = flight.get("expected_time", "")
         aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
 
@@ -234,13 +180,11 @@ if response.status_code == 200:
             # Format scheduled time (STD)
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
-
             # Use STD for Check-in Information and ETD for Gate Information if available
             gate_sched_time = etd_time if etd_time else sched_time
 
             # Calculate times for check-in and gate events
             go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
-
             # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
             flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
 
@@ -253,27 +197,17 @@ if response.status_code == 200:
             if previous_date and sched_date != previous_date:
                 html_output += f"""
                 <tr id="next-day">
-                    <td colspan="7">Next Day Flights</td>
-                </tr>
-                """
-            
-            html_output += f"""
-                <tr {row_click}>
-                    <td>{flight_number}</td>
-                    <td>{destination_name}</td>
-                    <td>{formatted_sched_time}</td>
-                    <td>{formatted_etd_time}</td>
-                    <td>{status}</td>
-                    <td>{stand}</td>
-                    <td>{gate}</td>
+@@ -195,39 +262,39 @@
                 </tr>
             """
 
+            previous_date = sched_date
             previous_date = sched_date  # Update the previous_date for next iteration
 
+    html_output += f"""
     html_output += """
         </table>
-
+        <div id="last-updated">Last updated: {datetime.now().strftime("%H:%M")}</div>
         <div id="popup">
             <div class="info-container">
                 <div>
