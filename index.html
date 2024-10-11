@@ -70,7 +70,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 05:54</div>
+        <div id="last-updated">Last updated: 06:11</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -82,52 +82,12 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('OG700', '', '05:20', '05:30', '05:35', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/TFPPD')">
-                    <td>OG700</td>
-                    <td>Berlin Brandenburg</td>
-                    <td>06:00</td>
-                    <td></td>
-                    <td>Check-in Closed</td>
-                    <td>3</td>
-                    <td>A13</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG400', '', '05:20', '05:30', '05:35', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/TFPPE')">
-                    <td>OG400</td>
-                    <td>Paris CDG</td>
-                    <td>06:00</td>
-                    <td></td>
-                    <td>Check-in Closed</td>
-                    <td>9</td>
-                    <td>C23</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG460', '', '05:20', '05:30', '05:35', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/TFPPF')">
-                    <td>OG460</td>
-                    <td>Amsterdam</td>
-                    <td>06:00</td>
-                    <td></td>
-                    <td>Check-in Closed</td>
-                    <td>8</td>
-                    <td>C35</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG880', '', '05:30', '05:40', '05:45', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/TFPPC')">
-                    <td>OG880</td>
-                    <td>Dublin</td>
-                    <td>06:10</td>
-                    <td></td>
-                    <td>Check-in Closed</td>
-                    <td>14</td>
-                    <td>D32</td>
-                </tr>
-            
                 <tr onclick="showPopup('OG900', '', '05:35', '05:45', '05:50', '06:00', '03:15', '05:15', 'https://www.flightradar24.com/TFPLA')">
                     <td>OG900</td>
                     <td>Copenhagen</td>
                     <td>06:15</td>
                     <td></td>
-                    <td>Check-in Closed</td>
+                    <td>Departed</td>
                     <td>7</td>
                     <td>C22</td>
                 </tr>
@@ -137,7 +97,7 @@
                     <td>Liverpool</td>
                     <td>06:35</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>12</td>
                     <td>D34</td>
                 </tr>
@@ -157,7 +117,7 @@
                     <td>Athens Eleftherios</td>
                     <td>06:45</td>
                     <td></td>
-                    <td>DYNAMIC MESSAGING</td>
+                    <td>Check-in Closed</td>
                     <td>71R</td>
                     <td>C28</td>
                 </tr>
@@ -167,7 +127,7 @@
                     <td>Amsterdam</td>
                     <td>08:35</td>
                     <td></td>
-                    <td></td>
+                    <td>Departed</td>
                     <td>8</td>
                     <td>C35</td>
                 </tr>
@@ -208,8 +168,8 @@
                     <td>10:35</td>
                     <td></td>
                     <td></td>
-                    <td>5</td>
-                    <td>D15</td>
+                    <td>9</td>
+                    <td>D23</td>
                 </tr>
             
                 <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', 'https://www.flightradar24.com/DL246')">
@@ -288,8 +248,8 @@
                     <td>16:00</td>
                     <td></td>
                     <td></td>
-                    <td>11</td>
-                    <td>D21</td>
+                    <td>5</td>
+                    <td>D15</td>
                 </tr>
             
                 <tr onclick="showPopup('ED6809', '', '', '', '', '', '', '', 'https://www.flightradar24.com/ED6808')">
@@ -340,6 +300,40 @@
                     <td></td>
                     <td>5</td>
                     <td>A15</td>
+                </tr>
+            
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                
+                <tr onclick="showPopup('OG400', '', '05:20', '05:30', '05:35', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/TFPLC')">
+                    <td>OG400</td>
+                    <td>Paris CDG</td>
+                    <td>06:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>46L</td>
+                    <td>C24</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG730', '', '05:25', '05:35', '05:40', '05:50', '03:05', '05:05', 'https://www.flightradar24.com/TFPPB')">
+                    <td>OG730</td>
+                    <td>Dusseldorf</td>
+                    <td>06:05</td>
+                    <td></td>
+                    <td></td>
+                    <td>12</td>
+                    <td>C34</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG460', '', '05:30', '05:40', '05:45', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/TFPPE')">
+                    <td>OG460</td>
+                    <td>Amsterdam</td>
+                    <td>06:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>3</td>
+                    <td>A13</td>
                 </tr>
             
         </table>
