@@ -5,7 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
-            /* Your existing CSS styling */
+            body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
+            h2 { text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }
+            table { width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }
+            th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }
+            th { background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }
+            td { font-size: 14px; }
+            tr:nth-child(even) { background-color: #2c2c2c; }
+            tr:hover { background-color: #444444; }
+            #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
+            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }
+            #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
+            #popup p { margin: 2px 0; font-size: 16px; }
+            #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
+            a { color: #f4d03f; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            #last-updated { text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }
+            @media only screen and (max-width: 600px) {
+                #popup { width: 75%; padding: 8px; }
+            }
         </style>
 
         <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
@@ -31,8 +49,7 @@
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
             .then(function(registration) {
               console.log('Service Worker registration successful with scope: ', registration.scope);
-            })
-            .catch(function(err) {
+            }).catch(function(err) {
               console.log('Service Worker registration failed: ', err);
             });
           }
@@ -66,9 +83,8 @@
     <body>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
-            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 20:29</div>
+        <div id="last-updated">Last updated: 20:35</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -94,7 +110,7 @@
                     <td colspan="7">Next Day Flights</td>
                 </tr>
                 
-                <tr onclick="showPopup('TO4447', '', '00:05', '00:15', '00:20', '00:30', '22:15', '00:05', 'https://www.flightradar24.com/TO4446')">
+                <tr onclick="showPopup('TO4447', '', '', '', '', '', '', '', 'https://www.flightradar24.com/TO4446')">
                     <td>TO4447</td>
                     <td>Paris Orly</td>
                     <td>00:45</td>
@@ -184,7 +200,7 @@
                     <td>C24</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY2636', '07:45', '08:00', '08:15', '', '08:30', '06:15', '08:05', '#')">
+                <tr onclick="showPopup('EZY2636', '', '', '', '', '', '', '', '#')">
                     <td>EZY2636</td>
                     <td>London Luton</td>
                     <td>08:45</td>
@@ -194,7 +210,7 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:50', '07:50', 'https://www.flightradar24.com/DL236')">
+                <tr onclick="showPopup('DL237', '', '', '', '', '', '', '', 'https://www.flightradar24.com/DL236')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
@@ -214,7 +230,7 @@
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('NO1968', '', '08:20', '08:30', '08:35', '08:45', '06:30', '08:20', 'https://www.flightradar24.com/NO1967')">
+                <tr onclick="showPopup('NO1968', '', '', '', '', '', '', '', 'https://www.flightradar24.com/NO1967')">
                     <td>NO1968</td>
                     <td>Almeria</td>
                     <td>09:00</td>
@@ -224,7 +240,7 @@
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY3316', '08:35', '08:50', '09:05', '', '09:20', '07:05', '08:55', '#')">
+                <tr onclick="showPopup('EZY3316', '', '', '', '', '', '', '', '#')">
                     <td>EZY3316</td>
                     <td>Edinburgh</td>
                     <td>09:35</td>
@@ -244,7 +260,7 @@
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('LS1376', '', '10:05', '10:15', '10:20', '10:30', '08:15', '10:05', 'https://www.flightradar24.com/LS1375')">
+                <tr onclick="showPopup('LS1376', '', '', '', '', '', '', '', 'https://www.flightradar24.com/LS1375')">
                     <td>LS1376</td>
                     <td>Birmingham</td>
                     <td>10:45</td>
@@ -264,7 +280,7 @@
                     <td>D21</td>
                 </tr>
             
-                <tr onclick="showPopup('LS1724', '', '10:35', '10:45', '10:50', '11:00', '08:45', '10:35', 'https://www.flightradar24.com/LS1723')">
+                <tr onclick="showPopup('LS1724', '', '', '', '', '', '', '', 'https://www.flightradar24.com/LS1723')">
                     <td>LS1724</td>
                     <td>Manchester</td>
                     <td>11:15</td>
@@ -274,7 +290,7 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', 'https://www.flightradar24.com/DL246')">
+                <tr onclick="showPopup('DL247', '', '', '', '', '', '', '', 'https://www.flightradar24.com/DL246')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
@@ -310,7 +326,7 @@
                     <td>14:50</td>
                     <td></td>
                     <td></td>
-                    <td>75L</td>
+                    <td>75R</td>
                     <td>C34</td>
                 </tr>
             
@@ -340,7 +356,7 @@
                     <td>15:30</td>
                     <td></td>
                     <td></td>
-                    <td>75R</td>
+                    <td>75L</td>
                     <td>D27</td>
                 </tr>
             
@@ -374,7 +390,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('HV6888', '', '17:40', '17:50', '17:55', '18:05', '15:50', '17:40', 'https://www.flightradar24.com/HV6887')">
+                <tr onclick="showPopup('HV6888', '', '', '', '', '', '', '', 'https://www.flightradar24.com/HV6887')">
                     <td>HV6888</td>
                     <td>Amsterdam</td>
                     <td>18:20</td>
