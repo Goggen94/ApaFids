@@ -106,7 +106,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
-@@ -76,7 +129,7 @@
+
 # Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
 def generate_flightradar_link(flight_number, aircraft_reg):
     try:
