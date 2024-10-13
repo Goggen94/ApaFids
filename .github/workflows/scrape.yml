@@ -23,6 +23,16 @@ jobs:
       run: |
         pip install -r scraper/requirements.txt
 
+    - name: Set environment variables
+      run: |
+        echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> $GITHUB_ENV
+        echo "FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}" >> $GITHUB_ENV
+        echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> $GITHUB_ENV
+        echo "FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}" >> $GITHUB_ENV
+        echo "FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
+        echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> $GITHUB_ENV
+        echo "FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }}" >> $GITHUB_ENV
+
     - name: Run scraper
       run: python scraper/scrape_flight.py
 
@@ -38,9 +48,3 @@ jobs:
       with:
         github_token: ${{ secrets.APAFIDSTOKEN1 }}
         publish_dir: ./scraper/output
-
-    # Sett opp miljøvariabler med VAPID-nøkler
-    - name: Set VAPID Public Key
-      run: |
-        echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" >> $GITHUB_ENV
-
