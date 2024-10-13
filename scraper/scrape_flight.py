@@ -189,6 +189,23 @@ if response.status_code == 200:
               }})
             }});
           }}
+
+          function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
+            document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+            document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+            document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+            document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+            document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+            document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+            document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            document.getElementById("notify-btn").setAttribute('onclick', "requestNotificationPermission('" + flight + "')");
+          }}
+
+          function closePopup() {{
+            document.getElementById("popup").style.display = "none";
+          }}
         </script>
     </head>
     <body>
@@ -284,7 +301,7 @@ if response.status_code == 200:
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button id="notify-btn" onclick="requestNotificationPermission('{flight_number}')">Notify me</button>
+            <button id="notify-btn">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
@@ -299,3 +316,4 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
+
