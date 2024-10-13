@@ -50,13 +50,13 @@
         <script>
           // Firebase-konfigurasjon
           const firebaseConfig = {
-            apiKey: "DIN_FIREBASE_API_KEY",
-            authDomain: "DIN_FIREBASE_AUTH_DOMAIN",
-            projectId: "DIN_FIREBASE_PROJECT_ID",
-            storageBucket: "DIN_FIREBASE_STORAGE_BUCKET",
-            messagingSenderId: "DIN_FIREBASE_MESSAGING_SENDER_ID",
-            appId: "DIN_FIREBASE_APP_ID",
-            measurementId: "DIN_FIREBASE_MEASUREMENT_ID"
+        apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.FIREBASE_APP_ID,
+      measurementId: process.env.FIREBASE_MEASUREMENT_ID
           };
 
           // Initialiser Firebase
@@ -121,7 +121,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 21:01</div>
+        <div id="last-updated">Last updated: 21:05</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -183,8 +183,8 @@
                     <td>06:10</td>
                     <td></td>
                     <td></td>
-                    <td>8</td>
-                    <td>C35</td>
+                    <td>7</td>
+                    <td>C22</td>
                 </tr>
             
                 <tr onclick="showPopup('OG880', '', '05:30', '05:40', '05:45', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/TFPPF')">
