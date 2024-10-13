@@ -277,6 +277,7 @@ if response.status_code == 200:
 
     html_output += f"""
     html_output += """
+    
         </table>
         <div id="last-updated">Last updated: {datetime.now().strftime("%H:%M")}</div>
         <div id="popup">
