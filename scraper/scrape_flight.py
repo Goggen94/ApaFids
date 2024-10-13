@@ -4,17 +4,6 @@ from datetime import datetime, timedelta
 
 # Function to get the current time and the time 24 hours ahead
 def get_time_range():
-    return date_from, date_to
-
-# Generate the time range for the API query
-date_from, date_to = get_time_range()
-
-import requests
-import os
-from datetime import datetime, timedelta
-
-# Function to get the current time and the time 24 hours ahead
-def get_time_range():
     now = datetime.utcnow()
     date_from = now.strftime('%Y-%m-%dT%H:%M:%SZ')  # Current time in UTC
     date_to = (now + timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M:%SZ')  # 24 hours ahead
@@ -36,6 +25,7 @@ def format_time(time_str):
         return dt.strftime("%H:%M"), dt.date()  # Return time (HH:MM) and date
     except Exception as e:
         return "", None  # Return an empty string if there's an issue
+
 
 # Function to calculate times related to check-in and gate events based on flight code
 def calculate_event_times(sched_time, event_time_for_gate, flight_number):
