@@ -1,6 +1,7 @@
 import requests
 import os
 from datetime import datetime, timedelta
+import json
 
 # Function to get the current time and the time 24 hours ahead
 def get_time_range():
@@ -17,6 +18,18 @@ url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date
 
 # Send the request to get the flight data
 response = requests.get(url)
+
+# Function to send notification when a flight lands
+def notify_landing(flight_number):
+    payload = {
+        "flight_number": flight_number
+    }
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post('http://127.0.0.1:5000/notify_landing', data=json.dumps(payload), headers=headers)
+    if response.status_code == 200:
+        print(f'Notification sent for flight {flight_number}')
+    else:
+        print(f'Failed to send notification for flight {flight_number}. Status code: {response.status_code}')
 
 # Function to format the time and date into separate columns
 def format_time(time_str):
@@ -173,6 +186,52 @@ if response.status_code == 200:
                 #departures-btn {{ margin-top: 15px; }}
             }}
         </style>
+
+        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js"></script>
+        <script>
+          // Firebase-konfigurasjon
+          const firebaseConfig = {{
+            apiKey: "DIN_FIREBASE_API_KEY",
+            authDomain: "DIN_FIREBASE_AUTH_DOMAIN",
+            projectId: "DIN_FIREBASE_PROJECT_ID",
+            storageBucket: "DIN_FIREBASE_STORAGE_BUCKET",
+            messagingSenderId: "DIN_FIREBASE_MESSAGING_SENDER_ID",
+            appId: "DIN_FIREBASE_APP_ID",
+            measurementId: "DIN_FIREBASE_MEASUREMENT_ID"
+          }};
+
+          // Initialiser Firebase
+          firebase.initializeApp(firebaseConfig);
+
+          const messaging = firebase.messaging();
+
+          function requestNotificationPermission(flightNumber) {{
+            messaging.requestPermission().then(function() {{
+              console.log('Notification permission granted.');
+              return messaging.getToken({{vapidKey: 'BORcM0w_fU1TmJDZAUbj5TeZLZdMGiJ0qfIIU1JeoN6fudf3ZV12S9g8bGGfr2dpwP2yKYtur5vKJsd9BfT2u10'}});
+            }}).then(function(token) {{
+              // Send token og flightNumber til backend
+              subscribeToPush(token, flightNumber);
+            }}).catch(function(err) {{
+              console.log('Unable to get permission to notify.', err);
+            }});
+          }}
+
+          function subscribeToPush(token, flightNumber) {{
+            fetch('/subscribe', {{
+              method: 'POST',
+              headers: {{
+                'Content-Type': 'application/json'
+              }},
+              body: JSON.stringify({{
+                token: token,
+                flight_number: flightNumber
+              }})
+            }});
+          }}
+        </script>
+
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
                 document.getElementById("popup").style.display = "block";
@@ -184,6 +243,11 @@ if response.status_code == 200:
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+
+                // Her kan du legge til Notify Me knappen for push-varsler
+                document.getElementById("notify-btn").onclick = function() {{
+                    requestNotificationPermission(flight);
+                }};
             }}
 
             function closePopup() {{
@@ -262,6 +326,10 @@ if response.status_code == 200:
                 </tr>
             """
 
+            # Send a notification when the flight has landed
+            if status.lower() == "landed":
+                notify_landing(flight_number)
+
             previous_date = sched_date  # Update the previous_date for next iteration
 
     html_output += """
@@ -284,6 +352,7 @@ if response.status_code == 200:
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
+            <button id="notify-btn">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
