@@ -1,7 +1,6 @@
 import requests
 import os
 from datetime import datetime, timedelta
-import json
 
 # Function to get the current time and the time 24 hours ahead
 def get_time_range():
@@ -32,7 +31,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
-
+        
         # Default times based on the flight number
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
@@ -54,21 +53,36 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        # Add more conditions as needed for other flight codes
+        elif flight_number.startswith(("EZY", "EJU")):
+            # EZY, EJU flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("TO", "HV")):
+            # TO, HV flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Generate the Flightradar24 link based on flight number or aircraft registration
+# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
 def generate_flightradar_link(flight_number, aircraft_reg):
     try:
         if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
-            return f"https://www.flightradar24.com/{aircraft_reg}"
+            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
         else:
-            flight_num = int(flight_number[2:]) - 1
+            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
     except:
-        return "#"
+        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -81,7 +95,7 @@ if response.status_code == 200:
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
+        <meta http-equiv="refresh" content="65">  <!-- Refresh every 65 seconds -->
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
             h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
@@ -94,11 +108,30 @@ if response.status_code == 200:
             #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
             #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }}
             #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
-            #popup p {{ margin: 2px 0; font-size: 16px; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
+            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
+            .info-container div {{ width: 48%; }}
+            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
             a {{ color: #f4d03f; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #last-updated {{ text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }}
+            #departures-btn {{
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }}
+            #last-updated {{
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }}
             @media only screen and (max-width: 600px) {{
                 #popup {{ width: 75%; padding: 8px; }}
             }}
@@ -135,7 +168,7 @@ if response.status_code == 200:
           function requestNotificationPermission(flightNumber) {{
             messaging.requestPermission().then(function() {{
               console.log('Notification permission granted.');
-              return messaging.getToken({{vapidKey: 'BORcM0w_fU1TmJDZAUbj5TeZLZdMGiJ0qfIIU1JeoN6fudf3ZV12S9g8bGGfr2dpwP2yKYtur5vKJsd9BfT2u10'}});
+              return messaging.getToken({{vapidKey: 'DIN_VAPID_KEY'}});
             }}).then(function(token) {{
               // Send token og flightNumber til backend
               subscribeToPush(token, flightNumber);
@@ -161,6 +194,7 @@ if response.status_code == 200:
     <body>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
         <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
         <table>
@@ -250,7 +284,7 @@ if response.status_code == 200:
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button id="notify-btn">Notify me</button>
+            <button id="notify-btn" onclick="requestNotificationPermission('{flight_number}')">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
