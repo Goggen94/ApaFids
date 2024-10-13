@@ -144,47 +144,7 @@ if response.status_code == 200:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
-            body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
-            h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
-            table {{ width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }}
-            th, td {{ padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }}
-            th {{ background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }}
-            td {{ font-size: 14px; }}
-            tr:nth-child(even) {{ background-color: #2c2c2c; }}
-            tr:hover {{ background-color: #444444; }}
-            #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
-            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
-            #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
-            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
-            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
-            .info-container div {{ width: 48%; }}
-            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
-            #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
-            a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
-            a:hover {{ text-decoration: underline; }}
-            #departures-btn {{
-                margin-left: 20px;
-                padding: 10px 20px;
-                background-color: #444444;
-                color: #f4d03f;
-                font-weight: bold;
-                border-radius: 8px;
-                text-decoration: none;
-                cursor: pointer;
-                border: 2px solid #f4d03f;
-            }}
-            #last-updated {{
-                text-align: right;
-                color: #f4d03f;
-                font-size: 14px;
-                padding-right: 20px;
-            }}
-            @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
-                .info-container {{ flex-direction: row; }}
-                .info-container div {{ width: 48%; }}
-                #departures-btn {{ margin-top: 15px; }}
-            }}
+            /* Your existing CSS styling */
         </style>
 
         <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
@@ -203,8 +163,18 @@ if response.status_code == 200:
 
           // Initialiser Firebase
           firebase.initializeApp(firebaseConfig);
-
           const messaging = firebase.messaging();
+
+          // Registrer Service Worker
+          if ('serviceWorker' in navigator) {{
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {{
+              console.log('Service Worker registration successful with scope: ', registration.scope);
+            }})
+            .catch(function(err) {{
+              console.log('Service Worker registration failed: ', err);
+            }});
+          }}
 
           function requestNotificationPermission(flightNumber) {{
             messaging.requestPermission().then(function() {{
@@ -230,29 +200,6 @@ if response.status_code == 200:
               }})
             }});
           }}
-        </script>
-
-        <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-
-                // Her kan du legge til Notify Me knappen for push-varsler
-                document.getElementById("notify-btn").onclick = function() {{
-                    requestNotificationPermission(flight);
-                }};
-            }}
-
-            function closePopup() {{
-                document.getElementById("popup").style.display = "none";
-            }}
         </script>
     </head>
     <body>
