@@ -1,29 +1,31 @@
-// firebase-messaging-sw.js
 importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js');
 
+// Firebase-konfigurasjon
 const firebaseConfig = {
-    apiKey: "DIN_FIREBASE_API_KEY",
-    authDomain: "DIN_FIREBASE_AUTH_DOMAIN",
-    projectId: "DIN_FIREBASE_PROJECT_ID",
-    storageBucket: "DIN_FIREBASE_STORAGE_BUCKET",
-    messagingSenderId: "DIN_FIREBASE_MESSAGING_SENDER_ID",
-    appId: "DIN_FIREBASE_APP_ID",
-    measurementId: "DIN_FIREBASE_MEASUREMENT_ID"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
+// Initialiser Firebase
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-// Lytt etter bakgrunnsvarsler
+// Lytt etter meldinger i bakgrunnen
 messaging.onBackgroundMessage(function(payload) {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/firebase-logo.png'  // Sett til ikonet for nettsiden din eller en egen fil
-    };
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: '/firebase-logo.png'
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
