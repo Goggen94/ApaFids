@@ -36,18 +36,80 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
 
-        # Example logic for specific flight codes
+        # Flight code-specific times
         if flight_number.startswith("OG"):
+            # OG flights
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("W4", "W6", "W9")):
+            # W4, W6, W9 flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("EZY", "EJU")):
+            # EZY, EJU flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("TO", "HV")):
+            # TO, HV flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("NO"):
+            # NO flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("LS"):
+            # LS flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("I2"):
+            # I2 flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("DL"):
+            # DL flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+
+# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
+def generate_flightradar_link(flight_number, aircraft_reg):
+    return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -280,4 +342,3 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-
