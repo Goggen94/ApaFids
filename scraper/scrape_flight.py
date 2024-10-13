@@ -133,4 +133,177 @@ if response.status_code == 200:
                 measurementId: "G-S0Y63P27KG"
             }};
             
-            // Initialize Firebase
+                       // Initialize Firebase
+            const app = firebase.initializeApp(firebaseConfig);
+            const messaging = firebase.messaging();
+            
+            // Request permission to send notifications
+            messaging.requestPermission().then(function() {{
+                console.log('Notification permission granted.');
+                return messaging.getToken({{ vapidKey: '{os.getenv("VAPID_PUBLIC_KEY")}' }});  // Using the VAPID key from GitHub secrets
+            }}).then(function(token) {{
+                console.log('Token received:', token);
+                // Save this token on your server for sending notifications
+            }}).catch(function(err) {{
+                console.error('Unable to get permission for notifications', err);
+            }});
+
+            // Handle incoming messages
+            messaging.onMessage((payload) => {{
+                console.log('Message received. ', payload);
+                // Display a custom alert or notification for the user
+                alert('Flight Notification: ' + payload.notification.body);
+            }});
+        </script>
+        <style>
+            body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
+            h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
+            table {{ width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }}
+            th, td {{ padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }}
+            th {{ background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }}
+            td {{ font-size: 14px; }}
+            tr:nth-child(even) {{ background-color: #2c2c2c; }}
+            tr:hover {{ background-color: #444444; }}
+            #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
+            #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
+            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
+            .info-container div {{ width: 48%; }}
+            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
+            #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
+            a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            #departures-btn {{
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }}
+            #last-updated {{
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }}
+            @media only screen and (max-width: 600px) {{
+                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                .info-container {{ flex-direction: row; }}
+                .info-container div {{ width: 48%; }}
+                #departures-btn {{ margin-top: 15px; }}
+            }}
+        </style>
+    </head>
+    <body>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
+        </div>
+        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
+        <table>
+            <tr>
+                <th>Flight</th>
+                <th>Destination</th>
+                <th>STD</th>
+                <th>ETD</th>
+                <th>Status</th>
+                <th>Stand</th>
+                <th>Gate</th>
+            </tr>
+    """
+
+    for flight in data:
+        destination = flight.get("destination_iata", "")
+        handling_agent = flight.get("handling_agent", "")
+        flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
+        status = flight.get("status", "N/A")
+        etd_time = flight.get("expected_time", "")
+        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
+
+        # Remove N/A from ETD column
+        formatted_etd_time, _ = format_time(etd_time) if etd_time != "" else ("", None)
+
+        # Filter flights handled by APA and departing from KEF
+        if destination != "KEF" and handling_agent == "APA":
+            destination_name = flight.get("destination", "N/A")
+            
+            # Format scheduled time (STD)
+            sched_time = flight.get("sched_time", "N/A")
+            formatted_sched_time, sched_date = format_time(sched_time)
+
+            # Use STD for Check-in Information and ETD for Gate Information if available
+            gate_sched_time = etd_time if etd_time else sched_time
+
+            # Calculate times for check-in and gate events
+            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
+
+            # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
+            flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
+
+            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
+
+            stand = flight.get("stand", "N/A")
+            gate = flight.get("gate", "N/A")
+            
+            # Insert yellow line when the day changes
+            if previous_date and sched_date != previous_date:
+                html_output += f"""
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                """
+            
+            html_output += f"""
+                <tr {row_click}>
+                    <td>{flight_number}</td>
+                    <td>{destination_name}</td>
+                    <td>{formatted_sched_time}</td>
+                    <td>{formatted_etd_time}</td>
+                    <td>{status}</td>
+                    <td>{stand}</td>
+                    <td>{gate}</td>
+                </tr>
+            """
+
+            previous_date = sched_date  # Update the previous_date for next iteration
+
+    html_output += """
+        </table>
+
+        <div id="popup">
+            <div class="info-container">
+                <div>
+                    <h3>Check-in Information</h3>
+                    <p id="checkin-opens">Check-in opens:</p>
+                    <p id="checkin-closes">Check-in closes:</p>
+                </div>
+                <div>
+                    <h3>Gate Information</h3>
+                    <p id="flight-info">Flight:</p>
+                    <p id="go-to-gate">Go to Gate:</p>
+                    <p id="boarding">Boarding:</p>
+                    <p id="final-call">Final Call:</p>
+                    <p id="name-call">Name Call:</p>
+                    <p id="gate-closed">Gate Closed:</p>
+                </div>
+            </div>
+            <p id="close-popup" onclick="closePopup()">Close</p>
+        </div>
+    </body>
+    </html>
+    """
+
+    # Save the HTML file to the output directory
+    os.makedirs("scraper/output", exist_ok=True)
+    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
+        file.write(html_output)
+
+    print("HTML file has been generated with departing flights handled by APA.")
+else:
+    print(f"Failed to retrieve data. Status code: {response.status_code}")
+
