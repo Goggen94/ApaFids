@@ -19,18 +19,6 @@ url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date
 # Send the request to get the flight data
 response = requests.get(url)
 
-# Function to send notification when a flight lands
-def notify_landing(flight_number):
-    payload = {
-        "flight_number": flight_number
-    }
-    headers = {'Content-Type': 'application/json'}
-    response = requests.post('http://127.0.0.1:5000/notify_landing', data=json.dumps(payload), headers=headers)
-    if response.status_code == 200:
-        print(f'Notification sent for flight {flight_number}')
-    else:
-        print(f'Failed to send notification for flight {flight_number}. Status code: {response.status_code}')
-
 # Function to format the time and date into separate columns
 def format_time(time_str):
     try:
@@ -44,7 +32,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
     try:
         sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
         event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
-        
+
         # Default times based on the flight number
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
@@ -66,70 +54,21 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("EZY", "EJU")):
-            # EZY, EJU flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("TO", "HV")):
-            # TO, HV flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("NO"):
-            # NO flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("LS"):
-            # LS flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("I2"):
-            # I2 flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("DL"):
-            # DL flights
-            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-
+        # Add more conditions as needed for other flight codes
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
 
-# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
+# Generate the Flightradar24 link based on flight number or aircraft registration
 def generate_flightradar_link(flight_number, aircraft_reg):
     try:
         if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
-            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
+            return f"https://www.flightradar24.com/{aircraft_reg}"
         else:
-            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
+            flight_num = int(flight_number[2:]) - 1
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
     except:
-        return "#"  # Return a placeholder link if there's an error
+        return "#"
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -144,7 +83,25 @@ if response.status_code == 200:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
-            /* Your existing CSS styling */
+            body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
+            h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
+            table {{ width: 100%; margin: 15px auto; border-collapse: collapse; background-color: #333333; }}
+            th, td {{ padding: 8px 12px; text-align: left; border-bottom: 1px solid #666666; font-weight: bold; }}
+            th {{ background-color: #f4d03f; color: #333; font-weight: bold; border-radius: 5px; font-size: 14px; }}
+            td {{ font-size: 14px; }}
+            tr:nth-child(even) {{ background-color: #2c2c2c; }}
+            tr:hover {{ background-color: #444444; }}
+            #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }}
+            #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; }}
+            #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
+            a {{ color: #f4d03f; text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            #last-updated {{ text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }}
+            @media only screen and (max-width: 600px) {{
+                #popup {{ width: 75%; padding: 8px; }}
+            }}
         </style>
 
         <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
@@ -170,8 +127,7 @@ if response.status_code == 200:
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
             .then(function(registration) {{
               console.log('Service Worker registration successful with scope: ', registration.scope);
-            }})
-            .catch(function(err) {{
+            }}).catch(function(err) {{
               console.log('Service Worker registration failed: ', err);
             }});
           }}
@@ -205,7 +161,6 @@ if response.status_code == 200:
     <body>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
-            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
         <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
         <table>
@@ -272,10 +227,6 @@ if response.status_code == 200:
                     <td>{gate}</td>
                 </tr>
             """
-
-            # Send a notification when the flight has landed
-            if status.lower() == "landed":
-                notify_landing(flight_number)
 
             previous_date = sched_date  # Update the previous_date for next iteration
 
