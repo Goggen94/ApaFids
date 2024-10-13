@@ -114,20 +114,20 @@ if response.status_code == 200:
             }}
 
             function scheduleNotification(flight, eta) {
-    const currentTime = new Date();
-    const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
-    const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
+            const currentTime = new Date();
+            const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
+            const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
 
-    const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
-    const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
+            const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
+            const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
 
-    // Clear any existing notifications
-    if (notify15minTimeout) clearTimeout(notify15minTimeout);
-    if (notify5minTimeout) clearTimeout(notify5minTimeout);
+            // Clear any existing notifications
+            if (notify15minTimeout) clearTimeout(notify15minTimeout);
+            if (notify5minTimeout) clearTimeout(notify5minTimeout);
 
-    // Schedule new notifications based on the updated ETA
-    if (timeTo15min > 0) {
-        notify15minTimeout = setTimeout(function() {
+            // Schedule new notifications based on the updated ETA
+            if (timeTo15min > 0) {
+             notify15minTimeout = setTimeout(function() {
             alert("Flight " + flight + " will land in 15 minutes!");
         }, timeTo15min);
     }
