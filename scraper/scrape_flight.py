@@ -26,7 +26,6 @@ def format_time(time_str):
     except Exception as e:
         return "", None  # Return an empty string if there's an issue
 
-
 # Function to calculate times related to check-in and gate events based on flight code
 def calculate_event_times(sched_time, event_time_for_gate, flight_number):
     try:
@@ -54,63 +53,18 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("EZY", "EJU")):
-            # EZY, EJU flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("TO", "HV")):
-            # TO, HV flights
+        else:
+            # Other flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("NO"):
-            # NO flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("LS"):
-            # LS flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("I2"):
-            # I2 flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("DL"):
-            # DL flights
-            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
-
-# Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
-def generate_flightradar_link(flight_number, aircraft_reg):
-        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -137,27 +91,27 @@ if response.status_code == 200:
                 measurementId: "G-S0Y63P27KG"
             }};
             
-                       // Initialize Firebase
+            // Initialize Firebase
             const app = firebase.initializeApp(firebaseConfig);
             const messaging = firebase.messaging();
             
-            // Request permission to send notifications
-            messaging.requestPermission().then(function() {{
+            messaging.requestPermission().then(() => {{
                 console.log('Notification permission granted.');
-                return messaging.getToken({{ vapidKey: '{os.getenv("VAPID_PUBLIC_KEY")}' }});  // Using the VAPID key from GitHub secrets
-            }}).then(function(token) {{
-                console.log('Token received:', token);
-                // Save this token on your server for sending notifications
-            }}).catch(function(err) {{
-                console.error('Unable to get permission for notifications', err);
+                return messaging.getToken({{ vapidKey: '{os.getenv("VAPID_PUBLIC_KEY")}' }});
+            }}).then((token) => {{
+                console.log('Token:', token);
+            }}).catch((err) => {{
+                console.error('Error getting permission', err);
             }});
 
-            // Handle incoming messages
             messaging.onMessage((payload) => {{
-                console.log('Message received. ', payload);
-                // Display a custom alert or notification for the user
+                console.log('Message received', payload);
                 alert('Flight Notification: ' + payload.notification.body);
             }});
+
+            function notifyUser(flight) {{
+                alert("You will be notified 15 minutes before and 5 minutes before flight " + flight + " lands!");
+            }}
         </script>
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
@@ -169,16 +123,16 @@ if response.status_code == 200:
             tr:nth-child(even) {{ background-color: #2c2c2c; }}
             tr:hover {{ background-color: #444444; }}
             #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
-            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  }}
             #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
-            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
             .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
             .info-container div {{ width: 48%; }}
             .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
-            a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
+            a {{ color: #f4d03f;  text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #departures-btn {{
+                        #departures-btn {{
                 margin-left: 20px;
                 padding: 10px 20px;
                 background-color: #444444;
@@ -196,7 +150,7 @@ if response.status_code == 200:
                 padding-right: 20px;
             }}
             @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                #popup {{ width: 75%; padding: 8px; }}
                 .info-container {{ flex-direction: row; }}
                 .info-container div {{ width: 48%; }}
                 #departures-btn {{ margin-top: 15px; }}
@@ -246,10 +200,7 @@ if response.status_code == 200:
             # Calculate times for check-in and gate events
             go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
 
-            # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
-            flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
-
-            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
+            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flight_number}')\""
 
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
@@ -296,8 +247,31 @@ if response.status_code == 200:
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
+            <button onclick="notifyUser(document.getElementById('flight-info').textContent)">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
+
+        <script>
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("flight-info").innerHTML = 'Flight: ' + flight;
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            }}
+
+            function closePopup() {{
+                document.getElementById("popup").style.display = "none";
+            }}
+
+            function notifyUser(flight) {{
+                alert("You will be notified 15 minutes before and 5 minutes before flight " + flight + " lands!");
+            }}
+        </script>
     </body>
     </html>
     """
