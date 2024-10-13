@@ -141,7 +141,7 @@ if response.status_code == 200:
 
             // Check for updated ETA and reschedule notifications if it changes
             function checkForUpdatedETA(flight) {{
-                fetch(`/api/flights/${{flight}}`)  // You need to replace this with your actual API endpoint
+                fetch("/api/flights/" + flight)  // You need to replace this with your actual API endpoint
                     .then(response => response.json())
                     .then(data => {{
                         const updatedETA = new Date(data.eta);  // Assume data.eta contains the updated ETA
@@ -149,11 +149,11 @@ if response.status_code == 200:
                             // ETA has changed, reschedule notifications
                             currentETA = updatedETA;  // Update the global ETA
                             scheduleNotification(flight, updatedETA);  // Reschedule notifications
-                            console.log(`ETA updated for flight ${flight}: ${updatedETA}`);
+                            console.log("ETA updated for flight " + flight + ": " + updatedETA);
                         }}
                     }})
                     .catch(error => {{
-                        console.error('Error fetching updated ETA:', error);
+                        console.error("Error fetching updated ETA:", error);
                     }});
             }}
 
