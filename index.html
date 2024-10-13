@@ -47,6 +47,52 @@
                 #departures-btn { margin-top: 15px; }
             }
         </style>
+
+        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js"></script>
+        <script>
+          // Firebase-konfigurasjon
+          const firebaseConfig = {
+            apiKey: "DIN_FIREBASE_API_KEY",
+            authDomain: "DIN_FIREBASE_AUTH_DOMAIN",
+            projectId: "DIN_FIREBASE_PROJECT_ID",
+            storageBucket: "DIN_FIREBASE_STORAGE_BUCKET",
+            messagingSenderId: "DIN_FIREBASE_MESSAGING_SENDER_ID",
+            appId: "DIN_FIREBASE_APP_ID",
+            measurementId: "DIN_FIREBASE_MEASUREMENT_ID"
+          };
+
+          // Initialiser Firebase
+          firebase.initializeApp(firebaseConfig);
+
+          const messaging = firebase.messaging();
+
+          function requestNotificationPermission(flightNumber) {
+            messaging.requestPermission().then(function() {
+              console.log('Notification permission granted.');
+              return messaging.getToken({vapidKey: 'BORcM0w_fU1TmJDZAUbj5TeZLZdMGiJ0qfIIU1JeoN6fudf3ZV12S9g8bGGfr2dpwP2yKYtur5vKJsd9BfT2u10'});
+            }).then(function(token) {
+              // Send token og flightNumber til backend
+              subscribeToPush(token, flightNumber);
+            }).catch(function(err) {
+              console.log('Unable to get permission to notify.', err);
+            });
+          }
+
+          function subscribeToPush(token, flightNumber) {
+            fetch('/subscribe', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                token: token,
+                flight_number: flightNumber
+              })
+            });
+          }
+        </script>
+
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 document.getElementById("popup").style.display = "block";
@@ -58,6 +104,11 @@
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+
+                // Her kan du legge til Notify Me knappen for push-varsler
+                document.getElementById("notify-btn").onclick = function() {
+                    requestNotificationPermission(flight);
+                };
             }
 
             function closePopup() {
@@ -70,7 +121,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 19:56</div>
+        <div id="last-updated">Last updated: 20:11</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -82,16 +133,6 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('HV6886', '', '19:31', '19:41', '19:46', '19:56', '17:35', '19:25', 'https://www.flightradar24.com/HV6885')">
-                    <td>HV6886</td>
-                    <td>Amsterdam</td>
-                    <td>20:05</td>
-                    <td>20:11</td>
-                    <td>Check-in Closed</td>
-                    <td>3</td>
-                    <td>A13</td>
-                </tr>
-            
                 <tr onclick="showPopup('W61540', '', '00:50', '01:00', '01:05', '01:15', '21:15', '23:05', 'https://www.flightradar24.com/W61539')">
                     <td>W61540</td>
                     <td>Warsaw</td>
@@ -412,8 +453,8 @@
                     <td>19:15</td>
                     <td></td>
                     <td></td>
-                    <td>75R</td>
-                    <td>C33</td>
+                    <td>8</td>
+                    <td>C35</td>
                 </tr>
             
         </table>
@@ -435,6 +476,7 @@
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
+            <button id="notify-btn">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
