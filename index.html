@@ -3,7 +3,7 @@
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="65">  <!-- Refresh every 65 seconds -->
+        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
             h2 { text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }
@@ -14,22 +14,23 @@
             tr:nth-child(even) { background-color: #2c2c2c; }
             tr:hover { background-color: #444444; }
             #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
-            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }
+            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }
             #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
-            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }
+            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }
             .info-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }
             .info-container div { width: 48%; }
             .info-container div h3, .info-container div p { margin: 0; padding: 0; }
             #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
-            a { color: #f4d03f; text-decoration: none; }
+            a { color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }
             a:hover { text-decoration: underline; }
-            #notify-btn {
-                padding: 10px;
-                margin-top: 15px;
+            #departures-btn {
+                margin-left: 20px;
+                padding: 10px 20px;
                 background-color: #444444;
                 color: #f4d03f;
                 font-weight: bold;
                 border-radius: 8px;
+                text-decoration: none;
                 cursor: pointer;
                 border: 2px solid #f4d03f;
             }
@@ -43,77 +44,25 @@
                 #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
                 .info-container { flex-direction: row; }
                 .info-container div { width: 48%; }
+                #departures-btn { margin-top: 15px; }
             }
         </style>
-        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js"></script>
         <script>
-          // Firebase-konfigurasjon
-          const firebaseConfig = {
-       apiKey: "AIzaSyDebqZBQtfPbR6Nx84HnfN6qLX7LrLMWJY",
-      authDomain: "paxbot-2b8b2.firebaseapp.com",
-      projectId: "paxbot-2b8b2",
-      storageBucket: "paxbot-2b8b2.appspot.com",
-      messagingSenderId: "315115333501",
-      appId: "1:315115333501:web:f9503954d0b067fb2ece14",
-      measurementId: "G-S0Y63P27KG"
-          };
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            }
 
-          // Initialiser Firebase
-          firebase.initializeApp(firebaseConfig);
-          const messaging = firebase.messaging();
-
-          // Registrer Service Worker
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/firebase-messaging-sw.js')
-            .then(function(registration) {
-              console.log('Service Worker registration successful with scope: ', registration.scope);
-            }).catch(function(err) {
-              console.log('Service Worker registration failed: ', err);
-            });
-          }
-
-          function requestNotificationPermission(flightNumber) {
-            messaging.requestPermission().then(function() {
-              console.log('Notification permission granted.');
-              return messaging.getToken({vapidKey: 'DIN_VAPID_KEY'});
-            }).then(function(token) {
-              // Send token og flightNumber til backend
-              subscribeToPush(token, flightNumber);
-            }).catch(function(err) {
-              console.log('Unable to get permission to notify.', err);
-            });
-          }
-
-          function subscribeToPush(token, flightNumber) {
-            fetch('/subscribe', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                token: token,
-                flight_number: flightNumber
-              })
-            });
-          }
-
-          function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
-            document.getElementById("popup").style.display = "block";
-            document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
-            document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-            document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-            document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-            document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-            document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-            document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-            document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-            document.getElementById("notify-btn").setAttribute('onclick', "requestNotificationPermission('" + flight + "')");
-          }
-
-          function closePopup() {
-            document.getElementById("popup").style.display = "none";
-          }
+            function closePopup() {
+                document.getElementById("popup").style.display = "none";
+            }
         </script>
     </head>
     <body>
@@ -121,7 +70,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 21:46</div>
+        <div id="last-updated">Last updated: 22:01</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -247,7 +196,7 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '', '', '', '', '', '', '', 'https://www.flightradar24.com/DL236')">
+                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:50', '07:50', 'https://www.flightradar24.com/DL236')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
@@ -267,7 +216,7 @@
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('NO1968', '', '', '', '', '', '', '', 'https://www.flightradar24.com/NO1967')">
+                <tr onclick="showPopup('NO1968', '', '08:20', '08:30', '08:35', '08:45', '06:30', '08:20', 'https://www.flightradar24.com/NO1967')">
                     <td>NO1968</td>
                     <td>Almeria</td>
                     <td>09:00</td>
@@ -297,7 +246,7 @@
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('LS1376', '', '', '', '', '', '', '', 'https://www.flightradar24.com/LS1375')">
+                <tr onclick="showPopup('LS1376', '', '10:05', '10:15', '10:20', '10:30', '08:15', '10:05', 'https://www.flightradar24.com/LS1375')">
                     <td>LS1376</td>
                     <td>Birmingham</td>
                     <td>10:45</td>
@@ -317,7 +266,7 @@
                     <td>D21</td>
                 </tr>
             
-                <tr onclick="showPopup('LS1724', '', '', '', '', '', '', '', 'https://www.flightradar24.com/LS1723')">
+                <tr onclick="showPopup('LS1724', '', '10:35', '10:45', '10:50', '11:00', '08:45', '10:35', 'https://www.flightradar24.com/LS1723')">
                     <td>LS1724</td>
                     <td>Manchester</td>
                     <td>11:15</td>
@@ -327,7 +276,7 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '', '', '', '', '', '', '', 'https://www.flightradar24.com/DL246')">
+                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', 'https://www.flightradar24.com/DL246')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
@@ -476,7 +425,6 @@
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button id="notify-btn">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
