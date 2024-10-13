@@ -97,6 +97,23 @@
               })
             });
           }
+
+          function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
+            document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+            document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+            document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+            document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+            document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+            document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+            document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            document.getElementById("notify-btn").setAttribute('onclick', "requestNotificationPermission('" + flight + "')");
+          }
+
+          function closePopup() {
+            document.getElementById("popup").style.display = "none";
+          }
         </script>
     </head>
     <body>
@@ -104,7 +121,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 20:42</div>
+        <div id="last-updated">Last updated: 20:47</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -346,8 +363,8 @@
                     <td>14:50</td>
                     <td></td>
                     <td></td>
-                    <td>46L</td>
-                    <td>C24</td>
+                    <td>70L</td>
+                    <td>C28</td>
                 </tr>
             
                 <tr onclick="showPopup('OG101', '', '14:25', '14:35', '14:40', '14:50', '12:05', '14:05', 'https://www.flightradar24.com/TFPPB')">
@@ -387,7 +404,7 @@
                     <td></td>
                     <td></td>
                     <td>44</td>
-                    <td>D24</td>
+                    <td>D25</td>
                 </tr>
             
                 <tr onclick="showPopup('ED6809', '', '', '', '', '', '', '', 'https://www.flightradar24.com/ED6808')">
@@ -459,7 +476,7 @@
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button id="notify-btn" onclick="requestNotificationPermission('{flight_number}')">Notify me</button>
+            <button id="notify-btn">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
