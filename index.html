@@ -3,7 +3,7 @@
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
+        <meta http-equiv="refresh" content="65">  <!-- Refresh every 65 seconds -->
         <style>
             body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
             h2 { text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }
@@ -16,11 +16,30 @@
             #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
             #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }
             #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
-            #popup p { margin: 2px 0; font-size: 16px; }
+            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }
+            .info-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }
+            .info-container div { width: 48%; }
+            .info-container div h3, .info-container div p { margin: 0; padding: 0; }
             #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
             a { color: #f4d03f; text-decoration: none; }
             a:hover { text-decoration: underline; }
-            #last-updated { text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }
+            #departures-btn {
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }
+            #last-updated {
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }
             @media only screen and (max-width: 600px) {
                 #popup { width: 75%; padding: 8px; }
             }
@@ -57,7 +76,7 @@
           function requestNotificationPermission(flightNumber) {
             messaging.requestPermission().then(function() {
               console.log('Notification permission granted.');
-              return messaging.getToken({vapidKey: 'BORcM0w_fU1TmJDZAUbj5TeZLZdMGiJ0qfIIU1JeoN6fudf3ZV12S9g8bGGfr2dpwP2yKYtur5vKJsd9BfT2u10'});
+              return messaging.getToken({vapidKey: 'DIN_VAPID_KEY'});
             }).then(function(token) {
               // Send token og flightNumber til backend
               subscribeToPush(token, flightNumber);
@@ -83,8 +102,9 @@
     <body>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 20:35</div>
+        <div id="last-updated">Last updated: 20:42</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -110,7 +130,7 @@
                     <td colspan="7">Next Day Flights</td>
                 </tr>
                 
-                <tr onclick="showPopup('TO4447', '', '', '', '', '', '', '', 'https://www.flightradar24.com/TO4446')">
+                <tr onclick="showPopup('TO4447', '', '00:05', '00:15', '00:20', '00:30', '22:15', '00:05', 'https://www.flightradar24.com/TO4446')">
                     <td>TO4447</td>
                     <td>Paris Orly</td>
                     <td>00:45</td>
@@ -200,7 +220,7 @@
                     <td>C24</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY2636', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('EZY2636', '07:45', '08:00', '08:15', '', '08:30', '06:15', '08:05', '#')">
                     <td>EZY2636</td>
                     <td>London Luton</td>
                     <td>08:45</td>
@@ -240,7 +260,7 @@
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY3316', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('EZY3316', '08:35', '08:50', '09:05', '', '09:20', '07:05', '08:55', '#')">
                     <td>EZY3316</td>
                     <td>Edinburgh</td>
                     <td>09:35</td>
@@ -316,8 +336,8 @@
                     <td>14:50</td>
                     <td></td>
                     <td></td>
-                    <td>3</td>
-                    <td>A13</td>
+                    <td>8</td>
+                    <td>C35</td>
                 </tr>
             
                 <tr onclick="showPopup('OG694', '', '14:10', '14:20', '14:25', '14:35', '11:50', '13:50', 'https://www.flightradar24.com/TFPPF')">
@@ -326,8 +346,8 @@
                     <td>14:50</td>
                     <td></td>
                     <td></td>
-                    <td>75R</td>
-                    <td>C34</td>
+                    <td>46L</td>
+                    <td>C24</td>
                 </tr>
             
                 <tr onclick="showPopup('OG101', '', '14:25', '14:35', '14:40', '14:50', '12:05', '14:05', 'https://www.flightradar24.com/TFPPB')">
@@ -346,8 +366,8 @@
                     <td>15:20</td>
                     <td></td>
                     <td></td>
-                    <td>73</td>
-                    <td>C31</td>
+                    <td>7</td>
+                    <td>C22</td>
                 </tr>
             
                 <tr onclick="showPopup('OG7201', '', '14:50', '15:00', '15:05', '15:15', '12:30', '14:30', 'https://www.flightradar24.com/TFPPA')">
@@ -356,8 +376,8 @@
                     <td>15:30</td>
                     <td></td>
                     <td></td>
-                    <td>75L</td>
-                    <td>D27</td>
+                    <td>5</td>
+                    <td>D15</td>
                 </tr>
             
                 <tr onclick="showPopup('OG121', '', '15:20', '15:30', '15:35', '15:45', '13:00', '15:00', 'https://www.flightradar24.com/TFPPC')">
@@ -366,8 +386,8 @@
                     <td>16:00</td>
                     <td></td>
                     <td></td>
-                    <td>79</td>
-                    <td>D31</td>
+                    <td>44</td>
+                    <td>D24</td>
                 </tr>
             
                 <tr onclick="showPopup('ED6809', '', '', '', '', '', '', '', 'https://www.flightradar24.com/ED6808')">
@@ -390,7 +410,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('HV6888', '', '', '', '', '', '', '', 'https://www.flightradar24.com/HV6887')">
+                <tr onclick="showPopup('HV6888', '', '17:40', '17:50', '17:55', '18:05', '15:50', '17:40', 'https://www.flightradar24.com/HV6887')">
                     <td>HV6888</td>
                     <td>Amsterdam</td>
                     <td>18:20</td>
@@ -439,7 +459,7 @@
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button id="notify-btn">Notify me</button>
+            <button id="notify-btn" onclick="requestNotificationPermission('{flight_number}')">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
     </body>
