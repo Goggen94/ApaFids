@@ -9,6 +9,20 @@ def get_time_range():
 # Generate the time range for the API query
 date_from, date_to = get_time_range()
 
+import requests
+import os
+from datetime import datetime, timedelta
+
+# Function to get the current time and the time 24 hours ahead
+def get_time_range():
+    now = datetime.utcnow()
+    date_from = now.strftime('%Y-%m-%dT%H:%M:%SZ')  # Current time in UTC
+    date_to = (now + timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M:%SZ')  # 24 hours ahead
+    return date_from, date_to
+
+# Generate the time range for the API query
+date_from, date_to = get_time_range()
+
 # URL to the flight data API, dynamically adding the dateFrom and dateTo values
 url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date_to}"
 
