@@ -113,39 +113,31 @@ if response.status_code == 200:
                 }}, 60000);  // Every 60 seconds
             }}
 
-           function scheduleNotification(flight, eta) {
-            const currentTime = new Date();
-            const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
-            const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
+            function scheduleNotification(flight, eta) {{
+                const currentTime = new Date();
+                const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
+                const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
 
-            const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
-            const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
+                const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
+                const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
 
-            // Clear any existing notifications
-            if (notify15minTimeout) clearTimeout(notify15minTimeout);
-            if (notify5minTimeout) clearTimeout(notify5minTimeout);
+                // Clear any existing notifications
+                if (notify15minTimeout) clearTimeout(notify15minTimeout);
+                if (notify5minTimeout) clearTimeout(notify5minTimeout);
 
-            // Schedule new notifications based on the updated ETA
-            if (timeTo15min > 0) {
-              notify15minTimeout = setTimeout(function() {
-               alert("Flight " + flight + " will land in 15 minutes!");
-            }, timeTo15min);
-    }
+                // Schedule new notifications based on the updated ETA
+                if (timeTo15min > 0) {{
+                    notify15minTimeout = setTimeout(function() {{
+                        alert("Flight " + flight + " will land in 15 minutes!");
+                    }}, timeTo15min);
+                }}
 
-    if (timeTo5min > 0) {
-        notify5minTimeout = setTimeout(function() {
-            alert("Flight " + flight + " will land in 5 minutes!");
-        }, timeTo5min);
-    }
-}
-
-
-    if (timeTo5min > 0) {
-        notify5minTimeout = setTimeout(function() {
-            alert("Flight " + flight + " will land in 5 minutes!");
-        }, timeTo5min);
-    }
-}
+                if (timeTo5min > 0) {{
+                    notify5minTimeout = setTimeout(function() {{
+                        alert("Flight " + flight + " will land in 5 minutes!");
+                    }}, timeTo5min);
+                }}
+            }}
 
             // Check for updated ETA and reschedule notifications if it changes
             function checkForUpdatedETA(flight) {{
@@ -212,7 +204,7 @@ if response.status_code == 200:
         gate = flight.get("gate", "N/A")
             
         # Insert yellow line when the day changes
-        if previous_date and sched_date != previous_date:
+        if previous_date and sched_time != previous_date:
             html_output += f"""
             <tr id="next-day">
                 <td colspan="7">Next Day Flights</td>
@@ -225,7 +217,7 @@ if response.status_code == 200:
                 <td>{destination}</td>
                 <td>{formatted_sched_time}</td>
                 <td>{formatted_etd_time}</td>
-                <td>{status}</td>
+                <td>{flight.get("status", "N/A")}</td>
                 <td>{stand}</td>
                 <td>{gate}</td>
             </tr>
