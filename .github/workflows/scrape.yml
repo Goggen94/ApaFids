@@ -38,3 +38,9 @@ jobs:
       with:
         github_token: ${{ secrets.APAFIDSTOKEN1 }}
         publish_dir: ./scraper/output
+
+    # Sett opp miljøvariabler med VAPID-nøkler
+    - name: Set VAPID Public Key
+      run: |
+        echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" >> $GITHUB_ENV
+
