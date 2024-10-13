@@ -53,6 +53,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        
         elif flight_number.startswith(("EZY", "EJU")):
             # EZY, EJU flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
@@ -115,14 +116,13 @@ if response.status_code == 200:
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
             a {{ color: #f4d03f; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #departures-btn {{
-                margin-left: 20px;
-                padding: 10px 20px;
+            #notify-btn {{
+                padding: 10px;
+                margin-top: 15px;
                 background-color: #444444;
                 color: #f4d03f;
                 font-weight: bold;
                 border-radius: 8px;
-                text-decoration: none;
                 cursor: pointer;
                 border: 2px solid #f4d03f;
             }}
@@ -133,10 +133,11 @@ if response.status_code == 200:
                 padding-right: 20px;
             }}
             @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%; padding: 8px; }}
+                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                .info-container {{ flex-direction: row; }}
+                .info-container div {{ width: 48%; }}
             }}
         </style>
-
         <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging.js"></script>
         <script>
@@ -316,4 +317,3 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-
