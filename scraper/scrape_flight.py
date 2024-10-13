@@ -36,27 +36,10 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
 
-        # Flight code-specific times
+        # Example logic for specific flight codes
         if flight_number.startswith("OG"):
-            # OG flights
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("W4", "W6", "W9")):
-            # W4, W6, W9 flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        else:
-            # Other flights
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
@@ -94,7 +77,11 @@ if response.status_code == 200:
             // Initialize Firebase
             const app = firebase.initializeApp(firebaseConfig);
             const messaging = firebase.messaging();
-            
+
+            let currentETA = null;  // Store the current ETA globally
+            let notify15minTimeout = null;  // Store the timeout ID for 15 min notification
+            let notify5minTimeout = null;   // Store the timeout ID for 5 min notification
+
             messaging.requestPermission().then(() => {{
                 console.log('Notification permission granted.');
                 return messaging.getToken({{ vapidKey: '{os.getenv("VAPID_PUBLIC_KEY")}' }});
@@ -112,6 +99,67 @@ if response.status_code == 200:
             function notifyUser(flight) {{
                 alert("You will be notified 15 minutes before and 5 minutes before flight " + flight + " lands!");
             }}
+
+            function showPopup(flight, eta) {{
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("flight-info").innerHTML = 'Flight: ' + flight;
+                
+                currentETA = new Date(eta);  // Set current ETA
+                scheduleNotification(flight, currentETA);
+                
+                // Periodically check for ETA updates every 1 minute
+                setInterval(function() {{
+                    checkForUpdatedETA(flight);
+                }}, 60000);  // Every 60 seconds
+            }}
+
+            function scheduleNotification(flight, eta) {{
+                const currentTime = new Date();
+                const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
+                const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
+
+                const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
+                const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
+
+                // Clear any existing notifications
+                if (notify15minTimeout) clearTimeout(notify15minTimeout);
+                if (notify5minTimeout) clearTimeout(notify5minTimeout);
+
+                // Schedule new notifications based on the updated ETA
+                if (timeTo15min > 0) {{
+                    notify15minTimeout = setTimeout(function() {{
+                        alert(`Flight ${flight} will land in 15 minutes!`);
+                    }}, timeTo15min);
+                }}
+
+                if (timeTo5min > 0) {{
+                    notify5minTimeout = setTimeout(function() {{
+                        alert(`Flight ${flight} will land in 5 minutes!`);
+                    }}, timeTo5min);
+                }}
+            }}
+
+            // Check for updated ETA and reschedule notifications if it changes
+            function checkForUpdatedETA(flight) {{
+                fetch(`/api/flights/${{flight}}`)  // You need to replace this with your actual API endpoint
+                    .then(response => response.json())
+                    .then(data => {{
+                        const updatedETA = new Date(data.eta);  // Assume data.eta contains the updated ETA
+                        if (updatedETA.getTime() !== currentETA.getTime()) {{
+                            // ETA has changed, reschedule notifications
+                            currentETA = updatedETA;  // Update the global ETA
+                            scheduleNotification(flight, updatedETA);  // Reschedule notifications
+                            console.log(`ETA updated for flight ${flight}: ${updatedETA}`);
+                        }}
+                    }})
+                    .catch(error => {{
+                        console.error('Error fetching updated ETA:', error);
+                    }});
+            }}
+
+            function closePopup() {{
+                document.getElementById("popup").style.display = "none";
+            }}
         </script>
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
@@ -122,47 +170,11 @@ if response.status_code == 200:
             td {{ font-size: 14px; }}
             tr:nth-child(even) {{ background-color: #2c2c2c; }}
             tr:hover {{ background-color: #444444; }}
-            #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
-            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  }}
-            #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
-            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
-            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
-            .info-container div {{ width: 48%; }}
-            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
-            #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
-            a {{ color: #f4d03f;  text-decoration: none; }}
-            a:hover {{ text-decoration: underline; }}
-                        #departures-btn {{
-                margin-left: 20px;
-                padding: 10px 20px;
-                background-color: #444444;
-                color: #f4d03f;
-                font-weight: bold;
-                border-radius: 8px;
-                text-decoration: none;
-                cursor: pointer;
-                border: 2px solid #f4d03f;
-            }}
-            #last-updated {{
-                text-align: right;
-                color: #f4d03f;
-                font-size: 14px;
-                padding-right: 20px;
-            }}
-            @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%; padding: 8px; }}
-                .info-container {{ flex-direction: row; }}
-                .info-container div {{ width: 48%; }}
-                #departures-btn {{ margin-top: 15px; }}
-            }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }}
         </style>
     </head>
     <body>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>KEF Airport Departures</h2>
-            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
-        </div>
-        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
+        <h2>KEF Airport Departures</h2>
         <table>
             <tr>
                 <th>Flight</th>
@@ -176,56 +188,40 @@ if response.status_code == 200:
     """
 
     for flight in data:
-        destination = flight.get("destination_iata", "")
-        handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        status = flight.get("status", "N/A")
+        destination = flight.get("destination", "N/A")
+        sched_time = flight.get("sched_time", "N/A")
         etd_time = flight.get("expected_time", "")
-        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
+        eta_time = flight.get("eta", "")  # Extract the ETA time
 
-        # Remove N/A from ETD column
-        formatted_etd_time, _ = format_time(etd_time) if etd_time != "" else ("", None)
+        formatted_sched_time, _ = format_time(sched_time)
+        formatted_etd_time, _ = format_time(etd_time)
+        formatted_eta_time, _ = format_time(eta_time)  # Format ETA for display
 
-        # Filter flights handled by APA and departing from KEF
-        if destination != "KEF" and handling_agent == "APA":
-            destination_name = flight.get("destination", "N/A")
+        row_click = f"onclick=\"showPopup('{flight_number}', '{eta_time}')\""
+
+        stand = flight.get("stand", "N/A")
+        gate = flight.get("gate", "N/A")
             
-            # Format scheduled time (STD)
-            sched_time = flight.get("sched_time", "N/A")
-            formatted_sched_time, sched_date = format_time(sched_time)
-
-            # Use STD for Check-in Information and ETD for Gate Information if available
-            gate_sched_time = etd_time if etd_time else sched_time
-
-            # Calculate times for check-in and gate events
-            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
-
-            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flight_number}')\""
-
-            stand = flight.get("stand", "N/A")
-            gate = flight.get("gate", "N/A")
-            
-            # Insert yellow line when the day changes
-            if previous_date and sched_date != previous_date:
-                html_output += f"""
-                <tr id="next-day">
-                    <td colspan="7">Next Day Flights</td>
-                </tr>
-                """
-            
+        # Insert yellow line when the day changes
+        if previous_date and sched_date != previous_date:
             html_output += f"""
-                <tr {row_click}>
-                    <td>{flight_number}</td>
-                    <td>{destination_name}</td>
-                    <td>{formatted_sched_time}</td>
-                    <td>{formatted_etd_time}</td>
-                    <td>{status}</td>
-                    <td>{stand}</td>
-                    <td>{gate}</td>
-                </tr>
+            <tr id="next-day">
+                <td colspan="7">Next Day Flights</td>
+            </tr>
             """
 
-            previous_date = sched_date  # Update the previous_date for next iteration
+        html_output += f"""
+            <tr {row_click}>
+                <td>{flight_number}</td>
+                <td>{destination}</td>
+                <td>{formatted_sched_time}</td>
+                <td>{formatted_etd_time}</td>
+                <td>{status}</td>
+                <td>{stand}</td>
+                <td>{gate}</td>
+            </tr>
+        """
 
     html_output += """
         </table>
