@@ -50,7 +50,6 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
@@ -105,7 +104,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
         elif flight_number.startswith("DL"):
             # DL flights
-            checkin_opens_time = (sched_dt - timedelta(hours=3, minutes=15)).strftime("%H:%M")
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
             go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
@@ -190,32 +189,13 @@ if response.status_code == 200:
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                const currentTime = new Date().getTime();
-                
-                const goToGateTime = new Date();
-                goToGateTime.setHours(...goToGate.split(':'));
-
-                const boardingTime = new Date();
-                boardingTime.setHours(...boarding.split(':'));
-
-                const finalCallTime = new Date();
-                finalCallTime.setHours(...finalCall.split(':'));
-
-                const nameCallTime = new Date();
-                nameCallTime.setHours(...nameCall.split(':'));
-
-                const gateClosedTime = new Date();
-                gateClosedTime.setHours(...gateClosed.split(':'));
-
-                const addGreenCircle = (eventTime) => currentTime >= eventTime.getTime() ? ' &#x1F7E2;' : ''; // Green circle
-
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate + addGreenCircle(goToGateTime);
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding + addGreenCircle(boardingTime);
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall + addGreenCircle(finalCallTime);
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall + addGreenCircle(nameCallTime);
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed + addGreenCircle(gateClosedTime);
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
             }}
@@ -223,6 +203,23 @@ if response.status_code == 200:
             function closePopup() {{
                 document.getElementById("popup").style.display = "none";
             }}
+
+            function updateCircles() {{
+                const currentTime = new Date().getTime();
+
+                document.querySelectorAll('.time-info').forEach((element) => {{
+                    const eventTime = new Date();
+                    eventTime.setHours(...element.getAttribute('data-time').split(':'));
+                    const circle = ' &#x1F7E2;';
+                    if (currentTime >= eventTime.getTime()) {{
+                        element.innerHTML += circle;
+                    }}
+                }});
+            }}
+
+            // Call updateCircles every 60 seconds
+            setInterval(updateCircles, 60000);
+
         </script>
     </head>
     <body>
@@ -311,11 +308,11 @@ if response.status_code == 200:
                 <div>
                     <h3>Gate Information</h3>
                     <p id="flight-info">Flight:</p>
-                    <p id="go-to-gate">Go to Gate:</p>
-                    <p id="boarding">Boarding:</p>
-                    <p id="final-call">Final Call:</p>
-                    <p id="name-call">Name Call:</p>
-                    <p id="gate-closed">Gate Closed:</p>
+                    <p id="go-to-gate" class="time-info" data-time="{go_to_gate}">Go to Gate:</p>
+                    <p id="boarding" class="time-info" data-time="{boarding}">Boarding:</p>
+                    <p id="final-call" class="time-info" data-time="{final_call}">Final Call:</p>
+                    <p id="name-call" class="time-info" data-time="{name_call}">Name Call:</p>
+                    <p id="gate-closed" class="time-info" data-time="{gate_closed}">Gate Closed:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
