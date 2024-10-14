@@ -23,28 +23,8 @@ messaging.onBackgroundMessage(function(payload) {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/firebase-logo.png' // You can customize this to your own icon
+        icon: '/firebase-logo.png'
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
-});
-
-// Test notification after 1 minute of subscribing
-self.addEventListener('push', function(event) {
-    // Trigger a test push notification 1 minute after the push event
-    event.waitUntil(
-        new Promise((resolve) => {
-            setTimeout(() => {
-                const testNotificationTitle = "Test Notification";
-                const testNotificationOptions = {
-                    body: "This is a test notification after 1 minute!",
-                    icon: '/firebase-logo.png' // You can change this to your preferred icon
-                };
-
-                // Show the test notification
-                self.registration.showNotification(testNotificationTitle, testNotificationOptions);
-                resolve();
-            }, 60000); // 1 minute delay (60000 milliseconds)
-        })
-    );
 });
