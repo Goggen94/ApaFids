@@ -50,18 +50,19 @@
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
                 const currentTime = new Date().getTime();
+                
                 const goToGateTime = new Date();
                 goToGateTime.setHours(...goToGate.split(':'));
-                
+
                 const boardingTime = new Date();
                 boardingTime.setHours(...boarding.split(':'));
-                
+
                 const finalCallTime = new Date();
                 finalCallTime.setHours(...finalCall.split(':'));
-                
+
                 const nameCallTime = new Date();
                 nameCallTime.setHours(...nameCall.split(':'));
-                
+
                 const gateClosedTime = new Date();
                 gateClosedTime.setHours(...gateClosed.split(':'));
 
@@ -88,7 +89,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 18:21</div>
+        <div id="last-updated">Last updated: 18:25</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -100,7 +101,7 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('HV6888', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('HV6888', '', '17:50', '18:00', '18:05', '18:15', '15:50', '17:40', '#')">
                     <td>HV6888</td>
                     <td>Amsterdam</td>
                     <td>18:20</td>
@@ -144,7 +145,7 @@
                     <td colspan="7">Next Day Flights</td>
                 </tr>
                 
-                <tr onclick="showPopup('TO4447', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('TO4447', '', '00:05', '00:15', '00:20', '00:30', '22:15', '00:05', '#')">
                     <td>TO4447</td>
                     <td>Paris Orly</td>
                     <td>00:45</td>
@@ -214,7 +215,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:50', '07:50', '#')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
@@ -224,7 +225,7 @@
                     <td>D31</td>
                 </tr>
             
-                <tr onclick="showPopup('NO2902', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('NO2902', '', '08:20', '08:30', '08:35', '08:45', '06:30', '08:20', '#')">
                     <td>NO2902</td>
                     <td>Alicante</td>
                     <td>09:00</td>
@@ -244,7 +245,7 @@
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('EJU4896', '08:05', '08:20', '08:35', '', '08:50', '06:35', '08:25', '#')">
+                <tr onclick="showPopup('EJU4896', '08:05', '08:20', '08:35', '', '08:50', '06:35', '08:25', 'https://www.flightradar24.com/U24895')">
                     <td>EJU4896</td>
                     <td>Paris Orly</td>
                     <td>09:05</td>
@@ -274,7 +275,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '', '', '', '', '', '', '', '#')">
+                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', '#')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
@@ -364,7 +365,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('EJU3970', '16:55', '17:10', '17:25', '', '17:40', '15:25', '17:15', '#')">
+                <tr onclick="showPopup('EJU3970', '16:55', '17:10', '17:25', '', '17:40', '15:25', '17:15', 'https://www.flightradar24.com/U23969')">
                     <td>EJU3970</td>
                     <td>Milan</td>
                     <td>17:55</td>
