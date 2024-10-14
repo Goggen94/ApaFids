@@ -29,18 +29,19 @@ messaging.onBackgroundMessage(function(payload) {
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Test notification after 1 minute of activating the notification
+// Test notification after 1 minute of subscribing
 self.addEventListener('push', function(event) {
-    // Trigger a push event 1 minute later for testing purposes
+    // Trigger a test push notification 1 minute after the push event
     event.waitUntil(
         new Promise((resolve) => {
             setTimeout(() => {
                 const testNotificationTitle = "Test Notification";
                 const testNotificationOptions = {
                     body: "This is a test notification after 1 minute!",
-                    icon: '/firebase-logo.png'
+                    icon: '/firebase-logo.png' // You can change this to your preferred icon
                 };
 
+                // Show the test notification
                 self.registration.showNotification(testNotificationTitle, testNotificationOptions);
                 resolve();
             }, 60000); // 1 minute delay (60000 milliseconds)
