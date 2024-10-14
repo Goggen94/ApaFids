@@ -104,7 +104,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
         elif flight_number.startswith("DL"):
             # DL flights
-            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_opens_time = (sched_dt - timedelta(hours=3, minutes=15)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
             go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
