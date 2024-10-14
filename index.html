@@ -49,32 +49,13 @@
         </style>
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
-                const currentTime = new Date().getTime();
-                
-                const goToGateTime = new Date();
-                goToGateTime.setHours(...goToGate.split(':'));
-
-                const boardingTime = new Date();
-                boardingTime.setHours(...boarding.split(':'));
-
-                const finalCallTime = new Date();
-                finalCallTime.setHours(...finalCall.split(':'));
-
-                const nameCallTime = new Date();
-                nameCallTime.setHours(...nameCall.split(':'));
-
-                const gateClosedTime = new Date();
-                gateClosedTime.setHours(...gateClosed.split(':'));
-
-                const addGreenCircle = (eventTime) => currentTime >= eventTime.getTime() ? ' &#x1F7E2;' : ''; // Green circle
-
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate + addGreenCircle(goToGateTime);
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding + addGreenCircle(boardingTime);
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall + addGreenCircle(finalCallTime);
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall + addGreenCircle(nameCallTime);
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed + addGreenCircle(gateClosedTime);
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
             }
@@ -82,6 +63,23 @@
             function closePopup() {
                 document.getElementById("popup").style.display = "none";
             }
+
+            function updateCircles() {
+                const currentTime = new Date().getTime();
+
+                document.querySelectorAll('.time-info').forEach((element) => {
+                    const eventTime = new Date();
+                    eventTime.setHours(...element.getAttribute('data-time').split(':'));
+                    const circle = ' &#x1F7E2;';
+                    if (currentTime >= eventTime.getTime()) {
+                        element.innerHTML += circle;
+                    }
+                });
+            }
+
+            // Call updateCircles every 60 seconds
+            setInterval(updateCircles, 60000);
+
         </script>
     </head>
     <body>
@@ -89,7 +87,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 18:56</div>
+        <div id="last-updated">Last updated: 19:08</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -101,7 +99,7 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('W61168', '18:13', '18:33', '18:43', '18:48', '18:58', '16:35', '18:25', 'https://www.flightradar24.com/W61167')">
+                <tr onclick="showPopup('W61168', '', '18:33', '18:43', '18:48', '18:58', '16:35', '18:25', 'https://www.flightradar24.com/W61167')">
                     <td>W61168</td>
                     <td>Katowice</td>
                     <td>19:05</td>
@@ -111,7 +109,7 @@
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('W46454', '18:20', '18:40', '18:50', '18:55', '19:05', '16:45', '18:35', 'https://www.flightradar24.com/W46453')">
+                <tr onclick="showPopup('W46454', '', '18:40', '18:50', '18:55', '19:05', '16:45', '18:35', 'https://www.flightradar24.com/W46453')">
                     <td>W46454</td>
                     <td>Milan</td>
                     <td>19:15</td>
@@ -121,7 +119,7 @@
                     <td>C32</td>
                 </tr>
             
-                <tr onclick="showPopup('W62428', '22:00', '22:20', '22:30', '22:35', '22:45', '20:30', '22:20', 'https://www.flightradar24.com/W62427')">
+                <tr onclick="showPopup('W62428', '', '22:20', '22:30', '22:35', '22:45', '20:30', '22:20', 'https://www.flightradar24.com/W62427')">
                     <td>W62428</td>
                     <td>Budapest</td>
                     <td>23:00</td>
@@ -205,7 +203,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:35', '07:50', '#')">
+                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:50', '07:50', '#')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
@@ -265,7 +263,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:10', '10:25', '#')">
+                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', '#')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
@@ -275,7 +273,7 @@
                     <td>D34</td>
                 </tr>
             
-                <tr onclick="showPopup('W46098', '11:00', '11:20', '11:30', '11:35', '11:45', '09:30', '11:20', 'https://www.flightradar24.com/W46097')">
+                <tr onclick="showPopup('W46098', '', '11:20', '11:30', '11:35', '11:45', '09:30', '11:20', 'https://www.flightradar24.com/W46097')">
                     <td>W46098</td>
                     <td>Rome</td>
                     <td>12:00</td>
@@ -377,11 +375,11 @@
                 <div>
                     <h3>Gate Information</h3>
                     <p id="flight-info">Flight:</p>
-                    <p id="go-to-gate">Go to Gate:</p>
-                    <p id="boarding">Boarding:</p>
-                    <p id="final-call">Final Call:</p>
-                    <p id="name-call">Name Call:</p>
-                    <p id="gate-closed">Gate Closed:</p>
+                    <p id="go-to-gate" class="time-info" data-time="{go_to_gate}">Go to Gate:</p>
+                    <p id="boarding" class="time-info" data-time="{boarding}">Boarding:</p>
+                    <p id="final-call" class="time-info" data-time="{final_call}">Final Call:</p>
+                    <p id="name-call" class="time-info" data-time="{name_call}">Name Call:</p>
+                    <p id="gate-closed" class="time-info" data-time="{gate_closed}">Gate Closed:</p>
                 </div>
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
