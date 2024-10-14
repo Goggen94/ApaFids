@@ -21,6 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r scraper/requirements.txt
+        pip install firebase-admin  # Install Firebase Admin SDK
 
     - name: Run scraper
       run: python scraper/scrape_flight.py
@@ -42,3 +43,4 @@ jobs:
     - name: Deploy Firebase Files
       run: |
         cp firebase-messaging-sw.js scraper/output/firebase-messaging-sw.js
+
