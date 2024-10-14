@@ -4,106 +4,6 @@
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging.js"></script>
-        <script>
-            const firebaseConfig = {
-                apiKey: "AIzaSyDebqZBQtfPbR6Nx84HnfN6qLX7LrLMWJY",
-                authDomain: "paxbot-2b8b2.firebaseapp.com",
-                projectId: "paxbot-2b8b2",
-                storageBucket: "paxbot-2b8b2.appspot.com",
-                messagingSenderId: "315115333501",
-                appId: "1:315115333501:web:f9503954d0b067fb2ece14",
-                measurementId: "G-S0Y63P27KG"
-            };
-            
-            // Initialize Firebase
-            const app = firebase.initializeApp(firebaseConfig);
-            const messaging = firebase.messaging();
-
-            let currentETA = null;  // Store the current ETA globally
-            let notify15minTimeout = null;  // Store the timeout ID for 15 min notification
-            let notify5minTimeout = null;   // Store the timeout ID for 5 min notification
-
-            messaging.requestPermission().then(() => {
-                console.log('Notification permission granted.');
-                return messaging.getToken({ vapidKey: 'None' });
-            }).then((token) => {
-                console.log('Token:', token);
-            }).catch((err) => {
-                console.error('Error getting permission', err);
-            });
-
-            messaging.onMessage((payload) => {
-                console.log('Message received', payload);
-                alert('Flight Notification: ' + payload.notification.body);
-            });
-
-            function notifyUser(flight) {
-                alert("You will be notified 15 minutes before and 5 minutes before flight " + flight + " lands!");
-            }
-
-            function showPopup(flight, eta) {
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = 'Flight: ' + flight;
-                
-                currentETA = new Date(eta);  // Set current ETA
-                scheduleNotification(flight, currentETA);
-                
-                // Periodically check for ETA updates every 1 minute
-                setInterval(function() {
-                    checkForUpdatedETA(flight);
-                }, 60000);  // Every 60 seconds
-            }
-
-            function scheduleNotification(flight, eta) {
-                const currentTime = new Date();
-                const notify15minBefore = new Date(eta.getTime() - 15 * 60000);  // 15 minutes before
-                const notify5minBefore = new Date(eta.getTime() - 5 * 60000);    // 5 minutes before
-
-                const timeTo15min = notify15minBefore.getTime() - currentTime.getTime();
-                const timeTo5min = notify5minBefore.getTime() - currentTime.getTime();
-
-                // Clear any existing notifications
-                if (notify15minTimeout) clearTimeout(notify15minTimeout);
-                if (notify5minTimeout) clearTimeout(notify5minTimeout);
-
-                // Schedule new notifications based on the updated ETA
-                if (timeTo15min > 0) {
-                    notify15minTimeout = setTimeout(function() {
-                        alert("Flight " + flight + " will land in 15 minutes!");
-                    }, timeTo15min);
-                }
-
-                if (timeTo5min > 0) {
-                    notify5minTimeout = setTimeout(function() {
-                        alert("Flight " + flight + " will land in 5 minutes!");
-                    }, timeTo5min);
-                }
-            }
-
-            // Check for updated ETA and reschedule notifications if it changes
-            function checkForUpdatedETA(flight) {
-                fetch("/api/flights/" + flight)  // You need to replace this with your actual API endpoint
-                    .then(response => response.json())
-                    .then(data => {
-                        const updatedETA = new Date(data.eta);  // Assume data.eta contains the updated ETA
-                        if (updatedETA.getTime() !== currentETA.getTime()) {
-                            // ETA has changed, reschedule notifications
-                            currentETA = updatedETA;  // Update the global ETA
-                            scheduleNotification(flight, updatedETA);  // Reschedule notifications
-                            console.log("ETA updated for flight " + flight + ": " + updatedETA);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error fetching updated ETA:", error);
-                    });
-            }
-
-            function closePopup() {
-                document.getElementById("popup").style.display = "none";
-            }
-        </script>
         <style>
             body { background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }
             h2 { text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }
@@ -147,13 +47,30 @@
                 #departures-btn { margin-top: 15px; }
             }
         </style>
+        <script>
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            }
+
+            function closePopup() {
+                document.getElementById("popup").style.display = "none";
+            }
+        </script>
     </head>
     <body>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 12:57</div>
+        <div id="last-updated">Last updated: 14:31</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -165,57 +82,47 @@
                 <th>Gate</th>
             </tr>
     
-                <tr onclick="showPopup('OG590', '')">
-                    <td>OG590</td>
-                    <td>Athens Eleftherios</td>
-                    <td>07:00</td>
-                    <td>14:15</td>
-                    <td>DYNAMIC MESSAGING</td>
-                    <td>8</td>
-                    <td>C35</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG504', '')">
+                <tr onclick="showPopup('OG504', '', '14:10', '14:20', '14:25', '14:35', '11:50', '13:50', 'https://www.flightradar24.com/TFPPE')">
                     <td>OG504</td>
                     <td>Warsaw</td>
                     <td>14:50</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>3</td>
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('OG694', '')">
+                <tr onclick="showPopup('OG694', '', '14:10', '14:20', '14:25', '14:35', '11:50', '13:50', 'https://www.flightradar24.com/TFPPF')">
                     <td>OG694</td>
                     <td>Lisbon</td>
                     <td>14:50</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>7</td>
                     <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('OG101', '')">
+                <tr onclick="showPopup('OG101', '', '14:25', '14:35', '14:40', '14:50', '12:05', '14:05', 'https://www.flightradar24.com/TFPPB')">
                     <td>OG101</td>
                     <td>Baltimore Washington</td>
                     <td>15:05</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>12</td>
                     <td>D34</td>
                 </tr>
             
-                <tr onclick="showPopup('OG614', '')">
+                <tr onclick="showPopup('OG614', '', '14:40', '14:50', '14:55', '15:05', '12:20', '14:20', 'https://www.flightradar24.com/TFPLC')">
                     <td>OG614</td>
                     <td>Barcelona</td>
                     <td>15:20</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>9</td>
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG7201', '')">
+                <tr onclick="showPopup('OG7201', '', '14:50', '15:00', '15:05', '15:15', '12:30', '14:30', 'https://www.flightradar24.com/TFPPC')">
                     <td>OG7201</td>
                     <td>Toronto Hamilton</td>
                     <td>15:30</td>
@@ -225,7 +132,7 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG121', '')">
+                <tr onclick="showPopup('OG121', '', '15:20', '15:30', '15:35', '15:45', '13:00', '15:00', 'https://www.flightradar24.com/TFPLA')">
                     <td>OG121</td>
                     <td>New York Stewart</td>
                     <td>16:00</td>
@@ -235,7 +142,7 @@
                     <td>D22B</td>
                 </tr>
             
-                <tr onclick="showPopup('ED6809', '')">
+                <tr onclick="showPopup('ED6809', '', '', '', '', '', '', '', 'https://www.flightradar24.com/ED6808')">
                     <td>ED6809</td>
                     <td>Billund</td>
                     <td>16:15</td>
@@ -245,7 +152,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('D03999', '')">
+                <tr onclick="showPopup('D03999', '', '', '', '', '', '', '', 'https://www.flightradar24.com/D03998')">
                     <td>D03999</td>
                     <td>East Midlands</td>
                     <td>17:10</td>
@@ -255,17 +162,17 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('HV6888', '')">
+                <tr onclick="showPopup('HV6888', '', '17:40', '17:50', '17:55', '18:05', '15:50', '17:40', 'https://www.flightradar24.com/HV6887')">
                     <td>HV6888</td>
                     <td>Amsterdam</td>
                     <td>18:20</td>
                     <td></td>
                     <td></td>
-                    <td>9</td>
-                    <td>C23</td>
+                    <td>3</td>
+                    <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('W61168', '')">
+                <tr onclick="showPopup('W61168', '', '18:25', '18:35', '18:40', '18:50', '16:35', '18:25', 'https://www.flightradar24.com/W61167')">
                     <td>W61168</td>
                     <td>Katowice</td>
                     <td>19:05</td>
@@ -275,17 +182,17 @@
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('W46454', '')">
+                <tr onclick="showPopup('W46454', '', '18:35', '18:45', '18:50', '19:00', '16:45', '18:35', 'https://www.flightradar24.com/W46453')">
                     <td>W46454</td>
                     <td>Milan</td>
                     <td>19:15</td>
                     <td></td>
                     <td></td>
-                    <td>9</td>
-                    <td>C23</td>
+                    <td>14</td>
+                    <td>C32</td>
                 </tr>
             
-                <tr onclick="showPopup('W62428', '')">
+                <tr onclick="showPopup('W62428', '', '22:20', '22:30', '22:35', '22:45', '20:30', '22:20', 'https://www.flightradar24.com/W62427')">
                     <td>W62428</td>
                     <td>Budapest</td>
                     <td>23:00</td>
@@ -299,7 +206,7 @@
                     <td colspan="7">Next Day Flights</td>
                 </tr>
                 
-                <tr onclick="showPopup('TO4447', '')">
+                <tr onclick="showPopup('TO4447', '', '00:05', '00:15', '00:20', '00:30', '22:15', '00:05', 'https://www.flightradar24.com/TO4446')">
                     <td>TO4447</td>
                     <td>Paris Orly</td>
                     <td>00:45</td>
@@ -309,87 +216,87 @@
                     <td>A15</td>
                 </tr>
             
-                <tr onclick="showPopup('OG400', '')">
+                <tr onclick="showPopup('OG400', '', '05:20', '05:30', '05:35', '05:45', '03:00', '05:00', 'https://www.flightradar24.com/TFPPE')">
                     <td>OG400</td>
                     <td>Paris CDG</td>
                     <td>06:00</td>
-                    <td></td>
-                    <td></td>
-                    <td>7</td>
-                    <td>C22</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG730', '')">
-                    <td>OG730</td>
-                    <td>Dusseldorf</td>
-                    <td>06:05</td>
-                    <td></td>
-                    <td></td>
-                    <td>70</td>
-                    <td>C33</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG460', '')">
-                    <td>OG460</td>
-                    <td>Amsterdam</td>
-                    <td>06:10</td>
-                    <td></td>
-                    <td></td>
-                    <td>5</td>
-                    <td>A15</td>
-                </tr>
-            
-                <tr onclick="showPopup('OG740', '')">
-                    <td>OG740</td>
-                    <td>Hamburg</td>
-                    <td>06:20</td>
                     <td></td>
                     <td></td>
                     <td>9</td>
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('OG900', '')">
+                <tr onclick="showPopup('OG730', '', '05:25', '05:35', '05:40', '05:50', '03:05', '05:05', 'https://www.flightradar24.com/TFPPA')">
+                    <td>OG730</td>
+                    <td>Dusseldorf</td>
+                    <td>06:05</td>
+                    <td></td>
+                    <td></td>
+                    <td>70</td>
+                    <td>C34</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG460', '', '05:30', '05:40', '05:45', '05:55', '03:10', '05:10', 'https://www.flightradar24.com/TFPLC')">
+                    <td>OG460</td>
+                    <td>Amsterdam</td>
+                    <td>06:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>11</td>
+                    <td>C21</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG740', '', '05:40', '05:50', '05:55', '06:05', '03:20', '05:20', 'https://www.flightradar24.com/TFPPC')">
+                    <td>OG740</td>
+                    <td>Hamburg</td>
+                    <td>06:20</td>
+                    <td></td>
+                    <td></td>
+                    <td>8</td>
+                    <td>C35</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG900', '', '05:45', '05:55', '06:00', '06:10', '03:25', '05:25', 'https://www.flightradar24.com/TFPPF')">
                     <td>OG900</td>
                     <td>Copenhagen</td>
                     <td>06:25</td>
                     <td></td>
                     <td></td>
-                    <td>3</td>
-                    <td>A13</td>
+                    <td>7</td>
+                    <td>C22</td>
                 </tr>
             
-                <tr onclick="showPopup('OG800', '')">
+                <tr onclick="showPopup('OG800', '', '06:00', '06:10', '06:15', '06:25', '03:40', '05:40', 'https://www.flightradar24.com/TFPPB')">
                     <td>OG800</td>
                     <td>London Stansted</td>
                     <td>06:40</td>
                     <td></td>
                     <td></td>
-                    <td>8</td>
-                    <td>D33</td>
+                    <td>5</td>
+                    <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '')">
+                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:50', '07:50', 'https://www.flightradar24.com/DL236')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
                     <td></td>
                     <td></td>
-                    <td>70</td>
-                    <td>D22B</td>
+                    <td>72</td>
+                    <td>D31</td>
                 </tr>
             
-                <tr onclick="showPopup('NO2902', '')">
+                <tr onclick="showPopup('NO2902', '', '08:20', '08:30', '08:35', '08:45', '06:30', '08:20', 'https://www.flightradar24.com/NO2901')">
                     <td>NO2902</td>
                     <td>Alicante</td>
                     <td>09:00</td>
                     <td></td>
                     <td></td>
-                    <td>42</td>
-                    <td>C28</td>
+                    <td>54</td>
+                    <td>C27</td>
                 </tr>
             
-                <tr onclick="showPopup('OG450', '')">
+                <tr onclick="showPopup('OG450', '', '08:20', '08:30', '08:35', '08:45', '06:00', '08:00', 'https://www.flightradar24.com/TFPLA')">
                     <td>OG450</td>
                     <td>Madeira</td>
                     <td>09:00</td>
@@ -399,7 +306,7 @@
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('EJU4896', '')">
+                <tr onclick="showPopup('EJU4896', '08:05', '08:20', '08:35', '', '08:50', '06:35', '08:25', '#')">
                     <td>EJU4896</td>
                     <td>Paris Orly</td>
                     <td>09:05</td>
@@ -409,17 +316,17 @@
                     <td>C35</td>
                 </tr>
             
-                <tr onclick="showPopup('OG620', '')">
+                <tr onclick="showPopup('OG620', '', '09:20', '09:30', '09:35', '09:45', '07:00', '09:00', 'https://www.flightradar24.com/TFAEW')">
                     <td>OG620</td>
                     <td>Tenerife South</td>
                     <td>10:00</td>
                     <td></td>
                     <td></td>
-                    <td>59</td>
+                    <td>58</td>
                     <td>C29</td>
                 </tr>
             
-                <tr onclick="showPopup('BA801', '')">
+                <tr onclick="showPopup('BA801', '', '', '', '', '', '', '', 'https://www.flightradar24.com/BA800')">
                     <td>BA801</td>
                     <td>London Heathrow</td>
                     <td>10:10</td>
@@ -429,17 +336,17 @@
                     <td>D15</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '')">
+                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:25', '10:25', 'https://www.flightradar24.com/DL246')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
                     <td></td>
                     <td></td>
-                    <td>70</td>
+                    <td>72</td>
                     <td>D31</td>
                 </tr>
             
-                <tr onclick="showPopup('W46098', '')">
+                <tr onclick="showPopup('W46098', '', '11:20', '11:30', '11:35', '11:45', '09:30', '11:20', 'https://www.flightradar24.com/W46097')">
                     <td>W46098</td>
                     <td>Rome</td>
                     <td>12:00</td>
@@ -468,31 +375,8 @@
                     <p id="gate-closed">Gate Closed:</p>
                 </div>
             </div>
-            <button onclick="notifyUser(document.getElementById('flight-info').textContent)">Notify me</button>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
-
-        <script>
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = 'Flight: ' + flight;
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-            }}
-
-            function closePopup() {{
-                document.getElementById("popup").style.display = "none";
-            }}
-
-            function notifyUser(flight) {{
-                alert("You will be notified 15 minutes before and 5 minutes before flight " + flight + " lands!");
-            }}
-        </script>
     </body>
     </html>
     
