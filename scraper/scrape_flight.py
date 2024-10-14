@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 
 # Function to get the current time and the time 24 hours ahead
 def get_time_range():
-    now = datetime.utcnow()
-    date_from = now.strftime('%Y-%m-%dT%H:%M:%SZ')  # Current time in UTC
-    date_to = (now + timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M:%SZ')  # 24 hours ahead
+    now = datetime.utcnow()  # Get the current UTC time
+    date_from = now.strftime("%Y-%m-%dT%H:%M:%SZ")  # Format start time as "YYYY-MM-DDTHH:MM:SSZ"
+    date_to = (now + timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")  # 24 hours ahead
     return date_from, date_to
 
 # Generate the time range for the API query
@@ -94,7 +94,14 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
 
 # Create a Flightradar24 URL using aircraft_reg for OG flights, and flight number -1 for W4, W6, W9 flights
 def generate_flightradar_link(flight_number, aircraft_reg):
-    return "#"  # Return a placeholder link if there's an error
+    try:
+        if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
+            return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
+        else:
+            flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
+            return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
+    except:
+        return "#"  # Return a placeholder link if there's an error
 
 # Check if the request was successful
 if response.status_code == 200:
@@ -217,11 +224,47 @@ if response.status_code == 200:
             td {{ font-size: 14px; }}
             tr:nth-child(even) {{ background-color: #2c2c2c; }}
             tr:hover {{ background-color: #444444; }}
-            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }}
+            #next-day {{ background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }}
+            #popup {{ display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }}
+            #popup h3 {{ color: #f4d03f; font-size: 16px; margin-bottom: 5px; }}
+            #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }}
+            .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
+            .info-container div {{ width: 48%; }}
+            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
+            #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
+            a {{ color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            #departures-btn {{
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }}
+            #last-updated {{
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }}
+            @media only screen and (max-width: 600px) {{
+                #popup {{ width: 75%;  /* Adjusted for mobile */ padding: 8px; }}
+                .info-container {{ flex-direction: row; }}
+                .info-container div {{ width: 48%; }}
+                #departures-btn {{ margin-top: 15px; }}
+            }}
         </style>
     </head>
     <body>
-        <h2>KEF Airport Departures</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
+        </div>
+        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -235,40 +278,59 @@ if response.status_code == 200:
     """
 
     for flight in data:
+        destination = flight.get("destination_iata", "")
+        handling_agent = flight.get("handling_agent", "")
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
-        destination = flight.get("destination", "N/A")
-        sched_time = flight.get("sched_time", "N/A")
+        status = flight.get("status", "N/A")
         etd_time = flight.get("expected_time", "")
-        eta_time = flight.get("eta", "")  # Extract the ETA time
+        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
+        eta_time = flight.get("eta", "")  # Get ETA for the flight
 
-        formatted_sched_time, _ = format_time(sched_time)
-        formatted_etd_time, _ = format_time(etd_time)
-        formatted_eta_time, _ = format_time(eta_time)  # Format ETA for display
+        formatted_etd_time, _ = format_time(etd_time) if etd_time != "" else ("", None)
 
-        row_click = f"onclick=\"showPopup('{flight_number}', '{eta_time}')\""
-
-        stand = flight.get("stand", "N/A")
-        gate = flight.get("gate", "N/A")
+        # Filter flights handled by APA and departing from KEF
+        if destination != "KEF" and handling_agent == "APA":
+            destination_name = flight.get("destination", "N/A")
             
-        # Insert yellow line when the day changes
-        if previous_date and sched_time != previous_date:
+            # Format scheduled time (STD)
+            sched_time = flight.get("sched_time", "N/A")
+            formatted_sched_time, sched_date = format_time(sched_time)
+
+            # Use STD for Check-in Information and ETD for Gate Information if available
+            gate_sched_time = etd_time if etd_time else sched_time
+
+            # Calculate times for check-in and gate events
+            go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
+
+            # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
+            flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
+
+            row_click = f"onclick=\"showPopup('{flight_number}', '{eta_time}')\""
+
+            stand = flight.get("stand", "N/A")
+            gate = flight.get("gate", "N/A")
+            
+            # Insert yellow line when the day changes
+            if previous_date and sched_date != previous_date:
+                html_output += f"""
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                """
+            
             html_output += f"""
-            <tr id="next-day">
-                <td colspan="7">Next Day Flights</td>
-            </tr>
+                <tr {row_click}>
+                    <td>{flight_number}</td>
+                    <td>{destination_name}</td>
+                    <td>{formatted_sched_time}</td>
+                    <td>{formatted_etd_time}</td>
+                    <td>{status}</td>
+                    <td>{stand}</td>
+                    <td>{gate}</td>
+                </tr>
             """
 
-        html_output += f"""
-            <tr {row_click}>
-                <td>{flight_number}</td>
-                <td>{destination}</td>
-                <td>{formatted_sched_time}</td>
-                <td>{formatted_etd_time}</td>
-                <td>{flight.get("status", "N/A")}</td>
-                <td>{stand}</td>
-                <td>{gate}</td>
-            </tr>
-        """
+            previous_date = sched_date  # Update the previous_date for next iteration
 
     html_output += """
         </table>
