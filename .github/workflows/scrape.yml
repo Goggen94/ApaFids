@@ -42,4 +42,3 @@ jobs:
     - name: Deploy Firebase Files
       run: |
         cp firebase-messaging-sw.js scraper/output/firebase-messaging-sw.js
-
