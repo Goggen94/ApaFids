@@ -86,6 +86,31 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith(("HV", "TO")):
+            # HV, TO flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("NO"):
+            # NO flights
+            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+        elif flight_number.startswith("DL"):
+            # DL flights
+            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
+            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
+            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
+            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
 
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
@@ -100,7 +125,7 @@ def generate_flightradar_link(flight_number, aircraft_reg):
             flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
         elif flight_number.startswith(("EZY", "EJU")):
-            flight_num = int(flight_number[2:]) - 1  # Bruk U2(flightnummer) - 1 for EZY og EJU
+            flight_num = int(flight_number[3:]) - 1  # Bruk U2(flightnummer) - 1 for EZY og EJU
             return f"https://www.flightradar24.com/U2{flight_num}"
         else:
             return "#"
@@ -165,18 +190,19 @@ if response.status_code == 200:
         <script>
             function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
                 const currentTime = new Date().getTime();
+                
                 const goToGateTime = new Date();
                 goToGateTime.setHours(...goToGate.split(':'));
-                
+
                 const boardingTime = new Date();
                 boardingTime.setHours(...boarding.split(':'));
-                
+
                 const finalCallTime = new Date();
                 finalCallTime.setHours(...finalCall.split(':'));
-                
+
                 const nameCallTime = new Date();
                 nameCallTime.setHours(...nameCall.split(':'));
-                
+
                 const gateClosedTime = new Date();
                 gateClosedTime.setHours(...gateClosed.split(':'));
 
