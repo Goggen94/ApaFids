@@ -28,3 +28,21 @@ messaging.onBackgroundMessage(function(payload) {
 
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// Test notification after 5 seconds of clicking the notify button
+self.addEventListener('push', function(event) {
+    event.waitUntil(
+        new Promise((resolve) => {
+            setTimeout(() => {
+                const testNotificationTitle = "Test Notification";
+                const testNotificationOptions = {
+                    body: "This is a test notification after 5 seconds!",
+                    icon: '/firebase-logo.png'
+                };
+
+                self.registration.showNotification(testNotificationTitle, testNotificationOptions);
+                resolve();
+            }, 5000); // 5-second delay
+        })
+    );
+});
