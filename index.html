@@ -113,11 +113,47 @@
             td { font-size: 14px; }
             tr:nth-child(even) { background-color: #2c2c2c; }
             tr:hover { background-color: #444444; }
-            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }
+            #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
+            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }
+            #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
+            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }
+            .info-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }
+            .info-container div { width: 48%; }
+            .info-container div h3, .info-container div p { margin: 0; padding: 0; }
+            #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
+            a { color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            #departures-btn {
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }
+            #last-updated {
+                text-align: right;
+                color: #f4d03f;
+                font-size: 14px;
+                padding-right: 20px;
+            }
+            @media only screen and (max-width: 600px) {
+                #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
+                .info-container { flex-direction: row; }
+                .info-container div { width: 48%; }
+                #departures-btn { margin-top: 15px; }
+            }
         </style>
     </head>
     <body>
-        <h2>KEF Airport Departures</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>KEF Airport Departures</h2>
+            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
+        </div>
+        <div id="last-updated">Last updated: 00:15</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -129,2066 +165,340 @@
                 <th>Gate</th>
             </tr>
     
-            <tr onclick="showPopup('W61539', '')">
-                <td>W61539</td>
-                <td>Keflavík</td>
-                <td>23:05</td>
-                <td>01:30</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('W61540', '')">
-                <td>W61540</td>
-                <td>Warsaw</td>
-                <td>23:45</td>
-                <td>02:10</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('OS328', '')">
-                <td>OS328</td>
-                <td>Vienna</td>
-                <td>00:10</td>
-                <td></td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5183', '')">
-                <td>NULGN5183</td>
-                <td>Paris Le Bourget</td>
-                <td>00:25</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('LH869', '')">
-                <td>LH869</td>
-                <td>Frankfurt</td>
-                <td>00:25</td>
-                <td></td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>14</td>
-                <td>C32</td>
-            </tr>
-        
-            <tr onclick="showPopup('ITP', '')">
-                <td>ITP</td>
-                <td>Paris Le Bourget</td>
-                <td>00:25</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('TO4447', '')">
-                <td>TO4447</td>
-                <td>Paris Orly</td>
-                <td>00:45</td>
-                <td>00:50</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG665', '')">
-                <td>OG665</td>
-                <td>Keflavík</td>
-                <td>00:55</td>
-                <td>00:32</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI751', '')">
-                <td>FI751</td>
-                <td>Keflavík</td>
-                <td>04:05</td>
-                <td>03:48</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>44</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('D03996', '')">
-                <td>D03996</td>
-                <td>Keflavík</td>
-                <td>04:25</td>
-                <td></td>
-                <td></td>
-                <td>61</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT430', '')">
-                <td>PVT430</td>
-                <td>Keflavík</td>
-                <td>04:30</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG202', '')">
-                <td>OG202</td>
-                <td>Keflavík</td>
-                <td>04:35</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG112', '')">
-                <td>OG112</td>
-                <td>Keflavík</td>
-                <td>04:45</td>
-                <td></td>
-                <td></td>
-                <td>46R</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG122', '')">
-                <td>OG122</td>
-                <td>Keflavík</td>
-                <td>04:50</td>
-                <td>04:22</td>
-                <td></td>
-                <td>12</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG142', '')">
-                <td>OG142</td>
-                <td>Keflavík</td>
-                <td>04:55</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG102', '')">
-                <td>OG102</td>
-                <td>Keflavík</td>
-                <td>04:55</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('VKA199', '')">
-                <td>VKA199</td>
-                <td>Liverpool</td>
-                <td>05:15</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG700', '')">
-                <td>OG700</td>
-                <td>Berlin Brandenburg</td>
-                <td>06:00</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG400', '')">
-                <td>OG400</td>
-                <td>Paris CDG</td>
-                <td>06:00</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>C32</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT600', '')">
-                <td>PVT600</td>
-                <td>Rome Ciampino</td>
-                <td>06:00</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI670', '')">
-                <td>FI670</td>
-                <td>Keflavík</td>
-                <td>06:00</td>
-                <td>06:16</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>55</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI696', '')">
-                <td>FI696</td>
-                <td>Keflavík</td>
-                <td>06:00</td>
-                <td>05:28</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>8</td>
-                <td>D35</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI688', '')">
-                <td>FI688</td>
-                <td>Keflavík</td>
-                <td>06:00</td>
-                <td>05:31</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>63</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT530', '')">
-                <td>PVT530</td>
-                <td>Liverpool</td>
-                <td>06:00</td>
-                <td></td>
-                <td></td>
-                <td>109</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI630', '')">
-                <td>FI630</td>
-                <td>Keflavík</td>
-                <td>06:05</td>
-                <td>05:47</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>11</td>
-                <td>D21</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG460', '')">
-                <td>OG460</td>
-                <td>Amsterdam</td>
-                <td>06:10</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG880', '')">
-                <td>OG880</td>
-                <td>Dublin</td>
-                <td>06:10</td>
-                <td></td>
-                <td></td>
-                <td>46R</td>
-                <td>D28</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG900', '')">
-                <td>OG900</td>
-                <td>Copenhagen</td>
-                <td>06:15</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>C23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI614', '')">
-                <td>FI614</td>
-                <td>Keflavík</td>
-                <td>06:15</td>
-                <td>06:16</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>12</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI680', '')">
-                <td>FI680</td>
-                <td>Keflavík</td>
-                <td>06:15</td>
-                <td>06:17</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI622', '')">
-                <td>FI622</td>
-                <td>Keflavík</td>
-                <td>06:15</td>
-                <td>06:01</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>40</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('DL236', '')">
-                <td>DL236</td>
-                <td>Keflavík</td>
-                <td>06:20</td>
-                <td></td>
-                <td></td>
-                <td>73</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI602', '')">
-                <td>FI602</td>
-                <td>Keflavík</td>
-                <td>06:20</td>
-                <td>06:36</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>3</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI642', '')">
-                <td>FI642</td>
-                <td>Keflavík</td>
-                <td>06:25</td>
-                <td>06:04</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>44</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI644', '')">
-                <td>FI644</td>
-                <td>Keflavík</td>
-                <td>06:25</td>
-                <td>06:14</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>75L</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG810', '')">
-                <td>OG810</td>
-                <td>Liverpool</td>
-                <td>06:35</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI830', '')">
-                <td>FI830</td>
-                <td>Keflavík</td>
-                <td>06:35</td>
-                <td>06:08</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>65</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI852', '')">
-                <td>FI852</td>
-                <td>Keflavík</td>
-                <td>06:35</td>
-                <td>06:58</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>5</td>
-                <td>D15</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI656', '')">
-                <td>FI656</td>
-                <td>Keflavík</td>
-                <td>06:35</td>
-                <td>06:41</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG800', '')">
-                <td>OG800</td>
-                <td>London Stansted</td>
-                <td>06:40</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>D15</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI820', '')">
-                <td>FI820</td>
-                <td>Keflavík</td>
-                <td>06:40</td>
-                <td>06:36</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT656', '')">
-                <td>PVT656</td>
-                <td>Keflavík</td>
-                <td>06:56</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG590', '')">
-                <td>OG590</td>
-                <td>Athens Eleftherios</td>
-                <td>07:00</td>
-                <td>14:15</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>46L</td>
-                <td>C24</td>
-            </tr>
-        
-            <tr onclick="showPopup('UA138', '')">
-                <td>UA138</td>
-                <td>Keflavík</td>
-                <td>07:00</td>
-                <td></td>
-                <td></td>
-                <td>42</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI506', '')">
-                <td>FI506</td>
-                <td>Amsterdam</td>
-                <td>07:20</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI532', '')">
-                <td>FI532</td>
-                <td>Munich</td>
-                <td>07:20</td>
-                <td>07:20</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>76</td>
-                <td>C28</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI536', '')">
-                <td>FI536</td>
-                <td>Prague</td>
-                <td>07:20</td>
-                <td></td>
-                <td></td>
-                <td>74</td>
-                <td>C26</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI520', '')">
-                <td>FI520</td>
-                <td>Frankfurt</td>
-                <td>07:20</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI568', '')">
-                <td>FI568</td>
-                <td>Zurich</td>
-                <td>07:20</td>
-                <td>07:20</td>
-                <td></td>
-                <td>77R</td>
-                <td>C33</td>
-            </tr>
-        
-            <tr onclick="showPopup('ED6810', '')">
-                <td>ED6810</td>
-                <td>Keflavík</td>
-                <td>07:20</td>
-                <td></td>
-                <td></td>
-                <td>59</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI416', '')">
-                <td>FI416</td>
-                <td>Dublin</td>
-                <td>07:30</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI342', '')">
-                <td>FI342</td>
-                <td>Helsinki</td>
-                <td>07:30</td>
-                <td></td>
-                <td></td>
-                <td>75R</td>
-                <td>C27</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI554', '')">
-                <td>FI554</td>
-                <td>Brussels</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI528', '')">
-                <td>FI528</td>
-                <td>Berlin Brandenburg</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI470', '')">
-                <td>FI470</td>
-                <td>London Gatwick</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>65</td>
-                <td>D22B</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI542', '')">
-                <td>FI542</td>
-                <td>Paris CDG</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI306', '')">
-                <td>FI306</td>
-                <td>Stockholm Arlanda</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>79</td>
-                <td>C25</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI430', '')">
-                <td>FI430</td>
-                <td>Glasgow</td>
-                <td>07:35</td>
-                <td></td>
-                <td></td>
-                <td>40</td>
-                <td>D31</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI500', '')">
-                <td>FI500</td>
-                <td>Amsterdam</td>
-                <td>07:40</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>C21</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI204', '')">
-                <td>FI204</td>
-                <td>Copenhagen</td>
-                <td>07:40</td>
-                <td></td>
-                <td></td>
-                <td>71</td>
-                <td>C29</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI450', '')">
-                <td>FI450</td>
-                <td>London Heathrow</td>
-                <td>07:40</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT741', '')">
-                <td>PVT741</td>
-                <td>Rotterdam</td>
-                <td>07:41</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI544', '')">
-                <td>FI544</td>
-                <td>Paris CDG</td>
-                <td>07:45</td>
-                <td>07:45</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>70L</td>
-                <td>C24</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI318', '')">
-                <td>FI318</td>
-                <td>Oslo</td>
-                <td>07:50</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI562', '')">
-                <td>FI562</td>
-                <td>Rome</td>
-                <td>07:50</td>
-                <td>07:50</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>72R</td>
-                <td>C28</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI206', '')">
-                <td>FI206</td>
-                <td>Copenhagen</td>
-                <td>07:50</td>
-                <td></td>
-                <td></td>
-                <td>44</td>
-                <td>C26</td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5511', '')">
-                <td>NULGN5511</td>
-                <td>Narsarsuaq</td>
-                <td>08:00</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5932', '')">
-                <td>NULGN5932</td>
-                <td>Cardiff</td>
-                <td>08:00</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI440', '')">
-                <td>FI440</td>
-                <td>Manchester</td>
-                <td>08:00</td>
-                <td></td>
-                <td></td>
-                <td>55</td>
-                <td>D33</td>
-            </tr>
-        
-            <tr onclick="showPopup('AY991', '')">
-                <td>AY991</td>
-                <td>Keflavík</td>
-                <td>08:00</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('UVA1240', '')">
-                <td>UVA1240</td>
-                <td>Narsarsuaq</td>
-                <td>08:00</td>
-                <td></td>
-                <td></td>
-                <td>105</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('DOD1501', '')">
-                <td>DOD1501</td>
-                <td>Toulouse (Francazal)</td>
-                <td>08:00</td>
-                <td></td>
-                <td></td>
-                <td>104</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI113', '')">
-                <td>FI113</td>
-                <td>Nuuk</td>
-                <td>08:05</td>
-                <td>08:05</td>
-                <td>DYNAMIC MESSAGING</td>
-                <td>64</td>
-                <td>C27</td>
-            </tr>
-        
-            <tr onclick="showPopup('EZY2635', '')">
-                <td>EZY2635</td>
-                <td>Keflavík</td>
-                <td>08:05</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI590', '')">
-                <td>FI590</td>
-                <td>Milan</td>
-                <td>08:20</td>
-                <td></td>
-                <td></td>
-                <td>75L</td>
-                <td>C29</td>
-            </tr>
-        
-            <tr onclick="showPopup('W61773', '')">
-                <td>W61773</td>
-                <td>Keflavík</td>
-                <td>08:20</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI596', '')">
-                <td>FI596</td>
-                <td>Barcelona</td>
-                <td>08:25</td>
-                <td></td>
-                <td>Check-in Closed</td>
-                <td>78</td>
-                <td>C25</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI560', '')">
-                <td>FI560</td>
-                <td>Nice</td>
-                <td>08:30</td>
-                <td></td>
-                <td></td>
-                <td>57</td>
-                <td>C25</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI272', '')">
-                <td>FI272</td>
-                <td>Billund</td>
-                <td>08:30</td>
-                <td></td>
-                <td></td>
-                <td>72L</td>
-                <td>C24</td>
-            </tr>
-        
-            <tr onclick="showPopup('AY992', '')">
-                <td>AY992</td>
-                <td>Helsinki</td>
-                <td>08:45</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('EZY2636', '')">
-                <td>EZY2636</td>
-                <td>London Luton</td>
-                <td>08:45</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('DL237', '')">
-                <td>DL237</td>
-                <td>Detroit</td>
-                <td>08:50</td>
-                <td></td>
-                <td></td>
-                <td>73</td>
-                <td>D22B</td>
-            </tr>
-        
-            <tr onclick="showPopup('EZY3315', '')">
-                <td>EZY3315</td>
-                <td>Keflavík</td>
-                <td>08:55</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('W61774', '')">
-                <td>W61774</td>
-                <td>Gdansk</td>
-                <td>09:00</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('NO1968', '')">
-                <td>NO1968</td>
-                <td>Almeria</td>
-                <td>09:00</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT912', '')">
-                <td>PVT912</td>
-                <td>Keflavík</td>
-                <td>09:12</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('DL246', '')">
-                <td>DL246</td>
-                <td>Keflavík</td>
-                <td>09:30</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('EZY3316', '')">
-                <td>EZY3316</td>
-                <td>Edinburgh</td>
-                <td>09:35</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('SK595', '')">
-                <td>SK595</td>
-                <td>Keflavík</td>
-                <td>09:40</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('LS1375', '')">
-                <td>LS1375</td>
-                <td>Keflavík</td>
-                <td>09:45</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI635', '')">
-                <td>FI635</td>
-                <td>Boston</td>
-                <td>10:00</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>D35</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI580', '')">
-                <td>FI580</td>
-                <td>Tenerife South</td>
-                <td>10:00</td>
-                <td>10:00</td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('BA800', '')">
-                <td>BA800</td>
-                <td>Keflavík</td>
-                <td>10:00</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>D21</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT912', '')">
-                <td>PVT912</td>
-                <td>Toronto Hamilton</td>
-                <td>10:12</td>
-                <td></td>
-                <td></td>
-                <td>108</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('SK4787', '')">
-                <td>SK4787</td>
-                <td>Keflavík</td>
-                <td>10:20</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('LS1723', '')">
-                <td>LS1723</td>
-                <td>Keflavík</td>
-                <td>10:20</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG620', '')">
-                <td>OG620</td>
-                <td>Tenerife South</td>
-                <td>10:30</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('SK596', '')">
-                <td>SK596</td>
-                <td>Copenhagen</td>
-                <td>10:30</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('LS1376', '')">
-                <td>LS1376</td>
-                <td>Birmingham</td>
-                <td>10:45</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('BA801', '')">
-                <td>BA801</td>
-                <td>London Heathrow</td>
-                <td>10:50</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>D21</td>
-            </tr>
-        
-            <tr onclick="showPopup('UA139', '')">
-                <td>UA139</td>
-                <td>New York Newark</td>
-                <td>11:00</td>
-                <td></td>
-                <td></td>
-                <td>42</td>
-                <td>D31</td>
-            </tr>
-        
-            <tr onclick="showPopup('RC401', '')">
-                <td>RC401</td>
-                <td>Keflavík</td>
-                <td>11:00</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('SK4788', '')">
-                <td>SK4788</td>
-                <td>Oslo</td>
-                <td>11:05</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('VJT548', '')">
-                <td>VJT548</td>
-                <td>Keflavík</td>
-                <td>11:05</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('LS1724', '')">
-                <td>LS1724</td>
-                <td>Manchester</td>
-                <td>11:15</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('DL247', '')">
-                <td>DL247</td>
-                <td>New York JFK</td>
-                <td>11:25</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('GAF67', '')">
-                <td>GAF67</td>
-                <td>Keflavík</td>
-                <td>11:30</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('RC402', '')">
-                <td>RC402</td>
-                <td>Vagar</td>
-                <td>11:45</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('BT169', '')">
-                <td>BT169</td>
-                <td>Keflavík</td>
-                <td>11:45</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('VJT548', '')">
-                <td>VJT548</td>
-                <td>Teterboro</td>
-                <td>12:00</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('BT170', '')">
-                <td>BT170</td>
-                <td>Riga</td>
-                <td>12:30</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('GAF67', '')">
-                <td>GAF67</td>
-                <td>Goose Bay</td>
-                <td>13:00</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG881', '')">
-                <td>OG881</td>
-                <td>Keflavík</td>
-                <td>13:15</td>
-                <td></td>
-                <td></td>
-                <td>46L</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG811', '')">
-                <td>OG811</td>
-                <td>Keflavík</td>
-                <td>13:30</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG801', '')">
-                <td>OG801</td>
-                <td>Keflavík</td>
-                <td>13:45</td>
-                <td></td>
-                <td></td>
-                <td>46R</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG461', '')">
-                <td>OG461</td>
-                <td>Keflavík</td>
-                <td>13:50</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG901', '')">
-                <td>OG901</td>
-                <td>Keflavík</td>
-                <td>13:50</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5622', '')">
-                <td>NULGN5622</td>
-                <td>Keflavík</td>
-                <td>13:55</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI417', '')">
-                <td>FI417</td>
-                <td>Keflavík</td>
-                <td>13:55</td>
-                <td></td>
-                <td></td>
-                <td>44</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG701', '')">
-                <td>OG701</td>
-                <td>Keflavík</td>
-                <td>14:00</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('7L5721', '')">
-                <td>7L5721</td>
-                <td>Keflavík</td>
-                <td>14:00</td>
-                <td></td>
-                <td></td>
-                <td>123</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('OG401', '')">
-                <td>OG401</td>
-                <td>Keflavík</td>
-                <td>14:05</td>
-                <td></td>
-                <td></td>
-                <td>44</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI319', '')">
-                <td>FI319</td>
-                <td>Keflavík</td>
-                <td>14:45</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>C34</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG504', '')">
-                <td>OG504</td>
-                <td>Warsaw</td>
-                <td>14:50</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG694', '')">
-                <td>OG694</td>
-                <td>Lisbon</td>
-                <td>14:50</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>C23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI441', '')">
-                <td>FI441</td>
-                <td>Keflavík</td>
-                <td>14:50</td>
-                <td></td>
-                <td></td>
-                <td>40</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI507', '')">
-                <td>FI507</td>
-                <td>Keflavík</td>
-                <td>14:55</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI431', '')">
-                <td>FI431</td>
-                <td>Keflavík</td>
-                <td>15:00</td>
-                <td></td>
-                <td></td>
-                <td>77R</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG101', '')">
-                <td>OG101</td>
-                <td>Baltimore Washington</td>
-                <td>15:05</td>
-                <td></td>
-                <td></td>
-                <td>119</td>
-                <td>D33</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI307', '')">
-                <td>FI307</td>
-                <td>Keflavík</td>
-                <td>15:10</td>
-                <td></td>
-                <td></td>
-                <td>72</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI471', '')">
-                <td>FI471</td>
-                <td>Keflavík</td>
-                <td>15:15</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI555', '')">
-                <td>FI555</td>
-                <td>Keflavík</td>
-                <td>15:15</td>
-                <td></td>
-                <td></td>
-                <td>71</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI451', '')">
-                <td>FI451</td>
-                <td>Keflavík</td>
-                <td>15:15</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG614', '')">
-                <td>OG614</td>
-                <td>Barcelona</td>
-                <td>15:20</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI207', '')">
-                <td>FI207</td>
-                <td>Keflavík</td>
-                <td>15:20</td>
-                <td></td>
-                <td></td>
-                <td>75L</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI205', '')">
-                <td>FI205</td>
-                <td>Keflavík</td>
-                <td>15:20</td>
-                <td></td>
-                <td></td>
-                <td>79</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5623', '')">
-                <td>NULGN5623</td>
-                <td>Frobisher Bay</td>
-                <td>15:25</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI501', '')">
-                <td>FI501</td>
-                <td>Keflavík</td>
-                <td>15:25</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>C21</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI273', '')">
-                <td>FI273</td>
-                <td>Keflavík</td>
-                <td>15:30</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG7201', '')">
-                <td>OG7201</td>
-                <td>Toronto Hamilton</td>
-                <td>15:30</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>D15</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI543', '')">
-                <td>FI543</td>
-                <td>Keflavík</td>
-                <td>15:35</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI521', '')">
-                <td>FI521</td>
-                <td>Keflavík</td>
-                <td>15:45</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>C23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI545', '')">
-                <td>FI545</td>
-                <td>Keflavík</td>
-                <td>15:45</td>
-                <td></td>
-                <td></td>
-                <td>76</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI343', '')">
-                <td>FI343</td>
-                <td>Keflavík</td>
-                <td>15:45</td>
-                <td></td>
-                <td></td>
-                <td>42</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('4X9923', '')">
-                <td>4X9923</td>
-                <td>Keflavík</td>
-                <td>15:50</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI529', '')">
-                <td>FI529</td>
-                <td>Keflavík</td>
-                <td>15:50</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG121', '')">
-                <td>OG121</td>
-                <td>New York Stewart</td>
-                <td>16:00</td>
-                <td></td>
-                <td></td>
-                <td>44</td>
-                <td>D25</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI578', '')">
-                <td>FI578</td>
-                <td>Lisbon</td>
-                <td>16:00</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI569', '')">
-                <td>FI569</td>
-                <td>Keflavík</td>
-                <td>16:00</td>
-                <td></td>
-                <td></td>
-                <td>63</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI533', '')">
-                <td>FI533</td>
-                <td>Keflavík</td>
-                <td>16:00</td>
-                <td></td>
-                <td></td>
-                <td>70</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI537', '')">
-                <td>FI537</td>
-                <td>Keflavík</td>
-                <td>16:00</td>
-                <td></td>
-                <td></td>
-                <td>73</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI454', '')">
-                <td>FI454</td>
-                <td>London Heathrow</td>
-                <td>16:10</td>
-                <td></td>
-                <td></td>
-                <td>75L</td>
-                <td>D31</td>
-            </tr>
-        
-            <tr onclick="showPopup('ED6809', '')">
-                <td>ED6809</td>
-                <td>Billund</td>
-                <td>16:15</td>
-                <td></td>
-                <td></td>
-                <td>59</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI216', '')">
-                <td>FI216</td>
-                <td>Copenhagen</td>
-                <td>16:30</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5637', '')">
-                <td>NULGN5637</td>
-                <td>Miami Opa Locka</td>
-                <td>16:30</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td>75R</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT1630', '')">
-                <td>PVT1630</td>
-                <td>Miami Opa Locka</td>
-                <td>16:30</td>
-                <td></td>
-                <td></td>
-                <td>102</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI114', '')">
-                <td>FI114</td>
-                <td>Keflavík</td>
-                <td>16:40</td>
-                <td>15:32</td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI821', '')">
-                <td>FI821</td>
-                <td>Raleigh</td>
-                <td>16:45</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>D22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI657', '')">
-                <td>FI657</td>
-                <td>Minneapolis St Paul</td>
-                <td>16:45</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>D35</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI853', '')">
-                <td>FI853</td>
-                <td>Chicago</td>
-                <td>16:45</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>D23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI645', '')">
-                <td>FI645</td>
-                <td>Washington Dulles</td>
-                <td>16:50</td>
-                <td></td>
-                <td></td>
-                <td>44</td>
-                <td>D27</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI671', '')">
-                <td>FI671</td>
-                <td>Denver</td>
-                <td>16:55</td>
-                <td></td>
-                <td></td>
-                <td>40</td>
-                <td>D28</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI873', '')">
-                <td>FI873</td>
-                <td>Detroit</td>
-                <td>16:55</td>
-                <td></td>
-                <td></td>
-                <td>79</td>
-                <td>D24</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI643', '')">
-                <td>FI643</td>
-                <td>Baltimore Washington</td>
-                <td>17:00</td>
-                <td></td>
-                <td></td>
-                <td>70</td>
-                <td>D29</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI623', '')">
-                <td>FI623</td>
-                <td>New York Newark</td>
-                <td>17:00</td>
-                <td></td>
-                <td></td>
-                <td>12</td>
-                <td>D34</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI615', '')">
-                <td>FI615</td>
-                <td>New York JFK</td>
-                <td>17:00</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>D21</td>
-            </tr>
-        
-            <tr onclick="showPopup('7L5721', '')">
-                <td>7L5721</td>
-                <td>Felipe Ángeles</td>
-                <td>17:00</td>
-                <td></td>
-                <td></td>
-                <td>123</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI681', '')">
-                <td>FI681</td>
-                <td>Seattle</td>
-                <td>17:05</td>
-                <td></td>
-                <td></td>
-                <td>72</td>
-                <td>D22B</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI603', '')">
-                <td>FI603</td>
-                <td>Toronto Pearson</td>
-                <td>17:05</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>D15</td>
-            </tr>
-        
-            <tr onclick="showPopup('D03999', '')">
-                <td>D03999</td>
-                <td>East Midlands</td>
-                <td>17:10</td>
-                <td></td>
-                <td></td>
-                <td>61</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI631', '')">
-                <td>FI631</td>
-                <td>Boston</td>
-                <td>17:10</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>D32</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI689', '')">
-                <td>FI689</td>
-                <td>Orlando</td>
-                <td>17:15</td>
-                <td></td>
-                <td></td>
-                <td>H-ITS</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI697', '')">
-                <td>FI697</td>
-                <td>Vancouver</td>
-                <td>17:15</td>
-                <td></td>
-                <td></td>
-                <td>76</td>
-                <td>D25</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT1716', '')">
-                <td>PVT1716</td>
-                <td>Keflavík</td>
-                <td>17:16</td>
-                <td></td>
-                <td></td>
-                <td>111</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('HV6887', '')">
-                <td>HV6887</td>
-                <td>Keflavík</td>
-                <td>17:30</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('JAS', '')">
-                <td>JAS</td>
-                <td>Keflavík</td>
-                <td>17:40</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI591', '')">
-                <td>FI591</td>
-                <td>Keflavík</td>
-                <td>17:45</td>
-                <td></td>
-                <td></td>
-                <td>7</td>
-                <td>C22</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI561', '')">
-                <td>FI561</td>
-                <td>Keflavík</td>
-                <td>18:05</td>
-                <td></td>
-                <td></td>
-                <td>1</td>
-                <td>A11</td>
-            </tr>
-        
-            <tr onclick="showPopup('WFS630', '')">
-                <td>WFS630</td>
-                <td>Keflavík</td>
-                <td>18:12</td>
-                <td></td>
-                <td></td>
-                <td>107</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI563', '')">
-                <td>FI563</td>
-                <td>Keflavík</td>
-                <td>18:15</td>
-                <td></td>
-                <td></td>
-                <td>57</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('HV6888', '')">
-                <td>HV6888</td>
-                <td>Amsterdam</td>
-                <td>18:20</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>C23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI597', '')">
-                <td>FI597</td>
-                <td>Keflavík</td>
-                <td>18:20</td>
-                <td></td>
-                <td></td>
-                <td>74</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('W61167', '')">
-                <td>W61167</td>
-                <td>Keflavík</td>
-                <td>18:25</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>C21</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI607', '')">
-                <td>FI607</td>
-                <td>Halifax</td>
-                <td>18:35</td>
-                <td></td>
-                <td></td>
-                <td>73</td>
-                <td>D24</td>
-            </tr>
-        
-            <tr onclick="showPopup('W46453', '')">
-                <td>W46453</td>
-                <td>Keflavík</td>
-                <td>18:35</td>
-                <td></td>
-                <td></td>
-                <td>3</td>
-                <td>A13</td>
-            </tr>
-        
-            <tr onclick="showPopup('W61168', '')">
-                <td>W61168</td>
-                <td>Katowice</td>
-                <td>19:05</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>C21</td>
-            </tr>
-        
-            <tr onclick="showPopup('W46454', '')">
-                <td>W46454</td>
-                <td>Milan</td>
-                <td>19:15</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT1931', '')">
-                <td>PVT1931</td>
-                <td>Keflavík</td>
-                <td>19:30</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN6101', '')">
-                <td>NULGN6101</td>
-                <td>Keflavík</td>
-                <td>19:30</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td>75R</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI750', '')">
-                <td>FI750</td>
-                <td>Liege</td>
-                <td>19:30</td>
-                <td></td>
-                <td></td>
-                <td>51</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('PVT1930', '')">
-                <td>PVT1930</td>
-                <td>Keflavík</td>
-                <td>19:30</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('NULGN5582', '')">
-                <td>NULGN5582</td>
-                <td>Keflavík</td>
-                <td>19:50</td>
-                <td></td>
-                <td>Cancelled</td>
-                <td></td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('WFS1950', '')">
-                <td>WFS1950</td>
-                <td>Keflavík</td>
-                <td>19:50</td>
-                <td></td>
-                <td></td>
-                <td>109</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('NO1969', '')">
-                <td>NO1969</td>
-                <td>Keflavík</td>
-                <td>19:55</td>
-                <td></td>
-                <td></td>
-                <td>118</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('TK3243', '')">
-                <td>TK3243</td>
-                <td>Keflavík</td>
-                <td>21:20</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td></td>
-            </tr>
-        
-            <tr onclick="showPopup('FI634', '')">
-                <td>FI634</td>
-                <td>Keflavík</td>
-                <td>21:50</td>
-                <td></td>
-                <td></td>
-                <td>52</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI581', '')">
-                <td>FI581</td>
-                <td>Keflavík</td>
-                <td>21:55</td>
-                <td></td>
-                <td></td>
-                <td>5</td>
-                <td>A15</td>
-            </tr>
-        
-            <tr onclick="showPopup('W62427', '')">
-                <td>W62427</td>
-                <td>Keflavík</td>
-                <td>22:20</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>C32</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG621', '')">
-                <td>OG621</td>
-                <td>Keflavík</td>
-                <td>22:45</td>
-                <td></td>
-                <td></td>
-                <td>115</td>
-                <td>C</td>
-            </tr>
-        
-            <tr onclick="showPopup('W62428', '')">
-                <td>W62428</td>
-                <td>Budapest</td>
-                <td>23:00</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>C32</td>
-            </tr>
-        
-            <tr onclick="showPopup('TK3244', '')">
-                <td>TK3244</td>
-                <td>Istanbul</td>
-                <td>23:15</td>
-                <td></td>
-                <td></td>
-                <td>11</td>
-                <td>D21</td>
-            </tr>
-        
-            <tr onclick="showPopup('LH868', '')">
-                <td>LH868</td>
-                <td>Keflavík</td>
-                <td>23:30</td>
-                <td></td>
-                <td></td>
-                <td>9</td>
-                <td>C23</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI455', '')">
-                <td>FI455</td>
-                <td>Keflavík</td>
-                <td>23:40</td>
-                <td></td>
-                <td></td>
-                <td>46L</td>
-                <td>D</td>
-            </tr>
-        
-            <tr onclick="showPopup('FI217', '')">
-                <td>FI217</td>
-                <td>Keflavík</td>
-                <td>23:50</td>
-                <td></td>
-                <td></td>
-                <td>14</td>
-                <td>C32</td>
-            </tr>
-        
-            <tr onclick="showPopup('TO4446', '')">
-                <td>TO4446</td>
-                <td>Keflavík</td>
-                <td>23:55</td>
-                <td></td>
-                <td></td>
-                <td>8</td>
-                <td>C35</td>
-            </tr>
-        
-            <tr onclick="showPopup('OG505', '')">
-                <td>OG505</td>
-                <td>Keflavík</td>
-                <td>00:05</td>
-                <td></td>
-                <td></td>
-                <td>75L</td>
-                <td>C33</td>
-            </tr>
-        
+                <tr onclick="showPopup('W61540', '')">
+                    <td>W61540</td>
+                    <td>Warsaw</td>
+                    <td>23:45</td>
+                    <td>02:10</td>
+                    <td>DYNAMIC MESSAGING</td>
+                    <td>12</td>
+                    <td>C34</td>
+                </tr>
+            
+                <tr id="next-day">
+                    <td colspan="7">Next Day Flights</td>
+                </tr>
+                
+                <tr onclick="showPopup('TO4447', '')">
+                    <td>TO4447</td>
+                    <td>Paris Orly</td>
+                    <td>00:45</td>
+                    <td>00:50</td>
+                    <td>DYNAMIC MESSAGING</td>
+                    <td>7</td>
+                    <td>C22</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG700', '')">
+                    <td>OG700</td>
+                    <td>Berlin Brandenburg</td>
+                    <td>06:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>3</td>
+                    <td>A13</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG400', '')">
+                    <td>OG400</td>
+                    <td>Paris CDG</td>
+                    <td>06:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>14</td>
+                    <td>C32</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG460', '')">
+                    <td>OG460</td>
+                    <td>Amsterdam</td>
+                    <td>06:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>12</td>
+                    <td>C34</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG880', '')">
+                    <td>OG880</td>
+                    <td>Dublin</td>
+                    <td>06:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>42</td>
+                    <td>D22B</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG900', '')">
+                    <td>OG900</td>
+                    <td>Copenhagen</td>
+                    <td>06:15</td>
+                    <td></td>
+                    <td></td>
+                    <td>9</td>
+                    <td>C23</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG810', '')">
+                    <td>OG810</td>
+                    <td>Liverpool</td>
+                    <td>06:35</td>
+                    <td></td>
+                    <td></td>
+                    <td>7</td>
+                    <td>D22</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG800', '')">
+                    <td>OG800</td>
+                    <td>London Stansted</td>
+                    <td>06:40</td>
+                    <td></td>
+                    <td></td>
+                    <td>5</td>
+                    <td>D15</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG590', '')">
+                    <td>OG590</td>
+                    <td>Athens Eleftherios</td>
+                    <td>07:00</td>
+                    <td>14:15</td>
+                    <td>DYNAMIC MESSAGING</td>
+                    <td>46L</td>
+                    <td>C24</td>
+                </tr>
+            
+                <tr onclick="showPopup('EZY2636', '')">
+                    <td>EZY2636</td>
+                    <td>London Luton</td>
+                    <td>08:45</td>
+                    <td></td>
+                    <td></td>
+                    <td>9</td>
+                    <td>D23</td>
+                </tr>
+            
+                <tr onclick="showPopup('DL237', '')">
+                    <td>DL237</td>
+                    <td>Detroit</td>
+                    <td>08:50</td>
+                    <td></td>
+                    <td></td>
+                    <td>40</td>
+                    <td>D22B</td>
+                </tr>
+            
+                <tr onclick="showPopup('W61774', '')">
+                    <td>W61774</td>
+                    <td>Gdansk</td>
+                    <td>09:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>7</td>
+                    <td>C22</td>
+                </tr>
+            
+                <tr onclick="showPopup('NO1968', '')">
+                    <td>NO1968</td>
+                    <td>Almeria</td>
+                    <td>09:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>3</td>
+                    <td>A13</td>
+                </tr>
+            
+                <tr onclick="showPopup('EZY3316', '')">
+                    <td>EZY3316</td>
+                    <td>Edinburgh</td>
+                    <td>09:35</td>
+                    <td></td>
+                    <td></td>
+                    <td>12</td>
+                    <td>D34</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG620', '')">
+                    <td>OG620</td>
+                    <td>Tenerife South</td>
+                    <td>10:30</td>
+                    <td></td>
+                    <td></td>
+                    <td>5</td>
+                    <td>A15</td>
+                </tr>
+            
+                <tr onclick="showPopup('LS1376', '')">
+                    <td>LS1376</td>
+                    <td>Birmingham</td>
+                    <td>10:45</td>
+                    <td></td>
+                    <td></td>
+                    <td>7</td>
+                    <td>D22</td>
+                </tr>
+            
+                <tr onclick="showPopup('BA801', '')">
+                    <td>BA801</td>
+                    <td>London Heathrow</td>
+                    <td>10:50</td>
+                    <td></td>
+                    <td></td>
+                    <td>11</td>
+                    <td>D21</td>
+                </tr>
+            
+                <tr onclick="showPopup('LS1724', '')">
+                    <td>LS1724</td>
+                    <td>Manchester</td>
+                    <td>11:15</td>
+                    <td></td>
+                    <td></td>
+                    <td>9</td>
+                    <td>D23</td>
+                </tr>
+            
+                <tr onclick="showPopup('DL247', '')">
+                    <td>DL247</td>
+                    <td>New York JFK</td>
+                    <td>11:25</td>
+                    <td></td>
+                    <td></td>
+                    <td>14</td>
+                    <td>D32</td>
+                </tr>
+            
+                <tr onclick="showPopup('BT170', '')">
+                    <td>BT170</td>
+                    <td>Riga</td>
+                    <td>12:30</td>
+                    <td></td>
+                    <td></td>
+                    <td>5</td>
+                    <td>A15</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG504', '')">
+                    <td>OG504</td>
+                    <td>Warsaw</td>
+                    <td>14:50</td>
+                    <td></td>
+                    <td></td>
+                    <td>8</td>
+                    <td>C35</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG694', '')">
+                    <td>OG694</td>
+                    <td>Lisbon</td>
+                    <td>14:50</td>
+                    <td></td>
+                    <td></td>
+                    <td>9</td>
+                    <td>C23</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG101', '')">
+                    <td>OG101</td>
+                    <td>Baltimore Washington</td>
+                    <td>15:05</td>
+                    <td></td>
+                    <td></td>
+                    <td>119</td>
+                    <td>D33</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG614', '')">
+                    <td>OG614</td>
+                    <td>Barcelona</td>
+                    <td>15:20</td>
+                    <td></td>
+                    <td></td>
+                    <td>7</td>
+                    <td>C22</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG7201', '')">
+                    <td>OG7201</td>
+                    <td>Toronto Hamilton</td>
+                    <td>15:30</td>
+                    <td></td>
+                    <td></td>
+                    <td>5</td>
+                    <td>D15</td>
+                </tr>
+            
+                <tr onclick="showPopup('OG121', '')">
+                    <td>OG121</td>
+                    <td>New York Stewart</td>
+                    <td>16:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>44</td>
+                    <td>D25</td>
+                </tr>
+            
+                <tr onclick="showPopup('ED6809', '')">
+                    <td>ED6809</td>
+                    <td>Billund</td>
+                    <td>16:15</td>
+                    <td></td>
+                    <td></td>
+                    <td>59</td>
+                    <td></td>
+                </tr>
+            
+                <tr onclick="showPopup('D03999', '')">
+                    <td>D03999</td>
+                    <td>East Midlands</td>
+                    <td>17:10</td>
+                    <td></td>
+                    <td></td>
+                    <td>61</td>
+                    <td></td>
+                </tr>
+            
+                <tr onclick="showPopup('HV6888', '')">
+                    <td>HV6888</td>
+                    <td>Amsterdam</td>
+                    <td>18:20</td>
+                    <td></td>
+                    <td></td>
+                    <td>9</td>
+                    <td>C23</td>
+                </tr>
+            
+                <tr onclick="showPopup('W61168', '')">
+                    <td>W61168</td>
+                    <td>Katowice</td>
+                    <td>19:05</td>
+                    <td></td>
+                    <td></td>
+                    <td>11</td>
+                    <td>C21</td>
+                </tr>
+            
+                <tr onclick="showPopup('W46454', '')">
+                    <td>W46454</td>
+                    <td>Milan</td>
+                    <td>19:15</td>
+                    <td></td>
+                    <td></td>
+                    <td>8</td>
+                    <td>C35</td>
+                </tr>
+            
+                <tr onclick="showPopup('W62428', '')">
+                    <td>W62428</td>
+                    <td>Budapest</td>
+                    <td>23:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>14</td>
+                    <td>C32</td>
+                </tr>
+            
         </table>
 
         <div id="popup">
