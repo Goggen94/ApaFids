@@ -299,7 +299,7 @@ if response.status_code == 200:
 
     # Save the HTML file to the output directory
     os.makedirs("scraper/output", exist_ok=True)
-    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
+    with open("/var/www/html/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
 
     print("HTML file has been generated with departing flights handled by APA.")
