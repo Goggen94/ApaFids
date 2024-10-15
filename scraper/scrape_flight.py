@@ -116,7 +116,17 @@ if response.status_code == 200:
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
             a {{ color: #f4d03f; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #departures-btn {{ margin-left: 20px; padding: 10px 20px; background-color: #444444; color: #f4d03f; font-weight: bold; border-radius: 8px; text-decoration: none; cursor: pointer; border: 2px solid #f4d03f; }}
+            #departures-btn {{
+                margin-left: 20px;
+                padding: 10px 20px;
+                background-color: #444444;
+                color: #f4d03f;
+                font-weight: bold;
+                border-radius: 8px;
+                text-decoration: none;
+                cursor: pointer;
+                border: 2px solid #f4d03f;
+            }}
             #last-updated {{ text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }}
             @media only screen and (max-width: 600px) {{
                 #popup {{ width: 75%; padding: 8px; }}
@@ -126,10 +136,9 @@ if response.status_code == 200:
             }}
         </style>
         <script>
-            // JavaScript for dynamic updating
             async function fetchUpdatedHTML() {{
                 try {{
-                    const response = await fetch('/path/to/generated/index.html'); // Adjust this path to the generated HTML file
+                    const response = await fetch('/path/to/generated/index.html');  // Adjust this path to the generated HTML file
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
@@ -140,13 +149,18 @@ if response.status_code == 200:
                 }}
             }}
 
-            // Fetch updated data every 60 seconds
-            setInterval(fetchUpdatedHTML, 60000);
+            setInterval(fetchUpdatedHTML, 60000);  // Fetch updated data every 60 seconds
 
-            // Show and manage popup
-            function showPopup(flight, flightradarLink) {{
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
                 document.getElementById("popup").style.display = "block";
                 document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
             }}
 
             function closePopup() {{
@@ -200,7 +214,7 @@ if response.status_code == 200:
             # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
             flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
 
-            row_click = f"onclick=\"showPopup('{flight_number}', '{flightradar_link}')\""
+            row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
 
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
@@ -261,4 +275,3 @@ if response.status_code == 200:
     print("HTML file has been generated with departing flights handled by APA.")
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
-
