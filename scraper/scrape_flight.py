@@ -83,11 +83,11 @@ def generate_flightradar_link(flight_number, aircraft_reg):
     try:
         if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
             return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
-        elif flight_number.startswith(("W4", "W6", "W9", "BT", "LS", "DL", "BA", "TO" "HV" "I2" "NO" )):
+        elif flight_number.startswith(("W4", "W6", "W9", "BT", "LS", "DL", "BA", "TO", "HV", "I2", "NO")):
             flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
         elif flight_number.startswith(("EZY", "EJU")):
-            flight_num = int(flight_number[3:]) - 1  # Bruk U2(flightnummer) - 1 for EZY og EJU
+            flight_num = int(flight_number[3:]) - 1  # Use U2(flightnumber) - 1 for EZY and EJU
             return f"https://www.flightradar24.com/U2{flight_num}"
         else:
             return "#"
@@ -203,13 +203,7 @@ if response.status_code == 200:
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-
-html_output += f"""
-    <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M:%S')}</div>
-"""
-
-
-
+        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M:%S')}</div>
         <table>
             <tr>
                 <th>Flight</th>
