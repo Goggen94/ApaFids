@@ -203,7 +203,10 @@ if response.status_code == 200:
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
+        html_output += f"""
+<div id="last-updated">Last updated: {datetime.now().strftime('%H:%M:%S')}</div>
+"""
+
         <table>
             <tr>
                 <th>Flight</th>
