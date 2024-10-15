@@ -229,16 +229,39 @@ if response.status_code == 200:
 
             setInterval(fetchUpdatedHTML, 60000);  // Fetch updated data every 60 seconds
 
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
+    
+    // Parse the current time
+    const currentTime = new Date();
+
+    // Function to check if the current time matches the event time
+    const checkEventTime = (eventTimeStr) => {
+        const eventTime = new Date();
+        const [hours, minutes] = eventTimeStr.split(':');
+        eventTime.setHours(hours);
+        eventTime.setMinutes(minutes);
+        eventTime.setSeconds(0);  // Set seconds to 0 for precise matching
+        return currentTime.getHours() === eventTime.getHours() && currentTime.getMinutes() === eventTime.getMinutes();
+    };
+
+    // Update each event with green circle if the time is here
+    document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate + (checkEventTime(goToGate) ? ' <span style="color: green;">●</span>' : '');
+    document.getElementById("boarding").innerHTML = "Boarding: " + boarding + (checkEventTime(boarding) ? ' <span style="color: green;">●</span>' : '');
+    document.getElementById("final-call").innerHTML = "Final Call: " + finalCall + (checkEventTime(finalCall) ? ' <span style="color: green;">●</span>' : '');
+    document.getElementById("name-call").innerHTML = "Name Call: " + nameCall + (checkEventTime(nameCall) ? ' <span style="color: green;">●</span>' : '');
+    document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed + (checkEventTime(gateClosed) ? ' <span style="color: green;">●</span>' : '');
+
+    // Check-in information remains the same
+    document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+    document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
             }}
 
             function closePopup() {{
