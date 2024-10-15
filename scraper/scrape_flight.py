@@ -19,7 +19,7 @@ date_from, date_to = get_time_range()
 # URL to the flight data API, dynamically adding the dateFrom and dateTo values
 url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date_to}"
 
-# Send the request to get the flight data (SSL verification disabled) - MODIFY THIS LINE
+# Send the request to get the flight data (SSL verification disabled)
 response = requests.get(url, verify=False)
 
 # Function to format the time and date into separate columns
@@ -39,6 +39,34 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         # Default times based on the flight number
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
+
+        # Flight-specific logic
+        # (your code for calculating times based on the flight number)
+        # ...
+
+        return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
+    except Exception as e:
+        return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
+
+# Sample HTML output generation (you should replace this with actual data generation from API response)
+html_output = "<html><body><h1>Flight Data</h1></body></html>"
+
+# Define the output directory for the generated HTML
+output_dir = "scraper/output"
+
+# Ensure the output directory exists
+os.makedirs(output_dir, exist_ok=True)
+
+# Now we write the HTML file, adding logging to catch any issues with file creation
+try:
+    with open(f"{output_dir}/index.html", "w", encoding="utf-8") as file:
+        file.write(html_output)
+    print(f"HTML file has been successfully saved to {output_dir}/index.html")
+except Exception as e:
+    print(f"Failed to write the HTML file: {e}")
+
+# Continue with any additional logic, such as copying the file to Nginx or any other tasks
+
 
         # Flight code-specific times
         if flight_number.startswith("OG"):
