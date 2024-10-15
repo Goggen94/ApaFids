@@ -67,7 +67,6 @@ except Exception as e:
 
 # Continue with any additional logic, such as copying the file to Nginx or any other tasks
 
-
         # Flight code-specific times
         if flight_number.startswith("OG"):
             # OG flights
