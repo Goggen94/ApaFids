@@ -83,7 +83,7 @@ def generate_flightradar_link(flight_number, aircraft_reg):
     try:
         if flight_number.startswith("OG") and aircraft_reg and aircraft_reg != "N/A":
             return f"https://www.flightradar24.com/{aircraft_reg}"  # Use A/C Reg for OG flights
-        elif flight_number.startswith(("W4", "W6", "W9", "BT", "LS", "DL", "BA", )):
+        elif flight_number.startswith(("W4", "W6", "W9", "BT", "LS", "DL", "BA", "TO" "HV" "I2" "NO" )):
             flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
         elif flight_number.startswith(("EZY", "EJU")):
