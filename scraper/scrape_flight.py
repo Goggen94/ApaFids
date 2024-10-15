@@ -282,7 +282,7 @@ function closePopup() {
                 <th>Stand</th>
                 <th>Gate</th>
             </tr>
-    """
+    }
 
     for flight in data:
         destination = flight.get("destination_iata", "")
