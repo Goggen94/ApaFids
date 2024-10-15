@@ -36,7 +36,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
         checkin_opens_time, checkin_closes_time = "", ""
         go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time = "", "", "", "", ""
 
-        # Flight code-specific times
+        # Flight code-specific times (same logic as before)
         if flight_number.startswith("OG"):
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
@@ -59,72 +59,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("TOM")):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("BT"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("BA"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=45)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith(("HV", "TO")):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("NO"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("DL"):
-            checkin_opens_time = (sched_dt - timedelta(hours=3, minutes=15)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=50)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=20)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("LS"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("I2"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
-        elif flight_number.startswith("EW"):
-            checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(minutes=40)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
@@ -137,9 +72,6 @@ def generate_flightradar_link(flight_number, aircraft_reg):
         elif flight_number.startswith(("W4", "W6", "W9")):
             flight_num = int(flight_number[2:]) - 1  # Subtract 1 from the flight number for W4, W6, W9
             return f"https://www.flightradar24.com/{flight_number[:2]}{flight_num}"
-        elif flight_number.startswith(("EZY", "EJU")):
-            flight_num = int(flight_number[3:]) - 1
-            return f"https://www.flightradar24.com/U2{flight_num}"
         else:
             return "#"
     except:
@@ -171,41 +103,52 @@ if response.status_code == 200:
             #popup p {{ margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }}
             .info-container {{ display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }}
             .info-container div {{ width: 48%; }}
-            .info-container div h3, .info-container div p {{ margin: 0; padding: 0; }}
             #close-popup {{ cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }}
             a {{ color: #f4d03f; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
-            #departures-btn {{
-                margin-left: 20px;
-                padding: 10px 20px;
-                background-color: #444444;
-                color: #f4d03f;
-                font-weight: bold;
-                border-radius: 8px;
-                text-decoration: none;
-                cursor: pointer;
-                border: 2px solid #f4d03f;
-            }}
-            #last-updated {{
-                text-align: right;
-                color: #f4d03f;
-                font-size: 14px;
-                padding-right: 20px;
-            }}
-            @media only screen and (max-width: 600px) {{
-                #popup {{ width: 75%; padding: 8px; }}
-                .info-container {{ flex-direction: row; }}
-                .info-container div {{ width: 48%; }}
-                #departures-btn {{ margin-top: 15px; }}
-            }}
+            #last-updated {{ text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }}
         </style>
+        <script>
+            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Flight: ' + flight + '</a>';
+                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
+                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
+                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
+                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
+                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
+                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
+                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+            }}
+
+            function closePopup() {{
+                document.getElementById("popup").style.display = "none";
+            }}
+
+            function fetchDataAndUpdate() {{
+                fetch("/path/to/index.html")  // Adjust this path to where your HTML is hosted
+                    .then(response => response.text())
+                    .then(html => {{
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Replace the table and last updated content
+                        document.querySelector('table').innerHTML = doc.querySelector('table').innerHTML;
+                        document.getElementById('last-updated').innerHTML = doc.getElementById('last-updated').innerHTML;
+
+                        // Optionally, close the popup if it's open
+                        closePopup();
+                    }})
+                    .catch(error => console.error('Error fetching data:', error));
+            }}
+
+            // Refresh every minute (60000ms)
+            setInterval(fetchDataAndUpdate, 60000);
+        </script>
     </head>
     <body>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>KEF Airport Departures</h2>
-            <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
-        </div>
-        <div id="last-updated">Last updated: {datetime.utcnow().strftime('%H:%M')}</div>
+        <h2>KEF Airport Departures</h2>
+        <div id="last-updated">Last updated: {datetime.now().strftime('%H:%M')}</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -224,25 +167,19 @@ if response.status_code == 200:
         flight_number = flight.get("flight_prefix", "") + flight.get("flight_num", "")
         status = flight.get("status", "N/A")
         etd_time = flight.get("expected_time", "")
-        aircraft_reg = flight.get("aircraft_reg", "N/A")
+        aircraft_reg = flight.get("aircraft_reg", "N/A")  # Get A/C Reg for OG flights
 
-        # Remove N/A from ETD column
         formatted_etd_time, _ = format_time(etd_time) if etd_time != "" else ("", None)
 
         if destination != "KEF" and handling_agent == "APA":
             destination_name = flight.get("destination", "N/A")
-            
-            # Format scheduled time (STD)
             sched_time = flight.get("sched_time", "N/A")
             formatted_sched_time, sched_date = format_time(sched_time)
 
-            # Use STD for Check-in Information and ETD for Gate Information if available
             gate_sched_time = etd_time if etd_time else sched_time
 
-            # Calculate times for check-in and gate events
             go_to_gate, boarding, final_call, name_call, gate_closed, checkin_opens, checkin_closes = calculate_event_times(sched_time, gate_sched_time, flight_number)
 
-            # Generate Flightradar link for W4, W6, W9 flights using flight number -1, and OG flights using A/C Reg
             flightradar_link = generate_flightradar_link(flight_number, aircraft_reg)
 
             row_click = f"onclick=\"showPopup('{flight_number}', '{go_to_gate}', '{boarding}', '{final_call}', '{name_call}', '{gate_closed}', '{checkin_opens}', '{checkin_closes}', '{flightradar_link}')\""
@@ -250,7 +187,6 @@ if response.status_code == 200:
             stand = flight.get("stand", "N/A")
             gate = flight.get("gate", "N/A")
             
-            # Insert yellow line when the day changes
             if previous_date and sched_date != previous_date:
                 html_output += f"""
                 <tr id="next-day">
@@ -274,6 +210,7 @@ if response.status_code == 200:
 
     html_output += """
         </table>
+
         <div id="popup">
             <div class="info-container">
                 <div>
@@ -293,59 +230,12 @@ if response.status_code == 200:
             </div>
             <p id="close-popup" onclick="closePopup()">Close</p>
         </div>
-        <script>
-            async function fetchUpdatedHTML() {{
-                try {{
-                    const response = await fetch('/path/to/generated/index.html');
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const updatedTable = doc.querySelector('table').innerHTML;
-                    document.querySelector('table').innerHTML = updatedTable;
-                    const lastUpdated = doc.querySelector('#last-updated').innerHTML;
-                    document.querySelector('#last-updated').innerHTML = lastUpdated;
-                }} catch (error) {{
-                    console.error("Error fetching updated HTML:", error);
-                }}
-            }}
-
-            setInterval(fetchUpdatedHTML, 60000);  // Fetch updated data every 60 seconds
-            
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {{
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
-                
-                const currentTime = new Date();
-
-                const checkEventTime = (eventTimeStr) => {{
-                    const eventTime = new Date();
-                    const [hours, minutes] = eventTimeStr.split(':');
-                    eventTime.setHours(hours);
-                    eventTime.setMinutes(minutes);
-                    eventTime.setSeconds(0);
-                    return currentTime.getHours() === eventTime.getHours() && currentTime.getMinutes() === eventTime.getMinutes();
-                }};
-
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate + (checkEventTime(goToGate) ? ' <span style=\"color: green;\">●</span>' : '');
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding + (checkEventTime(boarding) ? ' <span style=\"color: green;\">●</span>' : '');
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall + (checkEventTime(finalCall) ? ' <span style=\"color: green;\">●</span>' : '');
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall + (checkEventTime(nameCall) ? ' <span style=\"color: green;\">●</span>' : '');
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed + (checkEventTime(gateClosed) ? ' <span style=\"color: green;\">●</span>' : '');
-
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-            }}
-
-            function closePopup() {{
-                document.getElementById("popup").style.display = "none";
-            }}
-        </script>
     </body>
     </html>
     """
 
-    os.makedirs("scraper/output", exist_ok=True)
-    with open("scraper/output/index.html", "w", encoding="utf-8") as file:
+    os.makedirs("/var/www/html", exist_ok=True)
+    with open("/var/www/html/index.html", "w", encoding="utf-8") as file:
         file.write(html_output)
 
     print("HTML file has been generated with departing flights handled by APA.")
