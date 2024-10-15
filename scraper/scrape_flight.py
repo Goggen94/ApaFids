@@ -1,6 +1,10 @@
 import requests
 import os
 from datetime import datetime, timedelta
+import urllib3  # ADD THIS
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # ADD THIS
 
 # Function to get the current time and the time 24 hours ahead
 def get_time_range():
@@ -15,8 +19,8 @@ date_from, date_to = get_time_range()
 # URL to the flight data API, dynamically adding the dateFrom and dateTo values
 url = f"https://fids.kefairport.is/api/flights?dateFrom={date_from}&dateTo={date_to}"
 
-# Send the request to get the flight data
-response = requests.get(url)
+# Send the request to get the flight data (SSL verification disabled) - MODIFY THIS LINE
+response = requests.get(url, verify=False)
 
 # Function to format the time and date into separate columns
 def format_time(time_str):
