@@ -67,15 +67,16 @@ except Exception as e:
 
 # Continue with any additional logic, such as copying the file to Nginx or any other tasks
 
-        # Flight code-specific times
-          if flight_number.startswith("OG"):
-            # OG flights
-            checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
-            checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
-            boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
-            final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
-            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
-            gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+# Flight code-specific times
+if flight_number.startswith("OG"):
+    # OG flights
+    checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
+    checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
+    boarding_time = (event_dt - timedelta(minutes=40)).strftime("%H:%M")
+    final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+    name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
+    gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
+
         elif flight_number.startswith(("W4", "W6", "W9")):
             # W4, W6, W9 flights
             checkin_opens_time = (sched_dt - timedelta(hours=2, minutes=30)).strftime("%H:%M")
