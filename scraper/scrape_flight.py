@@ -144,7 +144,6 @@ if response.status_code == 200:
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
             h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
@@ -197,6 +196,8 @@ if response.status_code == 200:
                     const doc = parser.parseFromString(html, 'text/html');
                     const updatedTable = doc.querySelector('table').innerHTML;
                     document.querySelector('table').innerHTML = updatedTable;
+                    const lastUpdated = doc.querySelector('#last-updated').innerHTML;
+                    document.querySelector('#last-updated').innerHTML = lastUpdated;
                 }} catch (error) {{
                     console.error("Error fetching updated HTML:", error);
                 }}
