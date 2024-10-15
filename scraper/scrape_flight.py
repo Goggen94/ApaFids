@@ -66,6 +66,11 @@ except Exception as e:
     print(f"Failed to write the HTML file: {e}")
 
 # Continue with any additional logic, such as copying the file to Nginx or any other tasks
+# Function to calculate times related to check-in and gate events based on flight code
+def calculate_event_times(sched_time, event_time_for_gate, flight_number):
+    try:
+        sched_dt = datetime.strptime(sched_time, "%Y-%m-%dT%H:%M:%SZ")
+        event_dt = datetime.strptime(event_time_for_gate, "%Y-%m-%dT%H:%M:%SZ")
 
 # Flight code-specific times
 if flight_number.startswith("OG"):
@@ -170,6 +175,7 @@ elif flight_number.startswith("EW"):
     gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
 
 
+         # Return the calculated event times
         return go_to_gate_time, boarding_time, final_call_time, name_call_time, gate_closed_time, checkin_opens_time, checkin_closes_time
     except Exception as e:
         return "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"
