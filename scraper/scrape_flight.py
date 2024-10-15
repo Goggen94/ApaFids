@@ -297,9 +297,14 @@ if response.status_code == 200:
     </html>
     """
 
-    # Save the HTML file to the output directory
-    os.makedirs("scraper/output", exist_ok=True)
-    with open("/var/www/html/index.html", "w", encoding="utf-8") as file:
+    # Save the HTML file to the correct path based on the environment
+    if os.getenv('GITHUB_ACTIONS'):
+        output_path = "scraper/output/index.html"  # For GitHub Actions
+    else:
+        output_path = "/var/www/html/index.html"  # For the VM
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as file:
         file.write(html_output)
 
     print("HTML file has been generated with departing flights handled by APA.")
