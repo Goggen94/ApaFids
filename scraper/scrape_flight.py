@@ -144,7 +144,7 @@ if response.status_code == 200:
     <head>
         <title>KEF Airport Departures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="refresh" content="600">  <!-- Refresh every 10 minutes -->
+        <meta http-equiv="refresh" content="60">  <!-- Refresh every minute -->
         <style>
             body {{ background-color: #2c2c2c; color: white; font-family: Arial, sans-serif; font-size: 16px; }}
             h2 {{ text-align: center; color: #f4d03f; font-size: 24px; padding: 10px; border-radius: 8px; background-color: #444444; margin-bottom: 15px; }}
@@ -218,11 +218,23 @@ if response.status_code == 200:
                 document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed + addGreenCircle(gateClosedTime);
                 document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
                 document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
+                localStorage.setItem('popupData', JSON.stringify({{flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink}})); // Save popup data
             }}
 
             function closePopup() {{
                 document.getElementById("popup").style.display = "none";
+                localStorage.removeItem('popupData'); // Clear popup data on close
             }}
+
+            // Function to reopen the popup if it was open before refresh
+            function reopenPopupIfNeeded() {{
+                const popupData = JSON.parse(localStorage.getItem('popupData'));
+                if (popupData) {{
+                    showPopup(popupData.flight, popupData.goToGate, popupData.boarding, popupData.finalCall, popupData.nameCall, popupData.gateClosed, popupData.checkinOpens, popupData.checkinCloses, popupData.flightradarLink);
+                }}
+            }}
+
+            window.onload = reopenPopupIfNeeded;
         </script>
     </head>
     <body>
