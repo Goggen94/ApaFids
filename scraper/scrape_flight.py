@@ -228,8 +228,7 @@ if response.status_code == 200:
             }}
 
             setInterval(fetchUpdatedHTML, 60000);  // Fetch updated data every 60 seconds
-
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
+function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
     document.getElementById("popup").style.display = "block";
     document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
     
@@ -262,11 +261,9 @@ function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
 
-            }}
+    
 
-            function closePopup() {{
-                document.getElementById("popup").style.display = "none";
-            }}
+
         </script>
     </head>
     <body>
