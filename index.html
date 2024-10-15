@@ -13,43 +13,21 @@
             tr:nth-child(even) { background-color: #2c2c2c; }
             tr:hover { background-color: #444444; }
             #next-day { background-color: #f4d03f; color: black; font-weight: bold; text-align: center; padding: 8px; }
-            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%;  /* Reduced size */ }
+            #popup { display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #444; padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 999; color: white; font-size: 16px; width: 40%; }
             #popup h3 { color: #f4d03f; font-size: 16px; margin-bottom: 5px; }
-            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between;  /* Vertical alignment */ }
+            #popup p { margin: 2px 0; font-size: 16px; display: flex; justify-content: space-between; }
             .info-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 5px; }
             .info-container div { width: 48%; }
-            .info-container div h3, .info-container div p { margin: 0; padding: 0; }
             #close-popup { cursor: pointer; color: #f4d03f; margin-top: 8px; text-align: center; display: block; }
-            a { color: #f4d03f;  /* Set link color to yellow */ text-decoration: none; }
+            a { color: #f4d03f; text-decoration: none; }
             a:hover { text-decoration: underline; }
-            #departures-btn {
-                margin-left: 20px;
-                padding: 10px 20px;
-                background-color: #444444;
-                color: #f4d03f;
-                font-weight: bold;
-                border-radius: 8px;
-                text-decoration: none;
-                cursor: pointer;
-                border: 2px solid #f4d03f;
-            }
-            #last-updated {
-                text-align: right;
-                color: #f4d03f;
-                font-size: 14px;
-                padding-right: 20px;
-            }
-            @media only screen and (max-width: 600px) {
-                #popup { width: 75%;  /* Adjusted for mobile */ padding: 8px; }
-                .info-container { flex-direction: row; }
-                .info-container div { width: 48%; }
-                #departures-btn { margin-top: 15px; }
-            }
+            #departures-btn { margin-left: 20px; padding: 10px 20px; background-color: #444444; color: #f4d03f; font-weight: bold; border-radius: 8px; text-decoration: none; cursor: pointer; border: 2px solid #f4d03f; }
+            #last-updated { text-align: right; color: #f4d03f; font-size: 14px; padding-right: 20px; }
         </style>
         <script>
             async function fetchUpdatedHTML() {
                 try {
-                    const response = await fetch('/path/to/generated/index.html');  // Adjust this path to the generated HTML file
+                    const response = await fetch('/path/to/generated/index.html');  // Adjust this path
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
@@ -63,22 +41,6 @@
             }
 
             setInterval(fetchUpdatedHTML, 60000);  // Fetch updated data every 60 seconds
-
-            function showPopup(flight, goToGate, boarding, finalCall, nameCall, gateClosed, checkinOpens, checkinCloses, flightradarLink) {
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("flight-info").innerHTML = '<a href="' + flightradarLink + '" target="_blank">Radar -> Flight: ' + flight + '</a>';
-                document.getElementById("go-to-gate").innerHTML = "Go to Gate: " + goToGate;
-                document.getElementById("boarding").innerHTML = "Boarding: " + boarding;
-                document.getElementById("final-call").innerHTML = "Final Call: " + finalCall;
-                document.getElementById("name-call").innerHTML = "Name Call: " + nameCall;
-                document.getElementById("gate-closed").innerHTML = "Gate Closed: " + gateClosed;
-                document.getElementById("checkin-opens").innerHTML = "Check-in opens: " + checkinOpens;
-                document.getElementById("checkin-closes").innerHTML = "Check-in closes: " + checkinCloses;
-            }
-
-            function closePopup() {
-                document.getElementById("popup").style.display = "none";
-            }
         </script>
     </head>
     <body>
@@ -86,7 +48,7 @@
             <h2>KEF Airport Departures</h2>
             <a href="https://arr.paxnotes.com" id="departures-btn">Arrivals</a>
         </div>
-        <div id="last-updated">Last updated: 13:16</div>
+        <div id="last-updated">Last updated: {datetime.utcnow().strftime('%H:%M')}</div>
         <table>
             <tr>
                 <th>Flight</th>
@@ -108,22 +70,12 @@
                     <td>A13</td>
                 </tr>
             
-                <tr onclick="showPopup('T2361', '', '', '', '', '', '', '', '#')">
-                    <td>T2361</td>
-                    <td>Vagar</td>
-                    <td>13:30</td>
-                    <td></td>
-                    <td></td>
-                    <td>119</td>
-                    <td></td>
-                </tr>
-            
                 <tr onclick="showPopup('OG538', '', '14:10', '14:20', '14:25', '14:35', '11:50', '13:50', 'https://www.flightradar24.com/TFPPA')">
                     <td>OG538</td>
                     <td>Split</td>
                     <td>14:50</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>9</td>
                     <td>C23</td>
                 </tr>
@@ -133,7 +85,7 @@
                     <td>Washington Dulles</td>
                     <td>15:00</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>12</td>
                     <td>D34</td>
                 </tr>
@@ -143,7 +95,7 @@
                     <td>Alicante</td>
                     <td>15:20</td>
                     <td></td>
-                    <td></td>
+                    <td>Check-in Closed</td>
                     <td>8</td>
                     <td>C35</td>
                 </tr>
@@ -188,7 +140,7 @@
                     <td></td>
                 </tr>
             
-                <tr onclick="showPopup('EJU3970', '16:55', '17:10', '17:25', '', '17:40', '15:25', '17:15', 'https://www.flightradar24.com/U23969')">
+                <tr onclick="showPopup('EJU3970', '16:55', '17:10', '17:25', '', '17:40', '15:25', '17:15', '#')">
                     <td>EJU3970</td>
                     <td>Milan</td>
                     <td>17:55</td>
@@ -288,11 +240,11 @@
                     <td>06:40</td>
                     <td></td>
                     <td></td>
-                    <td>61</td>
+                    <td>79</td>
                     <td>D31</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY3316', '07:20', '07:35', '07:50', '', '08:05', '05:50', '07:40', 'https://www.flightradar24.com/U23315')">
+                <tr onclick="showPopup('EZY3316', '07:20', '07:35', '07:50', '', '08:05', '05:50', '07:40', '#')">
                     <td>EZY3316</td>
                     <td>Edinburgh</td>
                     <td>08:20</td>
@@ -312,7 +264,7 @@
                     <td>C23</td>
                 </tr>
             
-                <tr onclick="showPopup('DL237', '07:50', '08:00', '08:20', '08:30', '08:35', '05:35', '07:50', '#')">
+                <tr onclick="showPopup('DL237', '', '', '', '', '', '', '', '#')">
                     <td>DL237</td>
                     <td>Detroit</td>
                     <td>08:50</td>
@@ -332,7 +284,7 @@
                     <td>C24</td>
                 </tr>
             
-                <tr onclick="showPopup('EZY2636', '08:00', '08:15', '08:30', '', '08:45', '06:30', '08:20', 'https://www.flightradar24.com/U22635')">
+                <tr onclick="showPopup('EZY2636', '08:00', '08:15', '08:30', '', '08:45', '06:30', '08:20', '#')">
                     <td>EZY2636</td>
                     <td>London Luton</td>
                     <td>09:00</td>
@@ -342,7 +294,7 @@
                     <td>D34</td>
                 </tr>
             
-                <tr onclick="showPopup('NO3924', '', '08:20', '08:30', '08:35', '08:45', '06:30', '08:20', '#')">
+                <tr onclick="showPopup('NO3924', '', '', '', '', '', '', '', '#')">
                     <td>NO3924</td>
                     <td>Tenerife South</td>
                     <td>09:00</td>
@@ -372,7 +324,7 @@
                     <td>C34</td>
                 </tr>
             
-                <tr onclick="showPopup('LS410', '09:15', '09:35', '09:45', '09:50', '10:00', '07:45', '09:35', '#')">
+                <tr onclick="showPopup('LS410', '', '', '', '', '', '', '', '#')">
                     <td>LS410</td>
                     <td>Leeds</td>
                     <td>10:15</td>
@@ -382,17 +334,17 @@
                     <td>D23</td>
                 </tr>
             
-                <tr onclick="showPopup('EJU3970', '09:35', '09:50', '10:05', '', '10:20', '08:05', '09:55', 'https://www.flightradar24.com/U23969')">
+                <tr onclick="showPopup('EJU3970', '09:35', '09:50', '10:05', '', '10:20', '08:05', '09:55', '#')">
                     <td>EJU3970</td>
                     <td>Milan</td>
                     <td>10:35</td>
                     <td></td>
                     <td></td>
-                    <td>3</td>
-                    <td>A13</td>
+                    <td>40</td>
+                    <td>C24</td>
                 </tr>
             
-                <tr onclick="showPopup('LS1908', '09:45', '10:05', '10:15', '10:20', '10:30', '08:15', '10:05', '#')">
+                <tr onclick="showPopup('LS1908', '', '', '', '', '', '', '', '#')">
                     <td>LS1908</td>
                     <td>Newcastle</td>
                     <td>10:45</td>
@@ -408,11 +360,11 @@
                     <td>11:05</td>
                     <td></td>
                     <td></td>
-                    <td>11</td>
-                    <td>D21</td>
+                    <td>8</td>
+                    <td>D35</td>
                 </tr>
             
-                <tr onclick="showPopup('DL247', '10:25', '10:35', '10:55', '11:05', '11:10', '08:10', '10:25', '#')">
+                <tr onclick="showPopup('DL247', '', '', '', '', '', '', '', '#')">
                     <td>DL247</td>
                     <td>New York JFK</td>
                     <td>11:25</td>
@@ -422,14 +374,14 @@
                     <td>D32</td>
                 </tr>
             
-                <tr onclick="showPopup('TO4403', '', '12:35', '12:45', '12:50', '13:00', '10:45', '12:35', '#')">
+                <tr onclick="showPopup('TO4403', '', '', '', '', '', '', '', '#')">
                     <td>TO4403</td>
                     <td>Paris Orly</td>
                     <td>13:15</td>
                     <td></td>
                     <td></td>
-                    <td>3</td>
-                    <td>A13</td>
+                    <td>9</td>
+                    <td>C23</td>
                 </tr>
             
         </table>
