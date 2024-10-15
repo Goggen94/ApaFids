@@ -61,6 +61,7 @@ def calculate_event_times(sched_time, event_time_for_gate, flight_number):
             go_to_gate_time = (event_dt - timedelta(minutes=60)).strftime("%H:%M")
             boarding_time = (event_dt - timedelta(minutes=45)).strftime("%H:%M")
             final_call_time = (event_dt - timedelta(minutes=30)).strftime("%H:%M")
+            name_call_time = (event_dt - timedelta(minutes=25)).strftime("%H:%M")
             gate_closed_time = (event_dt - timedelta(minutes=15)).strftime("%H:%M")
         elif flight_number.startswith(("TOM")):
             # Tui flights (TOM)
