@@ -68,7 +68,7 @@ except Exception as e:
 # Continue with any additional logic, such as copying the file to Nginx or any other tasks
 
         # Flight code-specific times
-        if flight_number.startswith("OG"):
+          if flight_number.startswith("OG"):
             # OG flights
             checkin_opens_time = (sched_dt - timedelta(hours=3)).strftime("%H:%M")
             checkin_closes_time = (sched_dt - timedelta(hours=1)).strftime("%H:%M")
