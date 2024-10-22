@@ -31,4 +31,5 @@ jobs:
 
     - name: SCP the HTML file to the VM
       run: |
-        scp -o StrictHostKeyChecking=no scraper/output/index.html georg_sigurdsson1994@34.27.184.64:/var/www/html/index.html
+        scp -o StrictHostKeyChecking=no scraper/output/index.html georg_sigurdsson1994@34.27.184.64:/var/www/dep.paxnotes.com/index.html
+
