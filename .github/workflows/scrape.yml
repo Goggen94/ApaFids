@@ -24,7 +24,11 @@ jobs:
     - name: Run scraper
       run: python scraper/scrape_flight.py
 
-    - name: Copy HTML to Output Directory
+    - name: Add SSH Key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: SCP the HTML file to the VM
       run: |
-        mkdir -p /var/www/html
-        sudo cp scraper/output/index.html /var/www/html/index.html
+        scp -o StrictHostKeyChecking=no scraper/output/index.html georg_sigurdsson1994@34.27.184.64:/var/www/html/index.html
