@@ -29,5 +29,6 @@ jobs:
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
         git add scraper/output/index.html
-        git commit -m "Update flight data"
-        git push origin gh-pages
+        git commit -m "Update flight data" || true  # Avoid error if no changes
+        git branch -M gh-pages
+        git push origin gh-pages --force
