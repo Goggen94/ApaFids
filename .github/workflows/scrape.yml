@@ -28,6 +28,6 @@ jobs:
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
-        git add /var/www/html/index.html
+        git add scraper/output/index.html
         git commit -m "Update flight data"
         git push origin gh-pages
